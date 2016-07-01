@@ -27,6 +27,7 @@ fail () {
   exit
 }
 
+# Set up git configurations and store in keychain / a local gitconfig file
 setup_gitconfig () {
   if ! [ -f git/gitconfig.local.symlink ]
   then
@@ -49,7 +50,7 @@ setup_gitconfig () {
   fi
 }
 
-
+# Perform linking of all *.symlink files
 link_file () {
   local src=$1 dst=$2
 
@@ -125,6 +126,7 @@ link_file () {
   fi
 }
 
+# Install dotfiles
 install_dotfiles () {
   info 'installing dotfiles'
 
@@ -137,6 +139,7 @@ install_dotfiles () {
   done
 }
 
+################ Start of scripts ###############################
 setup_gitconfig
 install_dotfiles
 

@@ -1,3 +1,26 @@
-alias reload!='. ~/.zshrc'
-
-alias cls='clear' # Good 'ol Clear Screen command
+alias ll='ls -hl'
+alias la='ls -al'
+alias lc='ls -CF'
+alias gvim="gvim 2>/dev/null"
+alias eclipse="eclipse 2>/dev/null"
+alias nau="nautilus ."
+alias okular="okular 2>/dev/null"
+alias se="screen"
+alias gitl="git log-graph"
+alias t="task"
+alias tw="task -misc"
+alias tm="task +misc"
+alias to="taskopen"
+alias gs="git status"
+alias gc="git commit"
+alias ga="git add"
+alias ra="ranger"
+alias dirdiff="gvim --cmd 'let nodiffchar=1'"
+# Foreground imap sync
+alias O="offlineimap"
+alias o="offlineimap -qf INBOX"
+alias m="cd ~/Downloads && mail && cd -"
+alias kli="ikhal"
+alias kl="khal"
+alias kh="khard"
+alias v="vdirsyncer sync"
