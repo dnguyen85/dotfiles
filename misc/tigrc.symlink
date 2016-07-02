@@ -1,0 +1,4 @@
+bind generic H move-first-line
+bind generic G move-last-line
+bind main G move-last-line
+bind generic I @sh -c "echo -n %(commit) | xclip -selection c"

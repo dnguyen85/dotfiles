@@ -1,0 +1,178 @@
+# Paths ----------------------------------------------
+set folder           = ~/.mail               # mailbox location
+set alias_file       = ~/.mutt/alias         # where to store aliases
+set header_cache     = ~/.mutt/cache/headers # where to store headers
+set message_cachedir = ~/.mutt/cache/bodies  # where to store bodies
+set certificate_file = ~/.mutt/certificates  # where to store certs
+set mailcap_path     = ~/.mutt/mailcap       # entries for filetypes
+set tmpdir           = ~/.mutt/temp          # where to keep temp files
+set signature        = ~/.mutt/sig           # my signature file
+
+# Basic Options --------------------------------------
+set wait_key = no        # shut up, mutt
+set mbox_type = Maildir  # mailbox type
+set timeout = 3          # idle time before scanning
+set mail_check = 0       # minimum time between scans
+unset move               # gmail does that
+set delete               # don't ask, just do
+unset confirmappend      # don't ask, just do!
+set quit                 # don't ask, just do!!
+unset mark_old           # read/new is good enough for me
+set beep_new             # bell on new mails
+set pipe_decode          # strip headers and eval mimes when piping
+set thorough_search      # strip headers and eval mimes before searching
+
+# Sidebar Patch --------------------------------------
+set sidebar_delim   = '│'
+set sidebar_visible = yes
+set sidebar_width   = 24
+#  color sidebar_new color221 color233
+
+# Status Bar -----------------------------------------
+set status_chars  = " *%A"
+set status_format = "───[ Folder: %f ]───[%r%m messages%?n? (%n new)?%?d? (%d to delete)?%?t? (%t tagged)? ]───%>─%?p?( %p postponed )?───"
+
+# Colors ---------------------------------------------
+source /home/dhn24/stuff_repo/colors/mutt-colors-solarized/mutt-colors-solarized-dark-16.muttrc
+
+# Header Options -------------------------------------
+ignore *                                # ignore all headers
+unignore from: to: cc: date: subject:   # show only these
+unhdr_order *                           # some distros order things by default
+hdr_order from: to: cc: date: subject:  # and in this order
+
+# Account Settings -----------------------------------
+
+# Default inbox.
+set spoolfile = "+danh-dnguyen.io/INBOX"
+
+# Alternate email addresses.
+alternates dhn24@drexel.edu
+
+# Mailboxes to show in the sidebar.
+mailboxes +danh-dnguyen.io/INBOX \
+          +danh-dnguyen.io/Archive \
+          +danh-dnguyen.io/CFP \
+          +danh-dnguyen.io/ieee \
+          +danh-dnguyen.io/gnu-radio \
+          +danh-dnguyen.io/Sent \
+          +danh-dnguyen.io/Drafts \
+          +danh-dnguyen.io/Spam
+
+# Other special folders.
+set mbox      = "+danh-dnguyen.io/Archive"
+set postponed = "+danh-dnguyen.io/Drafts"
+
+# Index View Options ---------------------------------
+set date_format = "%m/%d"
+set index_format = "[%Z]  %D  %-20.20F  %s"
+set sort = threads                         # like gmail
+set sort_aux = reverse-last-date-received  # like gmail
+set uncollapse_jump                        # don't collapse on an unread message
+set sort_re                                # thread based on regex
+set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
+
+# Index Key Bindings ---------------------------------
+bind index gg       first-entry
+bind index G        last-entry
+
+bind index R        group-reply
+bind index <tab>    sync-mailbox
+bind index <space>  collapse-thread
+
+# Ctrl-R to mark all as read
+macro index \Cr "T~U<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "mark all messages as read"
+
+# Sync mailbox and then remote sync 
+macro index,pager o '<sync-mailbox><shell-escape>mail-sync &<enter>'
+
+
+# Saner copy/move dialogs
+macro index C "<copy-message>?<toggle-mailboxes>" "copy a message to a mailbox"
+macro index M "<save-message>?<toggle-mailboxes>" "move a message to a mailbox"
+
+#  macro index E "<change-folder>+danh-dnguyen.io/Archive<enter><limit>~B " "search everything"
+#  macro index,pager A "<save-message>+danh-dnguyen.io/Archive<enter>" "move message to the archive"
+#  macro index D "<save-message>+danh-dnguyen.io/Trash<enter>" "move message to the trash"
+#  macro index S "<save-message>+danh-dnguyen.io/Spam<enter>" "mark message as spam"
+
+# S to archive messages
+macro index,pager S ":set confirmappend=no delete=yes\n<tag-prefix><save-message>+danh-dnguyen.io/Archive\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n"
+
+
+# Sidebar Navigation ---------------------------------
+bind index,pager <down>   sidebar-next
+bind index,pager <up>     sidebar-prev
+bind index,pager <right>  sidebar-open
+
+# Pager View Options ---------------------------------
+set pager_index_lines = 10 # number of index lines to show
+set pager_context = 3      # number of context lines to show
+set pager_stop             # don't go to next message automatically
+set menu_scroll            # scroll in menus
+set tilde                  # show tildes like in vim
+unset markers              # no ugly plus signs
+
+set quote_regexp = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
+alternative_order text/plain text/enriched text/html
+
+# Pager Key Bindings ---------------------------------
+bind pager k  previous-line
+bind pager j  next-line
+bind pager gg top
+bind pager G  bottom
+
+bind pager R  group-reply
+
+# View attachments properly.
+bind attach <return> view-mailcap
+
+# Extract urls
+macro pager \Cu "|urlview<enter>" "call urlview to open links"
+
+# Compose View Options -------------------------------
+set realname = "Danh Nguyen"         # who am i?
+set sig_dashes                       # dashes before sig
+set edit_headers                     # show headers when composing
+set fast_reply                       # skip to compose when replying
+set askcc                            # ask for CC:
+set fcc_attach                       # save attachments with the body
+unset mime_forward                   # forward attachments as part of body
+set forward_format = "Fwd: %s"       # format of subject when forwarding
+set forward_decode                   # decode when forwarding
+set attribution = "On %d, %n wrote:" # format of quoting header
+set reply_to                         # reply to Reply to: field
+set reverse_name                     # reply as whomever it was to
+set include                          # include message in replies
+set forward_quote                    # include message in forwards
+
+# Editor
+set editor = "vim +/^$ ++1"                   # Use terminal Vim to compose email.
+set text_flowed
+
+# Sending
+set sendmail = "/usr/bin/msmtp -a fastmail"
+set sendmail_wait = 0
+set envelope_from=yes
+unset record
+
+# khard as address book
+set query_command= "khard email %s"
+bind editor <Tab> complete-query
+bind editor ^T    complete
+
+#  macro index,pager A \
+    #  "<pipe-message>khard add-email<return>" \
+    #  "add the sender email address to khard"
+
+# Multiple send personalities
+alternates "danh@dnguyen.io|dhn24@drexel.edu"
+# default profile
+set from="danh@dnguyen.io"
+set status_format="-%r-danh@dnguyen.io: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l? %l?]---(%s/%S)-%>-(%P)---"
+
+macro index,pager \e1 ":set from=danh@dnguyen.io\n:set status_format=\"-%r-danh@dnguyen.io: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l? %l?]---(%s/%S)-%>-(%P)---\"\n" "Switch to danh@dnguyen.io"
+macro index,pager \e2 ":set from=dhn24@drexel.edu\n:set status_format=\"-%r-dhn24@drexel.edu: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l? %l?]---(%s/%S)-%>-(%P)---\"\n" "Switch to dhn24@drexel.edu"
+
+
+
