@@ -13,9 +13,9 @@ then
 fi
 
 # Run antigen first
-if [[ -a $DOTFILES/zsh/antigen.zsh ]]
+if [[ -a $DOTFILES/antigen/antigen.zsh ]]
 then
-    source $DOTFILES/zsh/antigen.zsh
+    source $DOTFILES/antigen/antigen.zsh
 fi
 
 # all of our zsh files
