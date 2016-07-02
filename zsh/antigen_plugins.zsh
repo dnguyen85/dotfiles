@@ -2,7 +2,7 @@
 antigen use oh-my-zsh
 
 # Configs from default zsh libs (oh-my-zsh)
-antigen theme robbyrussell
+antigen theme dnguyen85/dotfiles zsh/themes/doubleend
 
 # List of other antigen zsh plugins
 antigen bundle zsh-users/zsh-syntax-highlighting
