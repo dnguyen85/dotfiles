@@ -1,0 +1,3 @@
+[submodule "oh-my-zsh.symlink"]
+	path = oh-my-zsh.symlink
+	url = https://github.com/dnguyen85/oh-my-zsh
