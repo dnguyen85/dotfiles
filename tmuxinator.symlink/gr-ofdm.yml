@@ -1,0 +1,32 @@
+# ~/.tmuxinator/nutaq_rx.yml
+
+name: gr-ofdm
+root: /home/dhn24/workspace/gr-3.7/gr-ofdm
+
+# Optional tmux socket
+# socket_name: 
+
+# Runs before everything. Use it to start daemons etc.
+# pre: sudo /etc/rc.d/mysqld start
+
+# Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
+# pre_window: rbenv shell 2.0.0-p247
+
+# Pass command line options to tmux. Useful for specifying a different tmux.conf.
+# tmux_options: -f ~/.tmux.mac.conf
+
+# Change the command to call tmux.  This can be used by derivatives/wrappers like byobu.
+# tmux_command: byobu
+
+# Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
+# startup_window: logs
+
+windows:
+    - gr-ofdm:
+        - workon gr-3.7
+    - gr-digital:
+        - cd /home/dhn24/workspace/gr-3.7/src/gnuradio/gr-digital
+        - workon gr-3.7
+    - ieee802-11:
+        - cd /home/dhn24/workspace/gr-3.7/gr-ieee802-11
+        

@@ -1,0 +1,32 @@
+# ~/.tmuxinator/reactive_jamming.yml
+
+name: uhd
+root: /home/dhn24/workspace/gr-3.6_reactive_jamming/uhd/fpga/usrp2/custom/MY_IP_CORES/v5_build5_2013-11-02_disabling_antenna_control_core_latest 
+
+# Optional tmux socket
+# socket_name: 
+
+# Runs before everything. Use it to start daemons etc.
+# pre: sudo /etc/rc.d/mysqld start
+
+# Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
+# pre_window: rbenv shell 2.0.0-p247
+
+# Pass command line options to tmux. Useful for specifying a different tmux.conf.
+# tmux_options: -f ~/.tmux.mac.conf
+
+# Change the command to call tmux.  This can be used by derivatives/wrappers like byobu.
+# tmux_command: byobu
+
+# Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
+# startup_window: logs
+
+windows:
+    - sysgen: 
+        - cd /home/dhn24/workspace/gr-3.6_reactive_jamming/uhd/fpga/usrp2/custom/MY_IP_CORES/v5_build5_2013-11-02_disabling_antenna_control_core_latest
+        - bash
+        - x144
+        - zsh
+        - sysgen -r "open 'Packet_Detector_user_reg_bus_withEnergy_Det5_1mdl_20131030.mdl'" &
+    - zsh:
+        

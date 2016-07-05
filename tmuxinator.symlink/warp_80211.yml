@@ -1,0 +1,45 @@
+# ~/.tmuxinator/reactive_jamming.yml
+
+name: warp80211
+root: /home/dhn24/workspace/warp/802.11_v1.5.2
+
+# Optional tmux socket
+# socket_name: 
+
+# Runs before everything. Use it to start daemons etc.
+# pre: sudo /etc/rc.d/mysqld start
+
+# Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
+# pre_window: rbenv shell 2.0.0-p247
+
+# Pass command line options to tmux. Useful for specifying a different tmux.conf.
+# tmux_options: -f ~/.tmux.mac.conf
+
+# Change the command to call tmux.  This can be used by derivatives/wrappers like byobu.
+# tmux_command: byobu
+
+# Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
+# startup_window: logs
+
+windows:
+    - xps:
+        - cd EDK_Projects/Mango_802.11_RefDes_v1.5.2
+        - bash
+        - x144
+        - zsh
+        - xps system.xmp &
+    - sysgen: 
+        - cd SysGen_Reference/wlan_phy_rx_pmd
+        - bash
+        - x144
+        - zsh
+        - sysgen -r "open 'wlan_phy_rx_pmd.mdl'" -a -nodesktop
+    - sdk:
+        - cd EDK_Projects/Mango_802.11_RefDes_v1.5.2/SDK_Workspace
+        - bash
+        - x144
+        - zsh
+        - gvim
+        - xsdk -workspace . &
+    - zsh:
+        

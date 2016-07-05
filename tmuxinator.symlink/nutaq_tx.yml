@@ -1,0 +1,32 @@
+# ~/.tmuxinator/nutaq_tx.yml
+
+name: nutaq_tx
+root: /home/DSA/Lyrtech/matlab/warplab6/WARPLyr_Examples
+
+# Optional tmux socket
+# socket_name: 
+
+# Runs before everything. Use it to start daemons etc.
+# pre: sudo /etc/rc.d/mysqld start
+
+# Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
+# pre_window: rbenv shell 2.0.0-p247
+
+# Pass command line options to tmux. Useful for specifying a different tmux.conf.
+# tmux_options: -f ~/.tmux.mac.conf
+
+# Change the command to call tmux.  This can be used by derivatives/wrappers like byobu.
+# tmux_command: byobu
+
+# Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
+# startup_window: logs
+
+windows:
+  - matlab:
+      layout: main-vertical
+      panes:
+        - vim
+        - matlab -nodesktop
+        - minicom ttyusb1 
+        - ping 10.0.0.1
+  - zsh: 

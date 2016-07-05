@@ -1,0 +1,37 @@
+# ~/.tmuxinator/reactive_jamming.yml
+
+name: warp_ofdm_v18
+root: /home/dhn24/workspace/warp/warp_ofdm_refdes/w3_ofdm_refdes_v18p1
+
+# Optional tmux socket
+# socket_name: 
+
+# Runs before everything. Use it to start daemons etc.
+# pre: sudo /etc/rc.d/mysqld start
+
+# Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
+# pre_window: rbenv shell 2.0.0-p247
+
+# Pass command line options to tmux. Useful for specifying a different tmux.conf.
+# tmux_options: -f ~/.tmux.mac.conf
+
+# Change the command to call tmux.  This can be used by derivatives/wrappers like byobu.
+# tmux_command: byobu
+
+# Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
+# startup_window: logs
+
+windows:
+    - xps:
+        - bash
+        - x134
+        - zsh
+        - xps system.xmp &
+    - sysgen: 
+        - cd pcores/ofdm_txrx_supermimo_coded_plbw_v4_01_e/mdlsrc
+        - bash
+        - x134
+        - zsh
+        - sysgen -r "open 'ofdm_txrx_supermimo_coded.mdl'" -a -nodesktop 
+    - zsh:
+        
