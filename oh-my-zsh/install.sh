@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Checking on oh-my-zsh"
+echo "› Checking on oh-my-zsh"
 
 if [[ ! -d ~/.oh-my-zsh ]]; 
 then
