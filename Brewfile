@@ -4,6 +4,7 @@ tap 'homebrew/bundle'
 
 cask 'xquartz'
 
+brew 'tmux'
 brew 'ack'
 brew 'coreutils'
 brew 'go'
