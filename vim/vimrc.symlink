@@ -87,11 +87,14 @@ nnoremap <silent> <Space> @=(foldlevel('.')?'za':'l')<CR>
 " Map changing directory to current file location
 " map <leader>l :lcd %:p:h<CR>
 
-" Set font
-"set guifont=Terminus\ 8
-" -- This has a bug with italics being cut off
-set guifont=Deja\ Vu\ Sans\ Mono\ for\ Powerline\ 10 
-"set guifont=Bitstream\ Vera\ Sans\ Mono\ 9
+" Set font for term and gui
+if has("gui_running")
+    if has("gui_macvim")
+        set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h11 
+    else
+        set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 10 
+    endif
+endif
 
 " Tabs are 4 spaces
 set tabstop=4
