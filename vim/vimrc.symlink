@@ -134,7 +134,7 @@ set scrolloff=3
 set printoptions=number:y
 
 " Run Make with F5/F6
-" map <F5> :make<CR>
+map <localleader>m :Make<CR>
 
 " Goyo reading
 let g:goyo_width = 80
@@ -294,10 +294,13 @@ set grepprg=grep\ -nH\ $*
 " 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
 " The following changes the default filetype back to 'tex':
 let g:tex_flavor='latex'
+let g:Tex_BibtexFlavor = 'biber'
 " For pdf as default compilation, otherwise, use :TCTarget pdf to change on the fly
 let g:Tex_DefaultTargetFormat='pdf'
+" Don't use Makefile in the project, even if exists
+let g:Tex_UseMakefile = 0
 " Critical for compiling w/ bibtex for pdflatex
-let g:Tex_MultipleCompileFormats='pdf'
+let g:Tex_MultipleCompileFormats='pdf,dvi'
 let g:Tex_ViewRule_dvi='okular --unique'
 let g:Tex_ViewRule_pdf='okular --unique'
 let g:Tex_CompileRule_dvi = 'latex -shell-escape -synctex=1 -src-specials -interaction=nonstopmode $*'
