@@ -9,6 +9,13 @@
         wtf     = !$ZSH/bin/git-wtf
         rank-contributors = !$ZSH/bin/git-rank-contributors
         count   = !git shortlog -sn
+        stash-unapply = !git stash show -p | git apply -R
+        log-graph = !git log --color --graph --abbrev-commit --pretty=oneline --decorate  
+        assume-unchanged = !git ls-files -v | grep ^[a-z]
+        ignored = !git clean -ndX
+        sum = !git log --pretty=format:'%C(yellow)%h %Cgreen%d %Creset%s' 
+        d = difftool
+        diff-orig = !git diff --no-ext-diff -w "$@" | vim -R -
 [color]
         diff = auto
         status = auto
@@ -23,8 +30,17 @@
         keepBackup = false
 [difftool]
         prompt = false
+[diff]
+	tool = vimdiff
+[merge]
+	tool = splice
+[mergetool "splice"]
+    cmd = "gvim -f $BASE $LOCAL $REMOTE $MERGED --cmd 'let nominibuf=1' -c 'SpliceInit'"
+    trustExitCode = true
 [help]
         autocorrect = 1
+[credential]
+	helper = cache --timeout=18000
 [push]
         # See `git help config` (search for push.default)
         # for more information on different options of the below setting.
