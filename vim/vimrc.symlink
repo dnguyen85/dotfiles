@@ -23,6 +23,7 @@ Enablefiletype gitcommit thesaurus_query.vim
 Enablefiletype tex thesaurus_query.vim
 Enablefiletype markdown thesaurus_query.vim
 Enablefiletype pandoc thesaurus_query.vim
+Enablefiletype votl thesaurus_query.vim
 
 " Colorscheme
 set background=dark
@@ -294,20 +295,32 @@ set grepprg=grep\ -nH\ $*
 " 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
 " The following changes the default filetype back to 'tex':
 let g:tex_flavor='latex'
-let g:Tex_BibtexFlavor = 'biber'
-" For pdf as default compilation, otherwise, use :TCTarget pdf to change on the fly
-let g:Tex_DefaultTargetFormat='pdf'
 " Don't use Makefile in the project, even if exists
 let g:Tex_UseMakefile = 0
-" Critical for compiling w/ bibtex for pdflatex
-let g:Tex_MultipleCompileFormats='pdf,dvi'
+" Viewing rules
 let g:Tex_ViewRule_dvi='okular --unique'
 let g:Tex_ViewRule_pdf='okular --unique'
-let g:Tex_CompileRule_dvi = 'latex -shell-escape -synctex=1 -src-specials -interaction=nonstopmode $*'
-let g:Tex_CompileRule_ps = 'dvips -Ppdf -R0 -o $*.ps $*.dvi'
+
+" For pdf as default compilation, otherwise, use :TCTarget pdf to change on the fly
+let g:Tex_DefaultTargetFormat='pdf'
+
+" Critical for compiling w/ bibtex for pdflatex
+"" Use arara instead of the below
+" let g:Tex_BibtexFlavor = 'biber'
+
+" pdftex flow rule
+" let g:Tex_MultipleCompileFormats='pdf,dvi'
+" let g:Tex_CompileRule_dvi = 'latex -shell-escape -synctex=1 -src-specials -interaction=nonstopmode $*'
+" let g:Tex_CompileRule_ps = 'dvips -Ppdf -R0 -o $*.ps $*.dvi'
 " let g:Tex_CompileRule_pdf = 'ps2pdf $*.ps'
-let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape -synctex=1 -src-specials -interaction=nonstopmode $*'
 " let g:Tex_FormatDependency_pdf = 'dvi,ps,pdf'
+
+" pdflatex rule
+" let g:Tex_CompileRule_pdf = 'pdflatex -shell-escape -synctex=1 -src-specials -interaction=nonstopmode $*'
+
+" arara rule
+let g:Tex_CompileRule_pdf = 'arara -v $*'
+
 let g:Tex_Leader = ','
 let g:Tex_GotoError=0
 " Use symbol math
@@ -665,6 +678,9 @@ let g:pandoc#after#modules#enabled = ["tablemode"]
 " Note: requires mapping of bibtex dir
 let g:pandoc#biblio#use_bibtool = 1
 
+" Pandoc make process - search upward until finding makefile
+autocmd Filetype pandoc :let &makeprg = 'if [ -f Makefile ]; then make; else make -C ..; fi'
+
 " Vertical split and open buffer 
 function! VerticalSplitBuffer(buffer)
     execute "vert belowright sb" a:buffer 
@@ -700,6 +716,11 @@ vnoremap <Leader>st "ky:ThesaurusQueryReplace <C-r>k<CR>
 
 " Autopairs
 let g:AutoPairsShortcutJump = '<C-y>' 
+
+" Mail check attachment
+let g:checkattach_filebrowser = 'ranger --choosefiles=%s'
+let g:checkattach_once = 'y'
+autocmd FileType mail map <C-a> :AttachFile<CR>
 
 " Use mouse in terminal vim
 set mouse=a

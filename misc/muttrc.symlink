@@ -19,7 +19,7 @@ unset confirmappend      # don't ask, just do!
 set quit                 # don't ask, just do!!
 unset mark_old           # read/new is good enough for me
 set beep_new             # bell on new mails
-set pipe_decode          # strip headers and eval mimes when piping
+set nopipe_decode        # don't strip headers and eval mimes when piping
 set thorough_search      # strip headers and eval mimes before searching
 
 # Sidebar Patch --------------------------------------
@@ -99,6 +99,8 @@ macro index M "<save-message>?<toggle-mailboxes>" "move a message to a mailbox"
 # S to archive messages
 macro index,pager S ":set confirmappend=no delete=yes\n<tag-prefix><save-message>+danh-dnguyen.io/Archive\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n"
 
+# X to save attachments
+macro index,pager X "<pipe-message>ripmime --no-nameless -i - -d "
 
 # Sidebar Navigation ---------------------------------
 bind index,pager <down>   sidebar-next
