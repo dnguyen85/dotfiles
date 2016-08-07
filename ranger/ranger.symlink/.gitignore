@@ -1,3 +1,5 @@
 bookmarks
 history
 tagged
+*.pyc
+*.pyo
