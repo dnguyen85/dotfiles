@@ -130,7 +130,14 @@ bind pager R  group-reply
 bind attach <return> view-mailcap
 
 # Extract urls
-macro pager \Cu "|urlview<enter>" "call urlview to open links"
+#  macro pager \Cu "|mimedecode |urlview<enter>" "call urlview to open links"
+macro index,pager \Cu "\
+: set my_tmp_pipe_decode=\$pipe_decode\n\
+: set pipe_decode\n\
+|urlview\n\
+: set pipe_decode=\$my_tmp_pipe_decode\n\
+: unset my_tmp_pipe_decode\n" \
+'call urlview to extract URLs out of a message'
 
 # Compose View Options -------------------------------
 set realname = "Danh Nguyen"         # who am i?
