@@ -14,7 +14,6 @@ alias to="taskopen"
 alias gs="git status"
 alias gc="git commit"
 alias ga="git add"
-alias ra="ranger"
 alias dirdiff="gvim --cmd 'let nodiffchar=1'"
 # Foreground imap sync
 alias O="offlineimap"
