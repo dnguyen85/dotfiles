@@ -1,0 +1,20 @@
+# MS Word documents
+application/msword; ~/.dotfiles/mutt/scripts/view_attachment.sh %s "-" 'libreoffice --writer'
+
+# Images
+image/*; muttimage.sh %s ; copiousoutput
+#  image/jpg; ~/stuff_repo/mutt/view_attachment.sh %s jpg
+#  image/jpeg; ~/stuff_repo/mutt/view_attachment.sh %s jpg
+#  image/pjpeg; ~/stuff_repo/mutt/view_attachment.sh %s jpg
+#  image/png; ~/stuff_repo/mutt/view_attachment.sh %s png
+#  image/gif; ~/stuff_repo/mutt/view_attachment.sh %s gif
+
+# PDFs
+application/pdf; ~/.dotfiles/mutt/scripts/view_attachment.sh %s pdf
+
+# HTML
+text/html; ~/.dotfiles/mutt/scripts/view_attachment.sh %s html; needsterminal;
+text/html; w3m -I %{charset} -T text/html; copiousoutput;
+
+# Unidentified files
+application/octet-stream; ~/.dotfiles/mutt/scripts/view_attachment.sh %s "-"

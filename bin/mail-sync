@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Wait for existing offlineimap to quit
+while pkill --signal 0 offlineimap
+do
+    sleep 2
+done
+while pkill --signal 0 vdirsyncer
+do
+    sleep 2
+done
+offlineimap > ~/.mutt/mail-sync.log 2>&1 &
+vdirsyncer sync > ~/.mutt/vdirsyncer.log 2>&1 &

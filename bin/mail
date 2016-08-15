@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+ACCT="fastmail.com"
+USER="danhnguyen04@gmail.com"
+
+# Sync address once
+mutt            # run mutt in foreground (and waits for mutt to exit)
+
+if ! lpass show --sync=auto --password $ACCT > /dev/null 2>&1 ; then
+    echo "Logging in for mail sync..."
+    lpass login $USER
+fi
+
+if lpass show --sync=auto --password $ACCT > /dev/null 2>&1 ; then
+    echo "Syncing mail"
+    mail-sync &     # wait & sync mail once more in background
+else
+    echo "Not syncing mail!!"
+fi
+
+exit 0          # force script to exit "cleanly"

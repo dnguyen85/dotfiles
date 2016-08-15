@@ -1,0 +1,18 @@
+# Set default values for all following accounts.
+defaults
+auth           on
+tls            on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile        ~/.mutt/msmtp.log
+
+# Fastmail
+account fastmail
+host mail.messagingengine.com
+port 465
+protocol smtp
+auth on
+tls_starttls off
+user danh@dnguyen.io
+passwordeval python ~/.dotfiles/mutt/scripts/offlineimap.py
+
+account default : fastmail

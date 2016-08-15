@@ -1,0 +1,38 @@
+[general]
+# Type of UI to use
+ui = ttyui
+# List all mail accounts here
+accounts = fastmail
+pythonfile=~/.dotfiles/mutt/scripts/offlineimap.py
+metadata = ~/.mail/.offlineimap
+fsync = False
+
+[Account fastmail]
+localrepository = fastmail-local
+remoterepository = fastmail-remote
+status_backend = sqlite
+postsynchook = notmuch new
+
+[Repository fastmail-local]
+type = Maildir
+localfolders = ~/.mail/danh-dnguyen.io
+# Name translation - avoid remote copy creation
+nametrans = lambda folder: fastmail_local_to_remote(folder)
+
+[Repository fastmail-remote]
+# Number of connections to make to remote host
+maxconnection = 3
+type = IMAP
+ssl = yes
+cert_fingerprint = 958b1601563aef92607a41eb5bad22e3cace8431
+remotehost = mail.messagingengine.com
+remoteuser = danh@dnguyen.io
+# Function to eval to get passwd
+remotepasseval = get_lastpass_pass(account="danhnguyen04@gmail.com", entry="fastmail.com")
+# Folder filter
+folderfilter = lambda foldername: foldername not in ['INBOX.Trash']
+# Name translation - Avoid local copies creation
+nametrans = lambda folder: re.sub('^INBOX\.', '', folder)
+
+
+
