@@ -23,10 +23,17 @@ set nopipe_decode        # don't strip headers and eval mimes when piping
 set thorough_search      # strip headers and eval mimes before searching
 
 # Sidebar Patch --------------------------------------
-set sidebar_delim   = '│'
+# shorten mailbox names
+set sidebar_short_path = yes
+# configure sidebar appearance
+set sidebar_divider_char   = '│'
+set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
 set sidebar_visible = yes
 set sidebar_width   = 24
-#  color sidebar_new color221 color233
+set mail_check_stats
+color sidebar_new       green   default         
+color sidebar_highlight white   color238        
+
 
 # Status Bar -----------------------------------------
 set status_chars  = " *%A"
@@ -65,7 +72,7 @@ set postponed = "+danh-dnguyen.io/Drafts"
 
 # Index View Options ---------------------------------
 set date_format = "%m/%d"
-set index_format = "[%Z]  %D  %-20.20F  %s"
+set index_format = "[%Z][%?X?A& ?]  %D  %-20.20F  %s %g"
 set sort = threads                         # like gmail
 set sort_aux = reverse-last-date-received  # like gmail
 set uncollapse_jump                        # don't collapse on an unread message
@@ -84,7 +91,7 @@ bind index <space>  collapse-thread
 macro index \Cr "T~U<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "mark all messages as read"
 
 # Sync mailbox and then remote sync 
-macro index,pager o '<sync-mailbox><shell-escape>mail-sync &<enter>'
+macro index,pager O '<sync-mailbox><shell-escape>mail-sync &<enter>'
 
 
 # Saner copy/move dialogs
@@ -100,12 +107,19 @@ macro index M "<save-message>?<toggle-mailboxes>" "move a message to a mailbox"
 macro index,pager S ":set confirmappend=no delete=yes\n<tag-prefix><save-message>+danh-dnguyen.io/Archive\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n"
 
 # X to save attachments
-macro index,pager X "<pipe-message>ripmime --no-nameless -i - -d "
+macro index,pager V "<pipe-message>ripmime --no-nameless -i - -d "
+
+# Searching backward
+bind index N search-opposite
+bind pager N search-opposite
 
 # Sidebar Navigation ---------------------------------
-bind index,pager <down>   sidebar-next
-bind index,pager <up>     sidebar-prev
-bind index,pager <right>  sidebar-open
+bind index,pager <   sidebar-prev
+bind index,pager >   sidebar-next
+bind index,pager \CO   sidebar-open
+
+# important
+bind index,pager F   flag-message
 
 # Pager View Options ---------------------------------
 set pager_index_lines = 10 # number of index lines to show
@@ -125,6 +139,9 @@ bind pager gg top
 bind pager G  bottom
 
 bind pager R  group-reply
+
+# Limiting to all
+macro index a "<limit>all\n" "show all messages (undo limit)"
 
 # View attachments properly.
 bind attach <return> view-mailcap
@@ -166,13 +183,13 @@ set envelope_from=yes
 unset record
 
 # khard as address book
-set query_command= "khard email %s"
+set query_command= "khard email --parsable %s"
 bind editor <Tab> complete-query
 bind editor ^T    complete
-
-#  macro index,pager A \
-    #  "<pipe-message>khard add-email<return>" \
-    #  "add the sender email address to khard"
+# Add email addrs to address book
+macro index,pager A \
+    "<pipe-message>khard add-email<return>" \
+    "add the sender email address to khard"
 
 # Multiple send personalities
 alternates "danh@dnguyen.io|dhn24@drexel.edu"
@@ -182,6 +199,37 @@ set status_format="-%r-danh@dnguyen.io: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:
 
 macro index,pager \e1 ":set from=danh@dnguyen.io\n:set status_format=\"-%r-danh@dnguyen.io: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l? %l?]---(%s/%S)-%>-(%P)---\"\n" "Switch to danh@dnguyen.io"
 macro index,pager \e2 ":set from=dhn24@drexel.edu\n:set status_format=\"-%r-dhn24@drexel.edu: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l? %l?]---(%s/%S)-%>-(%P)---\"\n" "Switch to dhn24@drexel.edu"
+
+# Postponing drafts
+bind compose p postpone-message
+bind index p recall-message
+
+# html viewing
+auto_view text/html                                     # view html automatically
+alternative_order text/plain text/enriched text/html    # set order of preference
+
+# notmuch
+set nm_default_uri="notmuch:///home/dhn24/.mail/danh-dnguyen.io"
+# enable virtual folders
+#  set virtual_spoolfile=yes  
+
+bind index <Esc>S sidebar-toggle-virtual
+
+tag-transforms "inbox"   "i"   \
+             "unread"  "u"   \
+             "replied" "↻ "  \
+             "sent"    "➥ "  \
+             "todo"    "T"   \
+             "deleted" "DEL" \
+             "invites" "CAL"
+
+#  set index_format="%4C %Z %?GI?%GI& ? %[%d/%b]  %-16.15F %?M?(%3M)&     ? %s %> %?g?%g?"
+
+virtual-mailboxes \
+	   "INBOX"                "notmuch://?query=tag:inbox and NOT tag:archive" \
+       "Starred"              "notmuch://?query=tag:*" \
+       "Sent"                 "notmuch://?query=tag:sent" \
+
 
 
 
