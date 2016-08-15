@@ -3,3 +3,6 @@ export PROJECTS=~/workspace
 
 # Lastpass
 export LPASS_AGENT_TIMEOUT=21600
+
+# Matplotlib
+export MPLCONFIGDIR=~/.matplotlib

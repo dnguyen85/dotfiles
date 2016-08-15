@@ -715,12 +715,15 @@ nnoremap <Leader>st :ThesaurusQueryReplaceCurrentWord<CR>
 vnoremap <Leader>st "ky:ThesaurusQueryReplace <C-r>k<CR>
 
 " Autopairs
-let g:AutoPairsShortcutJump = '<C-y>' 
+let g:AutoPairsShortcutJump = '<C-;>' 
 
 " Mail check attachment
 let g:checkattach_filebrowser = 'ranger --confdir=~/.ranger --choosefiles=%s'
 let g:checkattach_once = 'y'
 autocmd FileType mail map <C-a> :AttachFile<CR>
+
+" cscope
+set cscopequickfix=s-,c-,d-,i-,t-,e-
 
 " Use mouse in terminal vim
 set mouse=a
