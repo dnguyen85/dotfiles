@@ -70,6 +70,7 @@ else
     " Detect file change
     " set updatetime=1000
     " au CursorHold * if getcmdwintype() == '' | checktime | endif
+    autocmd FileChangedShell * echo 'File changed on disk, please reload!!!'
     
     " Enable italics
     set t_ZH=[3m
@@ -136,6 +137,7 @@ set printoptions=number:y
 
 " Run Make with F5/F6
 map <localleader>m :Make<CR>
+map <localleader>M :Make all<CR>
 
 " Goyo reading
 let g:goyo_width = 80
@@ -336,7 +338,7 @@ let g:Tex_IgnoredWarnings =
            \"Reference %.%# undefined\n".
            \"Latex Font Warning:"
 " Increase the number of warnings ignored
-let g:Tex_IgnoreLevel = 8
+let g:Tex_IgnoreLevel = 9
 
 function! SyncTexForward()
 let s:syncfile = fnamemodify(fnameescape(Tex_GetMainFileName()), ":r").".pdf"
@@ -649,7 +651,7 @@ let g:OrigamiSeparateLevels = 1
 "" Folding
 nnoremap zk zk[z 
 " Open file at highest foldlevel
-autocmd BufWinEnter *.py,*.m,*.md let &foldlevel = max(map(range(1, line('$')), 'foldlevel(v:val)'))
+autocmd BufWinEnter *.py,*.m,*.md,*.otl let &foldlevel = max(map(range(1, line('$')), 'foldlevel(v:val)'))
 
 " SimpyllFold python
 let g:SimpylFold_fold_docstring = 0
@@ -715,7 +717,7 @@ nnoremap <Leader>st :ThesaurusQueryReplaceCurrentWord<CR>
 vnoremap <Leader>st "ky:ThesaurusQueryReplace <C-r>k<CR>
 
 " Autopairs
-let g:AutoPairsShortcutJump = '<C-;>' 
+let g:AutoPairsShortcutJump = '<C-g>' 
 
 " Mail check attachment
 let g:checkattach_filebrowser = 'ranger --confdir=~/.ranger --choosefiles=%s'
@@ -724,6 +726,15 @@ autocmd FileType mail map <C-a> :AttachFile<CR>
 
 " cscope
 set cscopequickfix=s-,c-,d-,i-,t-,e-
+" Use the base of cscope.out as path prefix if absent
+set cscoperelative
+
+" quickfix window
+" This trigger takes advantage of the fact that the quickfix window can be
+" easily distinguished by its file-type, qf. The wincmd J command is
+" equivalent to the Ctrl+W, Shift+J shortcut telling Vim to move a window to
+" the very bottom (see :help :wincmd and :help ^WJ).
+autocmd FileType qf wincmd J
 
 " Use mouse in terminal vim
 set mouse=a
