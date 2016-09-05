@@ -92,7 +92,7 @@ nnoremap <silent> <Space> @=(foldlevel('.')?'za':'l')<CR>
 " Set font for term and gui
 if has("gui_running")
     if has("gui_macvim")
-        set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h11 
+        set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h12 
     else
         set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 10 
     endif

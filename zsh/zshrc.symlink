@@ -9,6 +9,14 @@ then
   source ~/.localrc
 fi
 
+# Detecting OS and set env variables
+if [[ "$(uname -s)" == "Darwin" ]]
+then
+    export OSX=1
+else
+    export OSX=
+fi
+
 # Run antigen first
 if [[ -a $DOTFILES/antigen/antigen.zsh ]]
 then

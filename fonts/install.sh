@@ -7,5 +7,5 @@ DOTFILES_ROOT=$(pwd -P)
 if [ "$(uname -s)" == "Darwin" ]
 then
     echo "› Installing powerline fonts for macOS"
-    rsync --exclude ".DS_Store" --exclude ".git/" --exclude "install.sh" -av --no-perms $DOTFILES_ROOT/fonts.symlink/ ~/Library/Fonts/
+    rsync --exclude ".DS_Store" --exclude ".git/" --exclude "install.sh" -av --no-perms $DOTFILES_ROOT/fonts/fonts.symlink/ ~/Library/Fonts/
 fi
