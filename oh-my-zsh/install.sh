@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "› Checking on oh-my-zsh"
 
