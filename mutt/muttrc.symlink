@@ -40,7 +40,7 @@ set status_chars  = " *%A"
 set status_format = "───[ Folder: %f ]───[%r%m messages%?n? (%n new)?%?d? (%d to delete)?%?t? (%t tagged)? ]───%>─%?p?( %p postponed )?───"
 
 # Colors ---------------------------------------------
-source /home/dhn24/stuff_repo/colors/mutt-colors-solarized/mutt-colors-solarized-dark-16.muttrc
+source /home/dhn24/.software/mutt-colors-solarized/mutt-colors-solarized-dark-16.muttrc
 
 # Header Options -------------------------------------
 ignore *                                # ignore all headers
