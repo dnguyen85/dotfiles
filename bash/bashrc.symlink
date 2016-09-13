@@ -1,0 +1,128 @@
+m2009b () {
+    if [ -L "/usr/local/bin/matlab" ] 
+    then
+        sudo rm /usr/local/bin/matlab
+    fi
+    sudo ln -s /opt/matlab/2009b/bin/matlab /usr/local/bin/matlab
+    alias matlab='matlab -c /opt/matlab/2009b/license.dat'
+}
+
+m2011b () {
+    if [ -L "/usr/local/bin/matlab" ] 
+    then
+        sudo rm /usr/local/bin/matlab
+    fi
+    sudo ln -s /opt/matlab/2011b/bin/matlab /usr/local/bin/matlab
+    [ `alias | grep matlab | wc -l` != 0 ] && unalias matlab
+}
+
+m2012b () {
+    if [ -L "/usr/local/bin/matlab" ] 
+    then
+        sudo rm /usr/local/bin/matlab
+    fi
+    sudo ln -s /opt/matlab/2012b/bin/matlab /usr/local/bin/matlab
+    [ `alias | grep matlab | wc -l` != 0 ] && unalias matlab
+}
+
+x101 () {
+	local xil_home
+	xil_home=/opt/Xilinx/10.1
+	. $xil_home/ISE/settings64.sh
+	. $xil_home/EDK/settings64.sh
+	export PATH="$xil_home/EDK/gnu/powerpc-eabi/lin64/bin:$PATH"
+	export PATH="$xil_home/EDK/gnu/microblaze/lin64/bin:$PATH"
+	export XIL_IMPACT_USELIBUSB=1
+    alias inserter='AWT_TOOLKIT=MToolkit inserter.sh'
+    alias analyzer='AWT_TOOLKIT=MToolkit analyzer.sh'
+}
+
+edk () {
+	x101
+	xps 1>/dev/null
+}
+
+x121 () {
+	local xil_home
+	xil_home=/opt/Xilinx/12.1
+	. $xil_home/ISE_DS/settings64.sh
+	export PATH="$xil_home/EDK/gnu/microblaze/lin64/bin:$PATH"
+ 	# export MODELSIM=/opt/Xilinx/12.4/ISE_DS/modelsim.ini
+	export XIL_IMPACT_USELIBUSB=1
+    alias ise='ise 2>/dev/null'
+    alias xps='xps 2>/dev/null'
+    alias sysgen='sysgen -c /opt/matlab/2009b/license.dat'
+}
+
+x124 () {
+	local xil_home
+	xil_home=/opt/Xilinx/12.4
+	. $xil_home/ISE_DS/settings64.sh
+	export PATH="$xil_home/EDK/gnu/microblaze/lin64/bin:$PATH"
+ 	export MODELSIM=/opt/Xilinx/12.4/ISE_DS/modelsim.ini
+	export XIL_IMPACT_USELIBUSB=1
+    alias ise='ise 2>/dev/null'
+    alias xps='xps 2>/dev/null'
+    alias sysgen='sysgen -c /opt/matlab/2009b/license.dat'
+}
+
+x134 () {
+	local xil_home
+	xil_home=/opt/Xilinx/13.4
+	. $xil_home/ISE_DS/settings64.sh
+	export PATH="$xil_home/EDK/gnu/microblaze/lin64/bin:$PATH"
+     # export MODELSIM=/opt/Xilinx/12.4/ISE_DS/modelsim.ini
+	export XIL_IMPACT_USELIBUSB=1
+    alias ise='ise 2>/dev/null'
+    alias xps='xps 2>/dev/null'
+}
+
+x142 () {
+	local xil_home
+	xil_home=/opt/Xilinx/14.2
+	. $xil_home/ISE_DS/settings64.sh
+	export PATH="$xil_home/EDK/gnu/microblaze/lin64/bin:$PATH"
+	export XIL_IMPACT_USELIBUSB=1
+    alias ise='ise 2>/dev/null'
+    alias xps='xps 2>/dev/null'
+    # export LD_PRELOAD=/opt/Xilinx/14.2/ISE_DS/ISE/lib/lin64/libCs_DeviceHelpers.so 
+}
+
+x141 () {
+	local xil_home
+	xil_home=/opt/Xilinx/14.1
+	. $xil_home/ISE_DS/settings64.sh
+	export PATH="$xil_home/EDK/gnu/microblaze/lin64/bin:$PATH"
+	export XIL_IMPACT_USELIBUSB=1
+    alias ise='ise 2>/dev/null'
+    alias xps='xps 2>/dev/null'
+}
+
+x143 () {
+	local xil_home
+	xil_home=/opt/Xilinx/14.3
+	. $xil_home/ISE_DS/settings64.sh
+	export PATH="$xil_home/EDK/gnu/microblaze/lin64/bin:$PATH"
+	export XIL_IMPACT_USELIBUSB=1
+    alias ise='ise 2>/dev/null'
+    alias xps='xps 2>/dev/null'
+}
+
+x144 () {
+	local xil_home
+	xil_home=/opt/Xilinx/14.4
+	. $xil_home/ISE_DS/settings64.sh
+	export PATH="$xil_home/EDK/gnu/microblaze/lin64/bin:$PATH"
+	export XIL_IMPACT_USELIBUSB=1
+    alias ise='ise 2>/dev/null'
+    alias xps='xps 2>/dev/null'
+}
+
+xReset () {
+    export LD_PRELOAD=""
+    export LD_LIBRARY_PATH=""
+}
+
+zpu () {
+    export PATH=/usr/local/zpu-toolchain/bin:$PATH
+}
