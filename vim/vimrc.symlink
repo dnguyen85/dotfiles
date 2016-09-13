@@ -241,6 +241,7 @@ let g:tagbar_autoshowtag = 1
 "let g:tlist_vhdl_settings   = 'vhdl;d:package declarations;b:package bodies;e:entities;a:architecture specifications;t:type declarations;p:processes;f:functions;r:procedures;s:signals;v:variables;g:generic maps;h:generic maps id;m:port maps;n:port maps id;q:components;c:constants;l:constants type;u:sub types'
 "let g:tlist_tex_settings = 'latex;s:sections;g:graphics;l:labels;r:refs;p:page refs;b:bibitems'
 
+
 "" Fugitive plugin
 cnoreabbrev Gs Gstatus
 " Mapping of navigating from blob or tree buffers
@@ -668,7 +669,7 @@ map <localleader>C :Pandoc! #article<CR>
 map <localleader>r :Pandoc revealjs<CR>
 
 " Pandoc autocmd
-inoremap <leader>d <!-- --><CR>
+autocmd Filetype pandoc inoremap <leader>d <!-- --><CR>
 
 let g:pandoc#formatting#mode = 's'
 let g:pandoc#formatting#smart_autoformat_on_cursormoved = 0
@@ -724,10 +725,21 @@ let g:checkattach_filebrowser = 'ranger --confdir=~/.ranger --choosefiles=%s'
 let g:checkattach_once = 'y'
 autocmd FileType mail map <C-a> :AttachFile<CR>
 
-" cscope
-set cscopequickfix=s-,c-,d-,i-,t-,e-
+""" cscope
+" set cscopequickfix=s-,c-,d-,i-,t-,e-
 " Use the base of cscope.out as path prefix if absent
 set cscoperelative
+
+" quickr-cscope
+let g:quickr_cscope_keymaps = 0
+nmap <C-\>s <plug>(quickr_cscope_symbols)
+nmap <C-\>g <plug>(quickr_cscope_global)
+nmap <C-\>c <plug>(quickr_cscope_callers)
+nmap <C-\>f <plug>(quickr_cscope_files)
+nmap <C-\>i <plug>(quickr_cscope_includes)
+nmap <C-\>t <plug>(quickr_cscope_text)
+nmap <C-\>e <plug>(quickr_cscope_egrep)
+nmap <C-\>d <plug>(quickr_cscope_functions)
 
 " quickfix window
 " This trigger takes advantage of the fact that the quickfix window can be
@@ -735,6 +747,7 @@ set cscoperelative
 " equivalent to the Ctrl+W, Shift+J shortcut telling Vim to move a window to
 " the very bottom (see :help :wincmd and :help ^WJ).
 autocmd FileType qf wincmd J
+autocmd! FileType qf nnoremap <buffer> <leader><Enter> <C-w><Enter><C-w>L
 
 " Use mouse in terminal vim
 set mouse=a
