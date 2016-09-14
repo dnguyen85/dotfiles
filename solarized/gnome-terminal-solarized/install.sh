@@ -9,6 +9,8 @@ if [[ ! -d $INSTALL_DIR ]]; then
     git clone https://github.com/Anthony25/gnome-terminal-colors-solarized $INSTALL_DIR
     cd $INSTALL_DIR
     git checkout ceab3f6
-    ./install.sh --scheme dark --profile Default 
+    if hash gnome-terminal 2>/dev/null; then
+        ./install.sh --scheme dark --profile Default 
+    fi 
 fi
 
