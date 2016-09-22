@@ -9,6 +9,7 @@ atom.symlink/themes
 
 git/gitconfig.local.symlink
 system/env.local.zsh
+bin/tig
 
 *.pyc
 ez_setup.py
