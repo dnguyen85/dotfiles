@@ -33,6 +33,9 @@ defaults write com.apple.dock wvous-bl-modifier -int 0
 # Set default location for screen capture
 defaults write com.apple.screencapture location ~/Dropbox/incron_tmp
 
+# iterm2
+defaults write com.googlecode.iterm2 HotkeyTermAnimationDuration -float 0
+
 # Hide Safari's bookmark bar.
 defaults write com.apple.Safari ShowFavoritesBar -bool false
 
