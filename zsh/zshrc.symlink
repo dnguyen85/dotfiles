@@ -9,6 +9,9 @@ then
   source ~/.localrc
 fi
 
+# Unset flow control
+stty start undef
+
 # Detecting OS and set env variables
 if [[ "$(uname -s)" == "Darwin" ]]
 then

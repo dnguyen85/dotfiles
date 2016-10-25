@@ -137,6 +137,7 @@ set printoptions=number:y
 
 " Run Make with F5/F6
 map <localleader>m :Make<CR>
+map <localleader>d :Dispatch make<CR>
 map <localleader>M :Make all<CR>
 
 " Goyo reading
@@ -440,10 +441,11 @@ let g:tern_show_argument_hints='on_hold'
 let g:neocomplete#enable_smart_case = 1
 
 """ Set sources manually
-" if !exists('g:neocomplete#sources')
-    " let g:neocomplete#sources = {}
-" endif
-" let g:neocomplete#sources.tex = ['buffer', 'look']
+if !exists('g:neocomplete#sources')
+    let g:neocomplete#sources = {}
+endif
+let g:neocomplete#sources.tex = ['buffer', 'look']
+let g:neocomplete#sources.yaml = ['buffer', 'look']
 
 """ Dictionary complete
 " Define sources
@@ -587,6 +589,9 @@ let g:airline#extensions#tabline#fnamecollapse=1
 let g:airline#extensions#tabline#buffer_min_count = 2
 " Use the `unique_tail` (or `unique_tail_improved` algorithm to display buffer
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+" Configure symbols
+let g:airline_symbols = get(g:,'airline_symbols',{})
+let g:airline_symbols.maxlinenr= ''
 
 "" Syntastic Syntax checker
 " Always populate location list for latex, pandoc, markdown
@@ -615,6 +620,10 @@ let g:syntastic_tex_language_check_args = '--language=en-US --disable=WHITESPACE
 let g:syntastic_text_checkers = ['language_check', 'proselint']
 let g:syntastic_text_language_check_args = '--language=en-US --disable=WHITESPACE_RULE,'
     \ . 'MORFOLOGIK_RULE_EN_US,EN_QUOTES,COMMA_PARENTHESIS_WHITESPACE,CURRENCY,EN_UNPAIRED_BRACKETS'
+" C/C++
+let g:syntastic_cpp_config_file = ".syntastic_c_config"
+let g:syntastic_c_remove_include_errors = 1
+let g:syntastic_cpp_remove_include_errors = 1
 
 "## diffchar plugin
 let g:DiffUnit = "Word1"
@@ -677,6 +686,7 @@ let g:pandoc#formatting#textwidth = 80
 let g:pandoc#after#modules#enabled = ["tablemode"]
 " Disable folding
 " let g:pandoc#modules#disabled = ["folding"]
+let g:pandoc#folding#fdc = 0
 " Use bibtool to search for citekey for all bibs in current dir
 " Note: requires mapping of bibtex dir
 let g:pandoc#biblio#use_bibtool = 1
@@ -717,8 +727,11 @@ let g:tq_map_keys = 0
 nnoremap <Leader>st :ThesaurusQueryReplaceCurrentWord<CR>
 vnoremap <Leader>st "ky:ThesaurusQueryReplace <C-r>k<CR>
 
-" Autopairs
+""" Autopairs
 let g:AutoPairsShortcutJump = '<C-g>' 
+" Do not map <BS> and <C-h>, will interfere w/ NeoComplete
+let g:AutoPairsMapBS = 0 
+let g:AutoPairsMapCh = 0
 
 " Mail check attachment
 let g:checkattach_filebrowser = 'ranger --confdir=~/.ranger --choosefiles=%s'

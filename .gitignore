@@ -11,3 +11,4 @@ git/gitconfig.local.symlink
 system/env.local.zsh
 
 *.pyc
+fontList.cache
