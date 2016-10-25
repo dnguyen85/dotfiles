@@ -9,6 +9,8 @@ atom.symlink/themes
 
 git/gitconfig.local.symlink
 system/env.local.zsh
+bin/tig
 
 *.pyc
 fontList.cache
+ez_setup.py
