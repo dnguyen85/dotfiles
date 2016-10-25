@@ -5,7 +5,7 @@
 INSTALL_DIR=~/.software/tig
 DOTFILES=~/.dotfiles
 
-echo "› Checking on ranger"
+echo "› Checking on tig"
 
 if [[ ! -d $INSTALL_DIR ]]; then
     mkdir -p $INSTALL_DIR

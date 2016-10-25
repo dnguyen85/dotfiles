@@ -1,6 +1,8 @@
 #!/bin/bash
 
-echo "› Checking on python, pip, and virtualenv"
+INSTALL_DIR=~/.software/komodo-python-dbgp
+
+echo "› Checking on python, pip, virtualenv, and PyDBGp"
 
 # Check if virtualenv exists
 if ! hash virtualenv 2>/dev/null; then
@@ -15,4 +17,10 @@ if ! hash virtualenv 2>/dev/null; then
         sudo -H pip install virtualenv
         sudo -H pip install virtualenvwrapper
     fi
+fi
+
+# Check if PyDBGp exists
+if [[ ! -d $INSTALL_DIR ]]; then
+    mkdir -p $INSTALL_DIR
+    git clone https://github.com/dnguyen85/komodo-python-dbgp $INSTALL_DIR
 fi
