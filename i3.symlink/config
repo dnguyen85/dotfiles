@@ -257,7 +257,7 @@ exec --no-startup-id nm-applet
 exec --no-startup-id gnome-sound-applet
 
 # Start xcape and guake
-bindsym F2 focus output left; exec guake
+#  bindsym F2 focus output left; exec guake
 exec /home/dhn24/stuff_repo/software/xcape/xcape -t 200 -e 'Alt_L=Pause;Alt_R=Print;Super_L=Scroll_Lock'
 
 # Get root access
