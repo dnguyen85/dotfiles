@@ -10,7 +10,7 @@ then
 
     # basic update
     sudo apt-get -qq -y --force-yes update
-    sudo apt-get -qq -y --force-yes upgrade
+    # sudo apt-get -qq -y --force-yes upgrade
 
     # install apps
     sudo apt-get -qq -y install \

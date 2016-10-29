@@ -17,6 +17,7 @@ Enablefiletype vim auto-pairs
 Enablefiletype matlab auto-pairs
 Enablefiletype c auto-pairs
 Enablefiletype cpp auto-pairs
+Enablefiletype java auto-pairs
 Enablefiletype mail vim-better-whitespace
 Enablefiletype mail thesaurus_query.vim
 Enablefiletype gitcommit thesaurus_query.vim
@@ -262,11 +263,20 @@ let g:Gitv_DoNotMapCtrlKey = 1
 au FileType gitv nmap <buffer> <silent> J <Plug>(gitv-previous-commit)
 au FileType gitv nmap <buffer> <silent> K <Plug>(gitv-next-commit)
 
-" Eclim plugin
-" nnoremap <silent> <buffer> <cr> :CSearchContext<cr>
-" let g:EclimTaglistEnable = 0
+""" Eclim plugin
+" Use omnifunc for autocompletion
+let g:EclimCompletionMethod = 'omnifunc'
 
-" Tab completion acts more like bash, presenting list of options
+" Eclim Java settings
+" Import class under cursor
+nnoremap <silent> <buffer> <leader>i :JavaImport<cr>
+" Search for javadocs of element under cursor
+nnoremap <silent> <buffer> <leader>d :JavaDocSearch -x declarations<cr>
+" Context sensitive search of element under cursor
+nnoremap <silent> <buffer> <cr> :JavaSearchContext<cr>
+
+
+""" Tab completion acts more like bash, presenting list of options
 set wildmode=longest,list
 
 " Map windows switching to ww
@@ -504,6 +514,7 @@ endif
 " Auto-use omnicompletion instead of usercomplete on certain patterns, such as 'dot' (overriding jedi-vim behavior)
 " (alternate pattern) let g:neocomplete#force_omni_input_patterns.python = '[^. \t]\.\w*'
 let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+let g:neocomplete#force_omni_input_patterns.java = '\%(\h\w*\|)\)\.\w*'
 
 " Enable heavy omni completion.
 if !exists('g:neocomplete#sources#omni#input_patterns')
