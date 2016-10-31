@@ -761,6 +761,7 @@ let g:vdebug_keymap = {
     \    "close" : "s",
     \    "detach" : "d",
     \    "set_breakpoint" : "<localleader>t",
+    \    "toggle_breakpoint_window" : "b",
     \    "get_context" : "g",
     \    "eval_under_cursor" : "c",
     \    "eval_visual" : "<localleader>v",
