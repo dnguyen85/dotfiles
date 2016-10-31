@@ -266,14 +266,15 @@ au FileType gitv nmap <buffer> <silent> K <Plug>(gitv-next-commit)
 """ Eclim plugin
 " Use omnifunc for autocompletion
 let g:EclimCompletionMethod = 'omnifunc'
-
-" Eclim Java settings
-" Import class under cursor
-nnoremap <silent> <buffer> <leader>i :JavaImport<cr>
-" Search for javadocs of element under cursor
-nnoremap <silent> <buffer> <leader>d :JavaDocSearch -x declarations<cr>
-" Context sensitive search of element under cursor
-nnoremap <silent> <buffer> <cr> :JavaSearchContext<cr>
+" Disable Airline plugin for native Eclim check
+" let g:airline#extensions#eclim#enabled = 0
+" debugger configuration {{{
+let g:EclimJavaDebugLineHighlight = 'EclimDebugLine'
+let g:EclimJavaDebugLineSignText = '▸'
+let g:EclimJavaDebugStatusWinOrientation = 'vertical'
+let g:EclimJavaDebugStatusWinWidth = '120'
+" }}}
+" Note: Debugger mapping in `ftplugin/java.vim`
 
 
 """ Tab completion acts more like bash, presenting list of options
@@ -748,6 +749,23 @@ let g:AutoPairsMapCh = 0
 let g:checkattach_filebrowser = 'ranger --confdir=~/.ranger --choosefiles=%s'
 let g:checkattach_once = 'y'
 autocmd FileType mail map <C-a> :AttachFile<CR>
+
+" {{{ Vdebug settings
+let g:vdebug_leader_key = '<localleader>' 
+let g:vdebug_keymap = {
+    \    "run" : "<localleader>r",
+    \    "run_to_cursor" : "h",
+    \    "step_over" : "f",
+    \    "step_into" : "e",
+    \    "step_out" : "x",
+    \    "close" : "s",
+    \    "detach" : "d",
+    \    "set_breakpoint" : "<localleader>t",
+    \    "get_context" : "g",
+    \    "eval_under_cursor" : "c",
+    \    "eval_visual" : "<localleader>v",
+    \}
+" }}}
 
 """ cscope
 " set cscopequickfix=s-,c-,d-,i-,t-,e-
