@@ -23,11 +23,11 @@ xkb_symbols "pc105" {
     key <NMLK> {	[ Num_Lock 		]	};
 
     key <LFSH> {	[ Shift_L		]	};
-    key <LCTL> {	[ Control_L		]	};
-    key <LWIN> {	[ Super_L		]	};
+    key <LCTL> {	[ Super_L		]	};
+    key <LWIN> {	[ Alt_L		]	};
 
     key <RTSH> {	[ Shift_R		]	};
-    key <RCTL> {	[ Control_R		]	};
+    key <RCTL> {	[ Alt_R		]	};
     key <RWIN> {	[ Super_R		]	};
     key <MENU> {	[ Menu			]	};
 
@@ -43,8 +43,11 @@ xkb_symbols "pc105" {
     key <MDSW> {	[ Mode_switch 		]	};
     modifier_map Mod5   { <LVL3>, <MDSW> };
 
-    key <ALT>  {	[ NoSymbol, Alt_L	]	};
-    include "altwin(meta_alt)"
+    key <ALT>  {	[ NoSymbol, Control_L, control_R	]	};
+    //include "altwin(meta_alt)"
+    key <LALT> {    [ Control_L     ]   };
+    key <RALT> {    [ Control_R     ]   };
+    modifier_map Mod1   { Alt_L, Alt_R, Meta_L, Meta_R };
 
     key <META> {	[ NoSymbol, Meta_L	]	};
     modifier_map Mod1   { <META> };
