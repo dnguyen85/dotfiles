@@ -195,6 +195,7 @@ macro index,pager A \
 alternates "danh@dnguyen.io|dhn24@drexel.edu"
 # default profile
 set from="danh@dnguyen.io"
+set realname="Danh Nguyen"
 set status_format="-%r-danh@dnguyen.io: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l? %l?]---(%s/%S)-%>-(%P)---"
 
 macro index,pager \e1 ":set from=danh@dnguyen.io\n:set status_format=\"-%r-danh@dnguyen.io: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l? %l?]---(%s/%S)-%>-(%P)---\"\n" "Switch to danh@dnguyen.io"

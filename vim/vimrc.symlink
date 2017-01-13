@@ -143,6 +143,11 @@ map <localleader>M :Make all<CR>
 
 " Goyo reading
 let g:goyo_width = 80
+" Limelight integration
+autocmd! User GoyoEnter Limelight
+autocmd! User GoyoLeave Limelight!
+let g:limelight_conceal_ctermfg = 237
+
 
 " Typing jj quickly escapes out of INSERT mode
 imap jk <Esc>
@@ -194,7 +199,8 @@ vnoremap <C-C> "+y
 let mapleader = ","
 
 " Map for tab close
-nmap <leader>gc :tabclose<CR>
+nmap gc :tabclose<CR>
+nmap gn :tabnew<CR>
 
 " MiniBufExplorer plugin
 " Map <C-Q> to close buffer
@@ -210,7 +216,7 @@ cnoreabbrev NAU au! BufWritePost <buffer>
 " CtrlP plugin
 nnoremap <C-B> :CtrlPBuffer<CR>
 " Try to reuse window elsewhere for opened files
-let g:ctrlp_switch_buffer = 'Et'
+let g:ctrlp_switch_buffer = 'et'
 " CWD for CtrlP: git dir, or current dir, or current file dir if current dir is not ancestor
 let g:ctrlp_working_path_mode = 'ra' 
 " Use Caching
@@ -698,7 +704,7 @@ let g:pandoc#formatting#textwidth = 80
 let g:pandoc#after#modules#enabled = ["tablemode"]
 " Disable folding
 " let g:pandoc#modules#disabled = ["folding"]
-let g:pandoc#folding#fdc = 0
+" let g:pandoc#folding#fdc = 0
 " Use bibtool to search for citekey for all bibs in current dir
 " Note: requires mapping of bibtex dir
 let g:pandoc#biblio#use_bibtool = 1
@@ -783,6 +789,12 @@ nmap <C-\>i <plug>(quickr_cscope_includes)
 nmap <C-\>t <plug>(quickr_cscope_text)
 nmap <C-\>e <plug>(quickr_cscope_egrep)
 nmap <C-\>d <plug>(quickr_cscope_functions)
+
+""" Window swap {{{
+let g:windowswap_map_keys = 0 "prevent default bindings
+nnoremap <silent> <leader>yw :call WindowSwap#MarkWindowSwap()<CR>
+nnoremap <silent> <leader>pw :call WindowSwap#DoWindowSwap()<CR>
+"}}}
 
 " quickfix window
 " This trigger takes advantage of the fact that the quickfix window can be

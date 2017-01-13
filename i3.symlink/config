@@ -90,7 +90,7 @@ mode "resize" {
         bindsym Escape mode "default"
 }
 
-#bindsym Mod4+r mode "resize"
+bindsym Mod4+r mode "resize"
 
 
 #### dmenu
@@ -112,6 +112,7 @@ bindsym Scroll_Lock scratchpad show
 bindsym $mod+g [title="FastMail"] scratchpad show
 bindsym $mod+u [class="Slack"] scratchpad show 
 bindsym $mod+o [title="otl"] scratchpad show 
+bindsym $mod+i [title="Any.do"] scratchpad show
 bindsym $mod+w [class="^Gvim"] [title="wiki"] scratchpad show
 bindsym $mod+r [class="^Nautilus"] scratchpad show
 

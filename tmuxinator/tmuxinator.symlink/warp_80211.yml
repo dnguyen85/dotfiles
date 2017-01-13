@@ -1,7 +1,7 @@
 # ~/.tmuxinator/reactive_jamming.yml
 
 name: warp80211
-root: /home/dhn24/workspace/warp/802.11_v1.5.2
+root: /home/dhn24/workspace/warp/802.11_v1.5.4
 
 # Optional tmux socket
 # socket_name: 
@@ -23,7 +23,7 @@ root: /home/dhn24/workspace/warp/802.11_v1.5.2
 
 windows:
     - xps:
-        - cd EDK_Projects/Mango_802.11_RefDes_v1.5.2
+        - cd EDK_Projects/Mango_802.11_RefDes_v1.5.4
         - bash
         - x144
         - zsh
@@ -35,7 +35,7 @@ windows:
         - zsh
         - sysgen -r "open 'wlan_phy_rx_pmd.mdl'" -a -nodesktop
     - sdk:
-        - cd EDK_Projects/Mango_802.11_RefDes_v1.5.2/SDK_Workspace
+        - cd EDK_Projects/Mango_802.11_RefDes_v1.5.4/SDK_Workspace
         - bash
         - x144
         - zsh
