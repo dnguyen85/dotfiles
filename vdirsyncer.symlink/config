@@ -35,6 +35,6 @@ fileext = .ics
 type = caldav
 url = https://caldav.messagingengine.com/
 username = danh@dnguyen.io
-password.fetch = ["command", "~/.dotfiles/mutt/script/offlineimap.py"]
+password.fetch = ["command", "~/.dotfiles/mutt/scripts/offlineimap.py"]
 
 
