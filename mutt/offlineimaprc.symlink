@@ -11,7 +11,7 @@ fsync = False
 localrepository = fastmail-local
 remoterepository = fastmail-remote
 status_backend = sqlite
-postsynchook = notmuch new
+postsynchook = maildir-notmuch-sync post ~/.mail/danh-dnguyen.io
 
 [Repository fastmail-local]
 type = Maildir

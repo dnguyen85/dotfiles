@@ -34,6 +34,9 @@ set mail_check_stats
 color sidebar_new       green   default         
 color sidebar_highlight white   color238        
 
+# Color Progress Bar --------------------------------------
+color progress white red
+
 
 # Status Bar -----------------------------------------
 set status_chars  = " *%A"
@@ -64,11 +67,15 @@ mailboxes +danh-dnguyen.io/INBOX \
           +danh-dnguyen.io/gnu-radio \
           +danh-dnguyen.io/Sent \
           +danh-dnguyen.io/Drafts \
-          +danh-dnguyen.io/Spam
+          +danh-dnguyen.io/Spam \
+          +danh-dnguyen.io/Ham \
+          +danh-dnguyen.io/Verified \
+          +danh-dnguyen.io/Trash
 
 # Other special folders.
 set mbox      = "+danh-dnguyen.io/Archive"
 set postponed = "+danh-dnguyen.io/Drafts"
+set trash = "+danh-dnguyen.io/Trash"
 
 # Index View Options ---------------------------------
 set date_format = "%m/%d"
@@ -80,18 +87,18 @@ set sort_re                                # thread based on regex
 set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
 
 # Index Key Bindings ---------------------------------
+bind index <tab>    sync-mailbox
 bind index gg       first-entry
 bind index G        last-entry
 
 bind index R        group-reply
-bind index <tab>    sync-mailbox
 bind index <space>  collapse-thread
 
 # Ctrl-R to mark all as read
 macro index \Cr "T~U<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "mark all messages as read"
 
 # Sync mailbox and then remote sync 
-macro index,pager O '<sync-mailbox><shell-escape>mail-sync &<enter>'
+macro index,pager O '<sync-mailbox><shell-escape>mail-sync &<enter>' "Mailbox synced"
 
 
 # Saner copy/move dialogs
@@ -99,14 +106,22 @@ macro index C "<copy-message>?<toggle-mailboxes>" "copy a message to a mailbox"
 macro index M "<save-message>?<toggle-mailboxes>" "move a message to a mailbox"
 
 #  macro index E "<change-folder>+danh-dnguyen.io/Archive<enter><limit>~B " "search everything"
-#  macro index,pager A "<save-message>+danh-dnguyen.io/Archive<enter>" "move message to the archive"
 #  macro index D "<save-message>+danh-dnguyen.io/Trash<enter>" "move message to the trash"
 #  macro index S "<save-message>+danh-dnguyen.io/Spam<enter>" "mark message as spam"
 
-# S to archive messages
-macro index,pager S ":set confirmappend=no delete=yes\n<tag-prefix><save-message>+danh-dnguyen.io/Archive\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n"
+# Spam handling
+# Move message(s) to Spam/Verified by pressing "S"
+macro index S "<tag-prefix><enter-command>unset resolve<enter><tag-prefix><clear-flag>N<tag-prefix><enter-command>set resolve<enter><tag-prefix><save-message>+danh-dnguyen.io/Verified<enter><sync-mailbox>" "file as Spam"
+macro pager S "<save-message>+danh-dnguyen.io/Verified<enter><sync-mailbox>" "file as Spam"
 
-# X to save attachments
+#  Move message(s) to Spam/Ham by pressing "H"
+macro index H "<tag-prefix><enter-command>unset resolve<enter><tag-prefix><clear-flag>N<tag-prefix><enter-command>set resolve<enter><tag-prefix><save-message>+danh-dnguyen.io/Ham<enter><sync-mailbox>" "file as Ham"
+macro pager H "<save-message>+danh-dnguyen.io/Ham<enter><sync-mailbox>" "file as Ham"
+
+# A to archive messages, tagged or current
+macro index,pager A ":set confirmappend=no delete=yes\n<tag-prefix><save-message>+danh-dnguyen.io/Archive\n<sync-mailbox>:set confirmappend=yes delete=ask-yes\n" "Message archived"
+
+# V to save all attachments
 macro index,pager V "<pipe-message>ripmime --no-nameless -i - -d "
 
 # Searching backward
@@ -114,12 +129,13 @@ bind index N search-opposite
 bind pager N search-opposite
 
 # Sidebar Navigation ---------------------------------
-bind index,pager <   sidebar-prev
-bind index,pager >   sidebar-next
-bind index,pager \CO   sidebar-open
+bind index,pager <up>   sidebar-prev
+bind index,pager <down>   sidebar-next
+bind index,pager <right>   sidebar-open
 
 # important
 bind index,pager F   flag-message
+
 
 # Pager View Options ---------------------------------
 set pager_index_lines = 10 # number of index lines to show
@@ -187,7 +203,7 @@ set query_command= "khard email --parsable %s"
 bind editor <Tab> complete-query
 bind editor ^T    complete
 # Add email addrs to address book
-macro index,pager A \
+macro index,pager \CA \
     "<pipe-message>khard add-email<return>" \
     "add the sender email address to khard"
 
@@ -212,9 +228,16 @@ alternative_order text/plain text/enriched text/html    # set order of preferenc
 # notmuch
 set nm_default_uri="notmuch:///home/dhn24/.mail/danh-dnguyen.io"
 # enable virtual folders
-#  set virtual_spoolfile=yes  
+set virtual_spoolfile=yes  
 
+# Old notmuch config for search
+# macro index L "<enter-command>unset wait_key<enter><shell-escape>read -p 'notmuch query: ' x; echo \$x >~/.cache/mutt_terms<enter><limit>~i \"\`notmuch search --output=messages \$(cat ~/.cache/mutt_terms) | head -n 600 | perl -le '@a=<>;chomp@a;s/\^id:// for@a;$,=\"|\";print@a'\`\"<enter>" "show only messages matching a notmuch pattern"
+
+# Toggle sidebar between virtual and maildir folders
 bind index <Esc>S sidebar-toggle-virtual
+
+# Modify (notmuch) tags
+bind index,pager  \` modify-labels
 
 tag-transforms "inbox"   "i"   \
              "unread"  "u"   \
@@ -222,14 +245,29 @@ tag-transforms "inbox"   "i"   \
              "sent"    "➥ "  \
              "todo"    "T"   \
              "deleted" "DEL" \
-             "invites" "CAL"
+             "invites" "CAL" \
+             "spam"    "Ø"   \
+             "Verified" "Ø√"  \
+             "archive" "≅"  
 
 #  set index_format="%4C %Z %?GI?%GI& ? %[%d/%b]  %-16.15F %?M?(%3M)&     ? %s %> %?g?%g?"
 
-virtual-mailboxes \
-	   "INBOX"                "notmuch://?query=tag:inbox and NOT tag:archive" \
-       "Starred"              "notmuch://?query=tag:*" \
-       "Sent"                 "notmuch://?query=tag:sent" \
+virtual-mailboxes "INBOX" "notmuch://?query=folder:INBOX" 
+virtual-mailboxes "Archive" "notmuch://?query=folder:Archive"
+virtual-mailboxes "CFP" "notmuch://?query=folder:CFP"
+virtual-mailboxes "ieee" "notmuch://?query=folder:ieee"
+virtual-mailboxes "gnu-radio" "notmuch://?query=folder:gnu-radio"
+virtual-mailboxes "Sent" "notmuch://?query=folder:Sent"
+virtual-mailboxes "Spam" "notmuch://?query=folder:Spam"
+virtual-mailboxes "Ham" "notmuch://?query=folder:Ham"
+virtual-mailboxes "Verified" "notmuch://?query=folder:Verified"
+
+# Return to Inbox by pressing "."
+macro index . "<change-vfolder>INBOX<enter>" "Change to virtual Inbox"
+
+# Notmuch mappings
+macro index c "<change-vfolder>?" "Change to vfolder overview"
+macro index \\ "<vfolder-from-query>" "Search mailbox"
 
 
 
