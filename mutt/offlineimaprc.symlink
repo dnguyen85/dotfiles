@@ -31,7 +31,7 @@ remoteuser = danh@dnguyen.io
 # Function to eval to get passwd
 remotepasseval = get_lastpass_pass(account="danhnguyen04@gmail.com", entry="fastmail.com")
 # Folder filter
-folderfilter = lambda foldername: foldername not in ['INBOX.Trash']
+#  folderfilter = lambda foldername: foldername not in ['INBOX.Trash']
 # Name translation - Avoid local copies creation
 nametrans = lambda folder: re.sub('^INBOX\.', '', folder)
 
