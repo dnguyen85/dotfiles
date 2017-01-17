@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# gmail is stupid. remove needs-review tag from messages sent by me
+#  eval notmuch tag -needs-review -- tag:new and tag:needs-review and from:mturquette@baylibre.com
+
+# gmail is stupid. mark sent mail as read
+#  notmuch tag -new -unread -- tag:new and tag:Sent
+
+# retag all (folder-filtered) "new" messages and "unread"
+#  notmuch tag +unread -new -- tag:new
+
