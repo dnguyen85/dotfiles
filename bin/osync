@@ -1,0 +1,2 @@
+#!/bin/bash
+num_procs=10;find "$HOME/odrive/Box/" -name "*.cloud*" -print0 | xargs -0 -n 1 -P $num_procs "odrive" sync
