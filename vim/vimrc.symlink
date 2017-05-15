@@ -25,6 +25,7 @@ Enablefiletype tex thesaurus_query.vim
 Enablefiletype markdown thesaurus_query.vim
 Enablefiletype pandoc thesaurus_query.vim
 Enablefiletype votl thesaurus_query.vim
+Enablefiletype yaml thesaurus_query.vim
 
 " Colorscheme
 set background=dark

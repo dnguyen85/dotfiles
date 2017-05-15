@@ -276,3 +276,6 @@ exec --no-startup-id /home/dhn24/stuff_repo/dbus_setup
 
 # vrome
 exec --no-startup-id vrome
+
+# odrive
+exec nohup odriveagent > /dev/null
