@@ -50,6 +50,6 @@ precmd_functions+=echo_blank
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(sudo cp git taskwarrior rsync)
+plugins=(sudo cp git taskwarrior rsync pip)
 
 source $ZSH/oh-my-zsh.sh
