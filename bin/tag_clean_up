@@ -7,6 +7,9 @@
 notmuch tag -new -unread -- tag:new and tag:Sent
 notmuch tag -new -unread -- tag:new and tag:Trash
 
+# Mark any archived mail as read
+notmuch tag -new -unread -- tag:new and tag:Archive
+
 # retag all (folder-filtered) "new" messages and "unread"
-notmuch tag +unread -new -- tag:new
+# notmuch tag +unread -new -- tag:new
 
