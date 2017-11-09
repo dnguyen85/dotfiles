@@ -1,9 +1,11 @@
 " Should I load minibuf (disabled for splice)?
-let g:pathogen_disabled = ['auto-pairs', 'vim-better-whitespace', 'thesaurus_query.vim']
+let g:pathogen_disabled = ['auto-pairs', 'vim-better-whitespace', 'thesaurus_query.vim', 'grproject', 'vim-perforce']
 
 if exists('nodiffchar')
     let g:pathogen_disabled = ['diffchar.vim']
 endif
+
+set shell=/bin/bash
 
 " Pathogen
 call pathogen#infect()
@@ -778,7 +780,7 @@ let g:vdebug_keymap = {
 """ cscope
 " set cscopequickfix=s-,c-,d-,i-,t-,e-
 " Use the base of cscope.out as path prefix if absent
-set cscoperelative
+" set cscoperelative
 
 " quickr-cscope
 let g:quickr_cscope_keymaps = 0

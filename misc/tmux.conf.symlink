@@ -2,8 +2,8 @@
 # unbind C-b
 # set -g prefix C-g
 
-# Use zsh
-set-option -g default-shell /bin/zsh
+# Use tcsh
+set-option -g default-shell /bin/tcsh
 
 # look good
 set -g default-terminal "screen-256color"
@@ -55,19 +55,16 @@ set-window-option -g clock-mode-colour green #green
 ### Done Colors
 
 # a mouse
-setw -g mode-mouse on
-set -g mouse-select-pane on
-set -g mouse-resize-pane on
-set -g mouse-select-window on
+set -g mouse on
 
 # act like vim
 # Copy mode
 setw -g mode-keys vi
-bind-key -t vi-copy 'v' begin-selection
-bind-key -t vi-copy 'y' copy-pipe 'xclip -in -selection clipboard'
-bind-key -t vi-copy 'r' rectangle-toggle
-bind-key -t vi-copy 'B' page-up
-bind-key -t vi-copy 'F' page-down
+bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
+bind-key -T copy-mode-vi 'y' send-keys -X copy-pipe "xclip -i -sel p -f | xclip -i -sel c" \; display-message "copied to system clipboard" \; send-keys -X cancel
+bind-key -T copy-mode-vi 'r' send-keys -X rectangle-toggle
+bind-key -T copy-mode-vi 'B' send-keys -X page-up
+bind-key -T copy-mode-vi 'F' send-keys -X page-down
 # Navi mode
 bind h select-pane -L
 bind j select-pane -D
@@ -108,11 +105,11 @@ bind-key ^q kill-session
 
 # Layout
 # Split and layout main-vertical
-bind ^a split-window\; select-layout main-vertical
+bind ^a split-window -c "#{pane_current_path}"\; select-layout main-vertical
 # Split and layout main-horizontal
-bind ^s split-window\; select-layout main-horizontal
+bind ^s split-window -c "#{pane_current_path}"\; select-layout main-horizontal
 # Split and layout grid
-bind ^g split-window\; select-layout tiled
+bind ^g split-window -c "#{pane_current_path}"\; select-layout tiled
 bind G run "tmux kill-pane; tmux select-layout tiled > /dev/null"
 bind A run "tmux kill-pane; tmux select-layout main-vertical > /dev/null"
 bind S run "tmux kill-pane; tmux select-layout main-horizontal > /dev/null"
@@ -122,9 +119,14 @@ bind a run "tmux select-layout main-vertical > /dev/null"
 unbind s
 bind s run "tmux select-layout main-horizontal > /dev/null"
 
+# Current path
+bind-key c new-window -c "#{pane_current_path}"
+bind-key % split-window -h -c "#{pane_current_path}"
+bind-key '"' split-window -v -c "#{pane_current_path}"
+
 # Open a file chooser for wiki
-bind-key w new-window -n fzf_wiki -c $HOME \; \
-    send-keys 'fzf_wiki && guake && tmux kill-window' 'Enter'
+#  bind-key w new-window -n fzf_wiki -c $HOME \; \
+    #  send-keys 'fzf_wiki && guake && tmux kill-window' 'Enter'
 
 # Last window
 bind-key C-b last-window
