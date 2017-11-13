@@ -501,7 +501,7 @@ inoremap <expr><C-l>     neocomplete#complete_common_string()
 
 " Set omnicompletion functions (called by neocomlcache
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
@@ -522,15 +522,25 @@ endif
 " Auto-use omnicompletion instead of usercomplete on certain patterns, such as 'dot' (overriding jedi-vim behavior)
 " (alternate pattern) let g:neocomplete#force_omni_input_patterns.python = '[^. \t]\.\w*'
 let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+" Patterns to trigger omnifunc completion (exclusively, disabling other
+" neocomplete sources) for eclim plugin
 let g:neocomplete#force_omni_input_patterns.java = '\%(\h\w*\|)\)\.\w*'
+let g:neocomplete#force_omni_input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)\w*'
+let g:neocomplete#force_omni_input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
 
-" Enable heavy omni completion.
+" Enable heavy omni completion. This will include vim's omnifunc() as _one
+" available source_ in the completion candidates, together with others (buffer,
+" file, includes, etc.). This can be buggy if other plugins are providing their
+" own completion list via `omnifunc`. In such cases, it's best to disable all
+" other sources and only use the omnifunc list, which can be done via
+" `force_omni_input_patterns` above.
 if !exists('g:neocomplete#sources#omni#input_patterns')
   let g:neocomplete#sources#omni#input_patterns = {}
 endif
 let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+" Use the below patterns if no other plugin is providing `omnifunc` completions 
+" let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+" let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
 
 """ Neocomplete Setting Stops
 
@@ -622,7 +632,7 @@ let g:syntastic_aggregate_errors = 1
 " Filetype map for non-supported filetypes
 let g:syntastic_filetype_map = {
     \ "mail": "text",
-    \ "pandoc": "text", 
+    \ "pandoc": "markdown", 
     \ }
 " Mode map for auto-checking on saves
 let g:syntastic_mode_map = {
@@ -633,12 +643,10 @@ let g:syntastic_mode_map = {
 let g:syntastic_tex_checkers = ['lacheck', 'chktex', 'language_check', 'proselint']
 let g:syntastic_tex_language_check_args = '--language=en-US --disable=WHITESPACE_RULE,'
     \ . 'MORFOLOGIK_RULE_EN_US,EN_QUOTES,COMMA_PARENTHESIS_WHITESPACE,CURRENCY,EN_UNPAIRED_BRACKETS'
-" Markdown files - not used anymore
-" let g:syntastic_markdown_checkers = ['textlint']
-" Text files - why?
-let g:syntastic_text_checkers = ['language_check', 'proselint']
-let g:syntastic_text_language_check_args = '--language=en-US --disable=WHITESPACE_RULE,'
-    \ . 'MORFOLOGIK_RULE_EN_US,EN_QUOTES,COMMA_PARENTHESIS_WHITESPACE,CURRENCY,EN_UNPAIRED_BRACKETS'
+" Markdown files
+let g:syntastic_markdown_checkers = ['textlint']
+" Text files - disabled
+" let g:syntastic_text_checkers = ['language_check', 'proselint']
 " C/C++
 let g:syntastic_cpp_config_file = ".syntastic_c_config"
 let g:syntastic_c_remove_include_errors = 1
@@ -672,7 +680,7 @@ au FilterWritePre * if &diff | exe 'set diffopt=filler,context:1000,iwhite' | ex
 "## End Diffmode settings
 
 " Voom settings
-let g:voom_tree_placement = "top"
+let g:voom_tree_placement = "left"
 
 " Vim origami
 let g:OrigamiSeparateLevels = 1
@@ -703,8 +711,8 @@ let g:pandoc#formatting#mode = 's'
 let g:pandoc#formatting#smart_autoformat_on_cursormoved = 0
 let g:pandoc#formatting#textwidth = 80
 let g:pandoc#after#modules#enabled = ["tablemode"]
+let g:pandoc#modules#disabled = ["chdir"]
 " Disable folding
-" let g:pandoc#modules#disabled = ["folding"]
 " let g:pandoc#folding#fdc = 0
 " Use bibtool to search for citekey for all bibs in current dir
 " Note: requires mapping of bibtex dir
