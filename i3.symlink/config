@@ -112,6 +112,7 @@ bindsym Scroll_Lock scratchpad show
 bindsym $mod+g [title="FastMail"] scratchpad show
 bindsym $mod+u [class="Slack"] scratchpad show 
 bindsym $mod+o [title="otl"] scratchpad show 
+bindsym $mod+m [class="Spotify"] scratchpad show 
 bindsym $mod+i [title="Any.do"] scratchpad show
 bindsym $mod+w [class="^Gvim"] [title="wiki"] scratchpad show
 bindsym $mod+r [class="^Nautilus"] scratchpad show
@@ -276,6 +277,9 @@ exec --no-startup-id /home/dhn24/stuff_repo/dbus_setup
 
 # vrome
 exec --no-startup-id vrome
+
+# Set Caplock as additional ctrl 
+exec setxkbmap -option caps:ctrl_modifier
 
 # odrive
 exec nohup odriveagent > /dev/null
