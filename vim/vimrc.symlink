@@ -1,5 +1,5 @@
 " Should I load minibuf (disabled for splice)?
-let g:pathogen_disabled = ['auto-pairs', 'vim-better-whitespace', 'thesaurus_query.vim', 'grproject', 'vim-perforce']
+let g:pathogen_disabled = ['auto-pairs', 'vim-better-whitespace', 'thesaurus_query.vim', 'grproject', 'vim-rtags', 'vim-vebugger']
 
 if exists('nodiffchar')
     let g:pathogen_disabled = ['diffchar.vim']
@@ -66,6 +66,13 @@ set smartcase
 " set foldmethod=syntax
 let g:fastfold_skipfiles = ['tex']
 
+" Define new autocmd group for saving folds
+augroup AutoSaveFolds
+  autocmd!     
+  autocmd BufWinLeave *.sv mkview
+  autocmd BufWinEnter *.sv silent loadview
+augroup END
+
 if has("gui_running")
     " Set window size
     set lines=40 columns=140
@@ -112,9 +119,14 @@ set modeline
 " Search options
 set showmatch
 " Search highlight
-set nohls
-" set hlsearch
+" set nohls
+set hlsearch
 set incsearch
+
+" Clear highlighting on escape in normal mode
+nnoremap <silent> <esc> :noh<return><esc>
+" Needed to make terminal vim work ok when remapping Esc
+nnoremap <esc>^[ <esc>^[ 
 
 " Line wrapping
 set textwidth=80
@@ -204,6 +216,9 @@ let mapleader = ","
 " Map for tab close
 nmap gc :tabclose<CR>
 nmap gn :tabnew<CR>
+" Go to last active tab
+au TabLeave * let g:lasttab = tabpagenr()
+nnoremap <silent> gl :exe "tabn ".g:lasttab<cr>
 
 " MiniBufExplorer plugin
 " Map <C-Q> to close buffer
@@ -274,7 +289,7 @@ au FileType gitv nmap <buffer> <silent> K <Plug>(gitv-next-commit)
 
 """ Eclim plugin
 " Use omnifunc for autocompletion
-let g:EclimCompletionMethod = 'omnifunc'
+" let g:EclimCompletionMethod = 'omnifunc'
 " Disable Airline plugin for native Eclim check
 " let g:airline#extensions#eclim#enabled = 0
 " debugger configuration {{{
@@ -282,6 +297,8 @@ let g:EclimJavaDebugLineHighlight = 'EclimDebugLine'
 let g:EclimJavaDebugLineSignText = '▸'
 let g:EclimJavaDebugStatusWinOrientation = 'vertical'
 let g:EclimJavaDebugStatusWinWidth = '120'
+" Disable eclim filetype validate in favor of syntastic
+let g:EclimFileTypeValidate = 0
 " }}}
 " Note: Debugger mapping in `ftplugin/java.vim`
 
@@ -480,7 +497,7 @@ call neocomplete#custom#source('dictionary', 'disabled', 1)
     " \ 'disabled_filetypes', {'tex' : 1})
 
 " ctags comment for include sources
-let g:neocomplete#ctags_command = '/usr/bin/ctags'
+let g:neocomplete#ctags_command = 'ctags'
 
 " imap <CR> to simply go to next line
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
@@ -527,8 +544,8 @@ let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*f
 " Patterns to trigger omnifunc completion (exclusively, disabling other
 " neocomplete sources) for eclim plugin
 let g:neocomplete#force_omni_input_patterns.java = '\%(\h\w*\|)\)\.\w*'
-let g:neocomplete#force_omni_input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)\w*'
-let g:neocomplete#force_omni_input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
+" let g:neocomplete#force_omni_input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)\w*'
+" let g:neocomplete#force_omni_input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
 
 " Enable heavy omni completion. This will include vim's omnifunc() as _one
 " available source_ in the completion candidates, together with others (buffer,
@@ -540,7 +557,18 @@ if !exists('g:neocomplete#sources#omni#input_patterns')
   let g:neocomplete#sources#omni#input_patterns = {}
 endif
 let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-" Use the below patterns if no other plugin is providing `omnifunc` completions 
+
+" Use the below patterns to activate rtags omnifunc completion
+function! SetupNeocompleteForCppWithRtags()
+    setlocal omnifunc=RtagsCompleteFunc
+    let l:cpp_patterns='[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+    let g:neocomplete#sources#omni#input_patterns.cpp = l:cpp_patterns 
+    set completeopt+=longest,menuone
+endfunction
+
+" autocmd FileType cpp,c call SetupNeocompleteForCppWithRtags()
+
+" Use the below patterns if no other plugin is providing `omnifunc` c/c++ completions
 " let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
 " let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
 
@@ -638,7 +666,7 @@ let g:syntastic_filetype_map = {
     \ }
 " Mode map for auto-checking on saves
 let g:syntastic_mode_map = {
-    \ "mode": "active",
+    \ "mode": "passive",
     \ "active_filetypes": [],
     \ "passive_filetypes": ["tex", "markdown", "pandoc", "text", "mail", "gitcommit"] }
 " Set up checkers for tex files
@@ -801,12 +829,14 @@ nmap <C-\>t <plug>(quickr_cscope_text)
 nmap <C-\>e <plug>(quickr_cscope_egrep)
 nmap <C-\>d <plug>(quickr_cscope_functions)
 
+""" rtags
+" Use quickfix list, instead of loc list
+let g:rtagsUseLocationList = 0
+
 """ Window swap {{{
 let g:windowswap_map_keys = 0 "prevent default bindings
-nnoremap <silent> <leader>yw :call WindowSwap#MarkWindowSwap()<CR>
-nnoremap <silent> <leader>pw :call WindowSwap#DoWindowSwap()<CR>
+nnoremap <silent> <leader>sw :call WindowSwap#EasyWindowSwap()<CR>
 "}}}
-
 " quickfix window
 " This trigger takes advantage of the fact that the quickfix window can be
 " easily distinguished by its file-type, qf. The wincmd J command is
@@ -814,6 +844,52 @@ nnoremap <silent> <leader>pw :call WindowSwap#DoWindowSwap()<CR>
 " the very bottom (see :help :wincmd and :help ^WJ).
 autocmd FileType qf wincmd J
 autocmd! FileType qf nnoremap <buffer> <leader><Enter> <C-w><Enter><C-w>L
+
+" Debugging {{{1
+
+" Disable signify by default
+let g:signify_disable_by_default = 1
+
+" set the sign to be placed on the sign column for debugging {{{2
+function! SetBreakpoint()
+    " set the breakpoint character and set the breakpoint
+    exe ':sign define mybreakpoint text=◉'
+    let s:breakpointplaceline = line('.')
+    exe ":sign place" s:breakpointplaceline " line=" . s:breakpointplaceline . " name=mybreakpoint file=" . expand('%:p')
+endfunction
+
+" Set the breakpoint {{{2
+function! SetBreakIndicator()
+    " set the breakpoint character and indicate the breakpoint
+    exe ':sign define mybreakindicator text=➤'
+    let s:breakpointplaceline = line('.')
+    exe ":sign place" s:breakpointplaceline " line=" . s:breakpointplaceline . " name=mybreakindicator file=" . expand('%:p')
+endfunction
+nnoremap <> :call SetBreakIndicator()<CR>
+
+" Unset the breakpoint {{{2
+function! UnsetBreakpoint()
+    " remove the breakpoint character
+    let s:breakpointplaceline = line('.')
+    exe ":sign unplace" s:breakpointplaceline
+    if exists(':SignifyRefresh')
+        SignifyRefresh
+        redraw!
+        " SignifyEnable
+    endif
+endfunction
+nnoremap >< :call UnsetBreakpoint()<CR>
+
+" Remove all breakpoints {{{2
+function! RemoveAllBreakpoints()
+    " remove all breakpoints
+    exe ":sign unplace *"
+    if exists(':SignifyRefresh')
+        SignifyRefresh
+        redraw!
+        " SignifyEnable
+    endif
+endfunction
 
 " Use mouse in terminal vim
 set mouse=a
