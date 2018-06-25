@@ -119,7 +119,7 @@ macro index H "<tag-prefix><enter-command>unset resolve<enter><tag-prefix><clear
 macro pager H "<save-message>+danh-dnguyen.io/Ham<enter><sync-mailbox>" "file as Ham"
 
 # A to archive messages, tagged or current
-macro index,pager A ":set confirmappend=no delete=yes resolve=no\n<tag-prefix><clear-flag>N<tag-prefix><save-message>+danh-dnguyen.io/Archive\n<sync-mailbox>:set confirmappend=yes delete=ask-yes resolve=yes\n" "Message archived"
+macro index,pager A ":set confirmappend=no delete=yes resolve=no\n<tag-prefix><clear-flag>N<tag-prefix><save-message>+danh-dnguyen.io/Archive\n<sync-mailbox>:set confirmappend=yes resolve=yes\n" "Message archived"
 
 # V to save all attachments
 macro index,pager V "<pipe-message>ripmime --no-nameless -i - -d "
