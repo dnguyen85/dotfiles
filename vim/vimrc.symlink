@@ -234,7 +234,7 @@ cnoreabbrev NAU au! BufWritePost <buffer>
 " CtrlP plugin
 nnoremap <C-B> :CtrlPBuffer<CR>
 " Try to reuse window elsewhere for opened files
-let g:ctrlp_switch_buffer = 'et'
+let g:ctrlp_switch_buffer = 'Et'
 " CWD for CtrlP: git dir, or current dir, or current file dir if current dir is not ancestor
 let g:ctrlp_working_path_mode = 'ra' 
 " Use Caching
