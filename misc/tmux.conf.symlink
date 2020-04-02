@@ -5,7 +5,7 @@ set-option -g default-shell /bin/zsh
 set -g default-terminal "screen-256color"
 
 # History
-set -g history-limit 1000000
+set -g history-limit 9999999
 
 # Don't rename window
 set-option -g allow-rename off
