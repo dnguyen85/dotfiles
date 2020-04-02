@@ -1,7 +1,3 @@
-# Prefix
-# unbind C-b
-# set -g prefix C-g
-
 # Use zsh
 set-option -g default-shell /bin/zsh
 
@@ -23,27 +19,20 @@ set -g status on
 #### COLOUR (Solarized 256)
 
 # default statusbar colors
-set-option -g status-bg black #base02
-set-option -g status-fg yellow #yellow
-set-option -g status-attr default
+set-option -g status-style bg=black #base02,fg=yellow #yellow,default
 
 # default window title colors
-set-window-option -g window-status-fg brightblue #base0
-set-window-option -g window-status-bg default
-set-window-option -g window-status-attr dim
+set-window-option -g window-status-style fg=brightblue #base0,bg=default,dim
 
 # active window title colors
-set-window-option -g window-status-current-fg brightred #orange
-set-window-option -g window-status-current-bg default
-set-window-option -g window-status-current-attr bright
+set-window-option -g window-status-current-style fg=brightred #orange,bg=default,bright
 
 # pane border
-set-option -g pane-border-fg black #base02
-set-option -g pane-active-border-fg brightgreen #base01
+set-option -g pane-border-style fg=black #base02
+set-option -g pane-active-border-style fg=brightgreen #base01
 
 # message text
-set-option -g message-bg black #base02
-set-option -g message-fg brightred #orange
+set-option -g message-style bg=black #base02,fg=brightred #orange
 
 # pane number display
 set-option -g display-panes-active-colour blue #blue
@@ -70,9 +59,6 @@ bind h select-pane -L
 bind j select-pane -D
 bind k select-pane -U
 bind l select-pane -R
-
-# Selecting window
-bind \ last-window
 
 # Force reload
 unbind ^r

@@ -29,6 +29,9 @@ workspace_auto_back_and_forth yes
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
 
+# Screenshot
+bindsym Shift+F8 exec shutter -s
+
 # kill focused window
 bindsym $mod+q kill
 
@@ -114,7 +117,7 @@ bindsym $mod+u [class="Slack"] scratchpad show
 bindsym $mod+o [title="otl"] scratchpad show 
 bindsym $mod+m [class="Spotify"] scratchpad show 
 bindsym $mod+i [title="Any.do"] scratchpad show
-bindsym $mod+w [class="^Gvim"] [title="wiki"] scratchpad show
+bindsym $mod+w [title="nvim"] scratchpad show
 bindsym $mod+r [class="^Nautilus"] scratchpad show
 
 # Start i3bar to display a workspace bar (plus the system information i3status
@@ -203,7 +206,7 @@ bindsym $mod+Shift+grave workspace prev_on_output
 bindsym $mod+Shift+s exec /home/dhn24/.i3/switch.py
 
 # Power management
-bindsym $mod+F4 exec gksudo pm-suspend
+bindsym $mod+F4 exec pkexec pm-suspend
 
 #################
 ### WORKSPACE ###
@@ -249,14 +252,14 @@ exec --no-startup-id xsetroot -solid "#000000"
 # Start Dropbox
 exec dropbox start
 
-# Startup gnome-settings-daemon
-exec --no-startup-id /usr/bin/gnome-settings-daemon
+# Startup gnome-settings-daemon - deprecated in 18.04
+#exec --no-startup-id /usr/bin/gnome-settings-daemon
 
 # Start network manager
 exec --no-startup-id nm-applet
 
 # Start tray icon for volume
-exec --no-startup-id gnome-sound-applet
+exec --no-startup-id volumeicon
 
 # Start xcape and guake
 #  bindsym F2 focus output left; exec guake

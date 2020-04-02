@@ -3,7 +3,7 @@ antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-completions src
 antigen bundle scheibler/khard misc/zsh
 antigen bundle pimutils/khal misc
-antigen bundle anntzer/zsh-pandoc-completion --branch=autocomplete-filenames
+antigen bundle anntzer/zsh-pandoc-completion
 
 # Apply
 antigen apply

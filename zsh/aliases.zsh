@@ -1,11 +1,9 @@
 alias ll='ls -hl'
 alias la='ls -al'
 alias lc='ls -CF'
-alias gvim="gvim 2>/dev/null"
 alias eclipse="eclipse 2>/dev/null"
 alias nau="nautilus ."
 alias okular="okular 2>/dev/null"
-alias se="screen"
 alias gitl="git log-graph"
 #  alias git="hub"
 alias t="task"
@@ -27,3 +25,4 @@ alias kh="khard"
 alias v="vdirsyncer sync"
 alias os="odrive status"
 alias or="orefresh"
+alias vim="nvim"
