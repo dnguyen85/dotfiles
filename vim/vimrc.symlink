@@ -29,11 +29,6 @@ let g:python3_host_prog = '~/python_envs/neovim/bin/python3'
 " Escape insert mode
 imap jk <Esc>
 
-" Colorscheme
-set background=dark
-colorscheme solarized
-call togglebg#map("")
-
 " Be iMproved, not compatible w/ vi
 set nocompatible 
 syntax enable
@@ -46,6 +41,12 @@ set autoindent
 set smartindent
 set ignorecase
 set smartcase
+
+" Colorscheme
+set background=dark
+colorscheme solarized
+call togglebg#map("")
+
 
 " Clear highlighting on escape in normal mode
 nnoremap <silent><esc> :noh<return><esc>

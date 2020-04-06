@@ -6,9 +6,6 @@ export LPASS_AGENT_TIMEOUT=21600
 
 # Matplotlib
 export MPLCONFIGDIR=~/.matplotlib
-
-# SystemC
-export SYSTEMC=~/.local
 export LD_LIBRARY_PATH=~/.local/lib:$LD_LIBRARY_PATH
 
 # For Xilinx product use

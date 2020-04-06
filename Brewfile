@@ -1,42 +1,31 @@
 cask_args appdir: '/Applications'
 
-tap 'homebrew/bundle'
-tap 'homebrew/dupes'
-
-cask 'xquartz'
-
 brew 'tmux'
-brew 'ack'
-brew 'coreutils'
-brew 'binutils'
-brew 'findutils', args: ['with-default-names']
-brew 'grep', args: ['with-default-names']
-brew 'gnu-tar', args: ['with-default-names']
-brew 'gnu-sed', args: ['with-default-names']
-brew 'gnu-which', args: ['with-default-names']
-brew 'gnutls'
-brew 'gzip'
+
+# GNU command line tools to replace BSD
+brew 'coreutils'    # GNU basic file, shell, and text manipulation utilities ls, cat
+brew 'binutils'     # GNU collection of binary tools: ld, as, etc.
+brew 'diffutils'    
+brew 'findutils'    # Need path addition for find 
+brew 'grep'         # Need path addition for grep
+brew 'gnu-tar'      # Need path addition for tar
+brew 'gnu-sed'      # Need path addition for sed
+brew 'gawk'
 brew 'watch'
-brew 'go'
-brew 'grc'
-brew 'imagemagick'
-brew 'jp2a'
-brew 'libcaca', args: ['with-imlib2']
+brew 'rsync'        # GNU rsync
+brew 'imagemagick'  # Convert, edit, compose bitmap images
 brew 'openssl'
 brew 'readline'
 brew 'unrar'
 brew 'wget'
 brew 'zsh'
 brew 'htop'
-brew 'python'
-brew 'rsync'
+brew 'fzf'
+brew 'ranger'
 
 cask 'google-chrome'
 cask 'handbrake'
-cask 'gimp'
-cask 'slack'
 cask 'vlc'
-cask 'caffeine'
 cask 'iterm2'
 cask 'dropbox'
 cask 'dash'
