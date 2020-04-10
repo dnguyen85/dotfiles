@@ -15,6 +15,8 @@ then
     # tar
     export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
     export MANPATH="/usr/local/opt/gnu-tar/libexec/gnuman:$MANPATH"
+    # Matlab
+    export PATH="/Applications/MATLAB_R2020a.app/bin:$PATH"
 else
     export PATH="./bin:/usr/local/bin:/usr/local/sbin:$HOME/.local/bin:$DOTFILES/bin:$PATH"
     export MANPATH="/usr/local/man:/usr/local/mysql/man:/usr/local/git/man:$MANPATH"

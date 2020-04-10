@@ -2,4 +2,4 @@
 export RANGER_LOAD_DEFAULT_RF=FALSE
 
 # Alias
-alias ra="ranger --confdir=~/.ranger"
+alias ra="TERM=screen-256color ranger --confdir=$HOME/.ranger"

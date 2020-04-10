@@ -31,7 +31,7 @@ defaults write com.apple.dock wvous-bl-corner -int 5
 defaults write com.apple.dock wvous-bl-modifier -int 0
 
 # Set default location for screen capture
-defaults write com.apple.screencapture location ~/Dropbox/incron_tmp
+defaults write com.apple.screencapture location ~/Documents/screenshot
 
 # iterm2
 defaults write com.googlecode.iterm2 HotkeyTermAnimationDuration -float 0
