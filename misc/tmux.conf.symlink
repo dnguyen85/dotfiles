@@ -1,8 +1,10 @@
 # Use zsh
 set-option -g default-shell /bin/zsh
+set-option -sg escape-time 10           # for nvim
+set-option -ga terminal-overrides ',XXX:RGB'
 
-# look good
-set -g default-terminal "screen-256color"
+# look good - set TERM to tmux-256color if system supports
+if-shell '>/dev/null 2>&1 infocmp tmux-256color' 'set -g default-terminal "tmux-256color"' 'set -g default-terminal "screen-256color"'
 
 # History
 set -g history-limit 9999999
@@ -13,19 +15,17 @@ set-option -g allow-rename off
 # Set status 
 set -g status on
 # soften status bar color
-#set -g status-bg '#666666'
-#set -g status-fg '#aaaaaa'
 
 #### COLOUR (Solarized 256)
 
 # default statusbar colors
-set-option -g status-style bg=black #base02,fg=yellow #yellow,default
+set-option -g status-style bg=black,fg=yellow # bg_options: base02, fg_options: yellow, default
 
 # default window title colors
-set-window-option -g window-status-style fg=brightblue #base0,bg=default,dim
+set-window-option -g window-status-style fg=brightblue #base0,bg=white,dim
 
 # active window title colors
-set-window-option -g window-status-current-style fg=brightred #orange,bg=default,bright
+set-window-option -g window-status-current-style fg=red,bg=default,bold #orange
 
 # pane border
 set-option -g pane-border-style fg=black #base02
@@ -120,4 +120,11 @@ bind-key C-b last-window
 # pane movement
 bind-key J command-prompt -p "join pane from:"  "join-pane -s '%%'"
 bind-key K command-prompt -p "send pane to:"  "join-pane -t '%%'"
+
+# Status bar with cpu / mem usage
+set -g status-interval 2
+set -g status-right "%H:%M#(tmux-mem-cpu-load -q --interval 2)" 
+set -g status-right-length 100 
+
+
 
