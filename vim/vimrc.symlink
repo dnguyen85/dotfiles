@@ -15,6 +15,7 @@ endfunction
 call plug#begin('~/.vim/plugged')
 Plug 'junegunn/vim-plug'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-abolish'
 Plug 'gregsexton/gitv'
 Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
@@ -28,9 +29,7 @@ Plug 'qpkorr/vim-bufkill'
 Plug 'tpope/vim-unimpaired'
 Plug 'dnguyen85/vim-latex'
 Plug 'dnguyen85/vimwiki'
-Plug 'majutsushi/tagbar'
 Plug 'davidhalter/jedi-vim'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-jedi'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -41,13 +40,23 @@ Plug 'Shougo/denite.nvim', {'do': ':UpdateRemotePlugins'}
 Plug 'tpope/vim-dispatch'
 Plug 'joonty/vdebug'
 Plug 'wincent/loupe'
+Plug 'mileszs/ack.vim'
+Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
+
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
 call plug#end()
 
 " Set python provider with neovim python packages
 if has("mac")
     let g:python3_host_prog = '/usr/local/bin/python3'
 else
-    let g:python3_host_prog = '~/python_envs/neovim/bin/python3'
+    let g:python3_host_prog = '~/python_envs/3.6.4/bin/python3'
 endif
 
 " Escape insert mode
@@ -115,6 +124,22 @@ au BufRead,BufNewFile * syn match TAB_CHAR "\t"
 " Spell checking
 set spelllang=en_us
 autocmd FileType gitcommit,pandoc,markdown,mail setlocal spell
+
+"## Diffmode settings using 'au FilterWritePre * if &diff'
+
+" Set wrap automatically in vimdiff
+au FilterWritePre * if &diff | setlocal wrap< | endif
+
+" When in diffmode suppress annoying auto-folding (filler,context:1000) and don't check for white space differences
+" au FilterWritePre * if &diff | exe 'set diffopt=filler,context:1000,iwhite' | exe 'execute "normal \<c-w>\<c-w>"' | endif # Buggy 
+au FilterWritePre * if &diff | exe 'set diffopt=filler,context:1000,iwhite' | endif 
+
+"## End Diffmode settings
+
+
+" Run Make with F5/F6
+nnoremap <localleader>M :Make<CR>               " Wrapper to call Make
+nnoremap <localleader>d :Dispatch make<CR>      " Call the makeprg
 
 " Latex Processing
 " IMPORTANT: grep will sometimes skip displaying the file name if you
@@ -185,7 +210,7 @@ let g:vimwiki_use_mouse = 1
 " Set browser
 if has("mac")
     let g:vimwiki_browsers=['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome']
-elseif
+else
     let g:vimwiki_browsers=['google-chrome']
 endif
 
@@ -227,6 +252,9 @@ inoremap <F6> <C-R>=strftime("files/%Y_%m_%d_img")<CR>
 " Map leader
 let mapleader = ","
 
+" Do not auto-resize when split closes
+set noea
+
 " Map for cut and paste
 " Use C-Q to do what C-V normally do. Note: no recursive map here
 noremap <C-Q> <C-V>
@@ -243,6 +271,22 @@ nnoremap <C-j>     <C-W>j
 nnoremap <C-k>     <C-W>k
 nnoremap <C-h>     <C-W>h
 nnoremap <C-l>     <C-W>l
+
+" Show the stack of syntax hilighting classes affecting whatever is under the
+" cursor.
+function! SynStack()
+    echo join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), " > ")
+endfunc
+
+""""""  Vertical split and open buffer 
+function! VerticalSplitBuffer(buffer)
+    execute "vert belowright sb" a:buffer 
+endfunction
+
+if !exists(":Vbuffer")
+    command -nargs=1 Vbuffer call VerticalSplitBuffer(<f-args>)
+endif
+
 
 "" Fugitive plugin
 cnoreabbrev Gs Gstatus
@@ -286,6 +330,20 @@ let g:airline_symbols.maxlinenr= ''
 " Wrap in try/catch to avoid errors on initial install before plugin is available
 try
 
+"" Change file/rec command
+call denite#custom#var('file/rec', 'command', ['ag', '--follow', '--nocolor', '--nogroup', '-u', '-g', ''])
+call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+call denite#custom#var('file/rec/git', 'command', ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+
+" Change matchers (optional)
+" call denite#custom#source(
+" \ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
+" call denite#custom#source(
+" \ 'file/rec', 'matchers', ['matcher/cpsm'])
+
+" Grep source filter by filename
+call denite#custom#source('grep', 'converters', ['converter_abbr_word'])  
+
 "" Mappings for Denite buffer actions
 autocmd FileType denite call s:denite_my_settings()
 function! s:denite_my_settings() abort
@@ -293,17 +351,31 @@ function! s:denite_my_settings() abort
     setlocal signcolumn=no cursorline
 
     nnoremap <silent><buffer><expr> <CR>
-    \ denite#do_map('do_action')
+        \ denite#do_map('do_action')
     nnoremap <silent><buffer><expr> d
-    \ denite#do_map('do_action', 'delete')
+       \ denite#do_map('do_action', 'delete')
+    nnoremap <silent><buffer><expr> <C-v>
+        \ denite#do_map('do_action', 'vsplit')
+    nnoremap <silent><buffer><expr> <C-s>
+        \ denite#do_map('do_action', 'split')
+    nnoremap <silent><buffer><expr> <C-t>
+        \ denite#do_map('do_action', 'tabopen')
     nnoremap <silent><buffer><expr> p
-    \ denite#do_map('do_action', 'preview')
+        \ denite#do_map('do_action', 'preview')
     nnoremap <silent><buffer><expr> q
-    \ denite#do_map('quit')
+        \ denite#do_map('quit')
     nnoremap <silent><buffer><expr> i
-    \ denite#do_map('open_filter_buffer')
+        \ denite#do_map('open_filter_buffer')
     nnoremap <silent><buffer><expr> <Space>
-    \ denite#do_map('toggle_select').'j'
+        \ denite#do_map('toggle_select').'j'
+    nnoremap <silent><buffer><expr> <C-q>
+        \ denite#do_map('do_action', 'quickfix')
+    nnoremap <silent><buffer> <C-a>
+        \ :<C-u>call <SID>denite_all_quickfix()<CR>
+endfunction
+function! s:denite_all_quickfix()
+  call denite#call_map('toggle_select_all')
+  call denite#call_map('do_action', 'quickfix')
 endfunction
 
 "" In filter mode and want to go back
@@ -311,9 +383,6 @@ autocmd FileType denite-filter call s:denite_filter_my_settings()
 function! s:denite_filter_my_settings() abort
   imap <silent><buffer> <C-o> <Plug>(denite_filter_quit)
 endfunction
-
-"" Change file/rec command
-call denite#custom#var('file/rec', 'command', ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
 
 "" Ag command on grep source
 call denite#custom#var('grep', {
@@ -324,6 +393,11 @@ call denite#custom#var('grep', {
     \ 'separator': ['--'],
     \ 'final_opts': [],
     \ })
+
+" Change ignore_globs
+call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
+      \ [ '.git/', '.ropeproject/', '__pycache__/',
+      \   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
 
 " Custom options for Denite
 "   auto_resize             - Auto resize the Denite window height automatically.
@@ -350,15 +424,17 @@ if has('nvim')
     \ 'auto_resize': 1,       
     \ 'prompt': 'λ ',
     \ 'source_names': 'short',
-    \ 'highlight_matched_range': 'Visual',
+    \ 'highlight_matched_char': 'Todo',
+    \ 'highlight_matched_range': 'SpellBad',
     \ 'vertical_preview': 1,
+    \ 'floating_preview': 1,
     \ 'highlight_window_background': 'Visual',
     \ 'highlight_filter_background': 'DiffAdd',
     \ }}
 else
     let s:denite_options = {'default' : {
     \ 'prompt': 'λ ',
-    \ 'highlight_matched_char': 'Underlined',
+    \ 'highlight_matched_char': 'Todo',
     \ 'highlight_matched_range': 'SpellBad',
     \ }}
 endif
@@ -378,8 +454,19 @@ catch
   echo 'Denite not installed. It should work after running :PlugInstall'
 endtry
 
-nnoremap <C-p> :Denite -start-filter file/rec<CR>
+" Denite Mappings
+nnoremap <C-p> :Denite file/rec/git -start-filter<CR>  
+nnoremap <C-t> :Denite file/rec -start-filter<CR>  
 nnoremap <leader>db :Denite buffer<CR>
+nnoremap <leader>d8 :DeniteCursorWord grep:.<CR>
+nnoremap <leader>d* :DeniteCursorWord grep:<C-r>%:'--column'<CR>
+nnoremap <leader>d/ :Denite grep:.<CR>
+nnoremap <leader>d. :Denite -start-filter grep:::!<CR>
+nnoremap <leader>d> :Denite -start-filter grep:<C-r>%:'--column':!<CR> 
+nnoremap <leader>dB :DeniteBufferDir file/rec -start-filter<CR>
+nnoremap <leader>dr :Denite -resume -cursor-pos=+1<CR>
+nnoremap <leader>d<C-r> :Denite register:.<CR>
+
 
 " Map for tab close
 nmap gc :tabclose<CR>
@@ -400,8 +487,83 @@ au FileType gitv nmap <buffer> <silent> K <Plug>(gitv-next-commit)
 """ Autopairs """
 let g:AutoPairsShortcutJump = '<C-g>' 
 " Do not map <BS> and <C-h>, will interfere w/ NeoComplete
-" let g:AutoPairsMapBS = 0 
-" let g:AutoPairsMapCh = 0
+let g:AutoPairsMapBS = 0 
+let g:AutoPairsMapCh = 0
+
+" Tagbar setup
+nnoremap <silent> <F11> :TagbarToggle<CR> 
+nnoremap <silent> <leader>t :TagbarOpen fj<CR> 
+let g:tagbar_indent = 1
+let g:tagbar_type_xml = {
+    \ 'ctagstype' : 'xml',
+    \ 'kinds'     : [
+        \ 'i:id'
+    \ ]
+\ }
+
+let g:tagbar_type_xsd = {
+    \ 'ctagstype' : 'XSD',
+    \ 'kinds'     : [
+        \ 'e:elements',
+        \ 'c:complexTypes',
+        \ 's:simpleTypes'
+    \ ]
+\ }
+
+""""""""""""""""""""""""""" Deoplete Setting Starts """"""""""""""""""""""
+" deoplete jedi
+let g:deoplete#sources#jedi#show_docstring = 1
+
+""""""""""""""""""""""""""" Language client """"""""""""""""""""""""""""""
+let g:LanguageClient_serverCommands = {'cpp': ['clangd', '--header-insertion=never', '--pch-storage=memory', '-background-index',],}
+
+" Automatically start language servers
+let g:LanguageClient_autoStart = 1 
+" let g:LanguageClient_loggingFile = expand('~/.languageclient')
+" let g:LanguageClient_loggingLevel = 'DEBUG'
+let g:LanguageClient_serverStderr = '/tmp/clangd.stderr'
+let g:LanguageClient_diagnosticMaxSeverity = "Error"
+let g:LanguageClient_diagnosticsList = "Location"
+
+function SetupCpp()
+  nnoremap <leader>ld :call LanguageClient#textDocument_definition()<CR>
+  nnoremap <leader>lr :call LanguageClient#textDocument_rename()<CR>
+  nnoremap <leader>lf :call LanguageClient#textDocument_formatting()<CR>
+  nnoremap <leader>lt :call LanguageClient#textDocument_typeDefinition()<CR>
+  nnoremap <leader>lx :call LanguageClient#textDocument_references()<CR>
+  nnoremap <leader>la :call LanguageClient_workspace_applyEdit()<CR>
+  nnoremap <leader>lc :call LanguageClient#textDocument_completion()<CR>
+  nnoremap K :call LanguageClient#textDocument_hover()<CR>
+  nnoremap <leader>ls :call LanguageClient_textDocument_documentSymbol()<CR>
+  nnoremap <leader>lm :call LanguageClient_contextMenu()<CR>
+  nnoremap <leader>ldv :call LanguageClient#textDocument_definition({'gotoCmd': 'vs'})<CR>
+  nnoremap <leader>lds :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
+  nnoremap <leader>ldt :call LanguageClient#textDocument_definition({'gotoCmd': 'tabedit'})<CR>
+  nnoremap <leader>ldp :call LanguageClient#textDocument_definition({'gotoCmd': 'preview'})<CR>
+  call deoplete#enable()
+  packadd termdebug
+endfunction()
+
+augroup LSP
+  autocmd!
+  autocmd FileType cpp,c call SetupCpp()
+augroup END
+
+" Rename - rc => rename camelCase
+nnoremap <leader>lrc :call LanguageClient#textDocument_rename(
+            \ {'newName': Abolish.camelcase(expand('<cword>'))})<CR>
+" Rename - rs => rename snake_case
+nnoremap <leader>lrs :call LanguageClient#textDocument_rename(
+            \ {'newName': Abolish.snakecase(expand('<cword>'))})<CR>
+" Rename - ru => rename UPPERCASE
+nnoremap <leader>lru :call LanguageClient#textDocument_rename(
+            \ {'newName': Abolish.uppercase(expand('<cword>'))})<CR>
+
+" Ack.vim
+let g:ackprg = 'ag --vimgrep --column'
+nnoremap <leader>8 :Ack!"\b<cword>\b" <CR>
+nnoremap <leader>* :Ack!"\b<cword>\b" %<CR>
 
 " Use mouse in terminal vim
 set mouse=a
+
