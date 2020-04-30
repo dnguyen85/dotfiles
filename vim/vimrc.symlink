@@ -57,6 +57,8 @@ call plug#end()
 " Set python provider with neovim python packages
 if has("mac")
     let g:python3_host_prog = '/usr/local/bin/python3'
+elseif has("win32")
+    let g:python3_host_prog = 'C:\Python38\python.exe'
 else
     let g:python3_host_prog = '~/python_envs/3.6.4/bin/python3'
 endif
@@ -212,6 +214,8 @@ let g:vimwiki_use_mouse = 1
 " Set browser
 if has("mac")
     let g:vimwiki_browsers=['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome']
+elseif has("win32")
+    let g:vimwiki_browsers=['C:\Program Files\Mozilla Firefox\firefox.exe']
 else
     let g:vimwiki_browsers=['google-chrome']
 endif
