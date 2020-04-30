@@ -42,6 +42,8 @@ Plug 'joonty/vdebug'
 Plug 'wincent/loupe'
 Plug 'mileszs/ack.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
+Plug 'Shougo/neosnippet.vim'
+Plug 'honza/vim-snippets'
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -509,6 +511,26 @@ let g:tagbar_type_xsd = {
         \ 's:simpleTypes'
     \ ]
 \ }
+
+""" Neosnippet plugin
+" C-k to select-and-expand a snippet from Neocomplcache popup (Use C-n and C-p
+" to select), C-k also jumps to next field in snippet
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+" FAQ for auto-complete w/ function parameters from clang-complete
+let g:neosnippet#enable_completed_snippet = 1
+let g:neosnippet#enable_complete_done = 1
+
+" For snippet_complete marker.
+if has('conceal')
+  set conceallevel=2 concealcursor=niv
+endif
+
+" Use Honza's snippets
+let g:neosnippet#enable_snipmate_compatibility = 1
+let g:neosnippet#snippets_directory='~/.vim/plugged/vim-snippets/snippets, ~/.vim/my_snippets'
 
 """"""""""""""""""""""""""" Deoplete Setting Starts """"""""""""""""""""""
 " deoplete jedi
