@@ -1,0 +1,2 @@
+#!/bin/bash
+bsub -q priority -Is -n 8 -W60 -R "select[type=LINUX64 && mem>8000] rusage[mem=8000] span[hosts=1]" $*
