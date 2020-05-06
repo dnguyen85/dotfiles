@@ -29,21 +29,32 @@ Plug 'qpkorr/vim-bufkill'
 Plug 'tpope/vim-unimpaired'
 Plug 'dnguyen85/vim-latex'
 Plug 'dnguyen85/vimwiki'
-Plug 'davidhalter/jedi-vim'
-Plug 'zchee/deoplete-jedi'
+Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
+Plug 'zchee/deoplete-jedi', { 'for': ['python'] }
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'jiangmiao/auto-pairs', { 'for': ['python', 'c', 'c++', 'matlab', 'vim'] }
-Plug 'altercation/vim-colors-solarized'
+Plug 'dnguyen85/vim-colors-solarized'
 Plug 'vim-scripts/EnhCommentify.vim'
 Plug 'Shougo/denite.nvim', {'do': ':UpdateRemotePlugins'}
 Plug 'tpope/vim-dispatch'
-Plug 'joonty/vdebug'
+Plug 'joonty/vdebug', { 'for': ['python'] }
 Plug 'wincent/loupe'
 Plug 'mileszs/ack.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
+Plug 'Shougo/neco-syntax'               " For syntax completion
+Plug 'Shougo/neoinclude.vim'            " For include completion
 Plug 'Shougo/neosnippet.vim'
+Plug 'sjl/splice.vim'                   " For git merge 
+Plug 'sk1418/QFGrep'
 Plug 'honza/vim-snippets'
+Plug 'dnguyen85/vim-indent-guides', { 'for': 'python' }
+Plug 'jeetsukumaran/vim-indentwise'
+Plug 'vimoutliner/vimoutliner'
+Plug 'juneedahamed/vc.vim'
+Plug 'ncm2/float-preview.nvim'
+Plug 'othree/xml.vim'
+Plug 'Konfekt/FastFold'
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -80,13 +91,18 @@ set ignorecase
 set smartcase
 
 " Colorscheme
-set background=dark
+set background=light
 colorscheme solarized
 call togglebg#map("")
 
 
-" Clear highlighting on escape in normal mode
-nnoremap <silent><esc> :let @/=""<return><esc>
+" Clear highlighting on escape in normal mode (Option 1)
+" nnoremap <silent><esc> :let @/=""<return><esc>
+
+" Clear highlighting on escape in normal mode (option 2)
+nnoremap <silent> <esc> :noh<return><esc>
+" Needed to make terminal vim work ok when remapping Esc
+" nnoremap <esc>^[ <esc>^[ 
 
 " Matchit is a plugin for vim, but is built-in for neovim - activate it
 runtime macros/matchit.vim
@@ -132,14 +148,25 @@ autocmd FileType gitcommit,pandoc,markdown,mail setlocal spell
 "## Diffmode settings using 'au FilterWritePre * if &diff'
 
 " Set wrap automatically in vimdiff
-au FilterWritePre * if &diff | setlocal wrap< | endif
+if &diff 
+    setlocal wrap< 
+    set diffopt=filler,context:1000,iwhite
+endif
 
 " When in diffmode suppress annoying auto-folding (filler,context:1000) and don't check for white space differences
 " au FilterWritePre * if &diff | exe 'set diffopt=filler,context:1000,iwhite' | exe 'execute "normal \<c-w>\<c-w>"' | endif # Buggy 
-au FilterWritePre * if &diff | exe 'set diffopt=filler,context:1000,iwhite' | endif 
+autocmd FilterWritePre * if &diff | set wrap< | endif 
+autocmd FilterWritePre * if &diff | exe 'set diffopt=filler,context:1000,iwhite' | endif 
 
 "## End Diffmode settings
 
+" NERD Tree plugin
+map <F12> :NERDTreeToggle<CR>
+
+"" Folding
+nnoremap zk zk[z
+" Open file at highest foldlevel
+autocmd BufWinEnter *.py,*.m,*.md,*.otl let &foldlevel = max(map(range(1, line('$')), 'foldlevel(v:val)'))
 
 " Run Make with F5/F6
 nnoremap <localleader>M :Make<CR>               " Wrapper to call Make
@@ -354,8 +381,7 @@ call denite#custom#source('grep', 'converters', ['converter_abbr_word'])
 autocmd FileType denite call s:denite_my_settings()
 function! s:denite_my_settings() abort
     " Window
-    setlocal signcolumn=no cursorline
-
+    " setlocal signcolumn=no cursorline
     nnoremap <silent><buffer><expr> <CR>
         \ denite#do_map('do_action')
     nnoremap <silent><buffer><expr> d
@@ -425,17 +451,17 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 " \ 'vertical_preview': 1
 if has('nvim')
     let s:denite_options = {'default' : {
-    \ 'split': 'floating',     
-    \ 'winrow': 1,             
-    \ 'auto_resize': 1,       
     \ 'prompt': 'λ ',
     \ 'source_names': 'short',
-    \ 'highlight_matched_char': 'Todo',
-    \ 'highlight_matched_range': 'SpellBad',
+    \ 'split': 'floating',     
+    \ 'auto_resize': 1,       
     \ 'vertical_preview': 1,
     \ 'floating_preview': 1,
-    \ 'highlight_window_background': 'Visual',
+    \ 'winrow': 1,             
     \ 'highlight_filter_background': 'DiffAdd',
+    \ 'highlight_window_background': 'Visual',
+    \ 'highlight_matched_char': 'Todo',
+    \ 'highlight_matched_range': 'SpellBad'
     \ }}
 else
     let s:denite_options = {'default' : {
@@ -516,6 +542,11 @@ let g:tagbar_type_xsd = {
     \ ]
 \ }
 
+""" XML folding
+let g:xml_syntax_folding=1
+au FileType xml setlocal foldmethod=syntax
+
+
 """ Neosnippet plugin
 " C-k to select-and-expand a snippet from Neocomplcache popup (Use C-n and C-p
 " to select), C-k also jumps to next field in snippet
@@ -550,6 +581,8 @@ let g:LanguageClient_autoStart = 1
 let g:LanguageClient_serverStderr = '/tmp/clangd.stderr'
 let g:LanguageClient_diagnosticMaxSeverity = "Error"
 let g:LanguageClient_diagnosticsList = "Location"
+let g:LanguageClient_virtualTextPrefix = "•••➜"
+" let g:LanguageClient_diagnosticsSignsMax = 0 - Disable the gutter sign
 
 function SetupCpp()
   nnoremap <leader>ld :call LanguageClient#textDocument_definition()<CR>
@@ -565,7 +598,6 @@ function SetupCpp()
   nnoremap <leader>ldv :call LanguageClient#textDocument_definition({'gotoCmd': 'vs'})<CR>
   nnoremap <leader>lds :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
   nnoremap <leader>ldt :call LanguageClient#textDocument_definition({'gotoCmd': 'tabedit'})<CR>
-  nnoremap <leader>ldp :call LanguageClient#textDocument_definition({'gotoCmd': 'preview'})<CR>
   call deoplete#enable()
   packadd termdebug
 endfunction()
@@ -589,6 +621,26 @@ nnoremap <leader>lru :call LanguageClient#textDocument_rename(
 let g:ackprg = 'ag --vimgrep --column'
 nnoremap <leader>8 :Ack!"\b<cword>\b" <CR>
 nnoremap <leader>* :Ack!"\b<cword>\b" %<CR>
+
+"## diffchar plugin - new plugin
+let g:DiffPairVisible=2
+
+"## DirDiff settings
+" exclude folder and files
+let g:DirDiffExcludes = ".git,*.swp,*~,~*,*.pyc"
+
+" Don't flag files as different based on whitespace
+let g:DirDiffAddArgs = "-w"
+let g:DirDiffForceLang = ""         " Must set this to work in tcsh 
+"## End DirDiff
+
+" Slime.vim
+let g:slime_target = "tmux"
+let g:slime_python_ipython = 1
+
+" Termdebug
+let g:termdebug_wide = 1
+au TermOpen * setlocal nonumber norelativenumber
 
 " Use mouse in terminal vim
 set mouse=a
