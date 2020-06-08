@@ -91,7 +91,7 @@ set ignorecase
 set smartcase
 
 " Colorscheme
-set background=light
+set background=dark
 colorscheme solarized
 call togglebg#map("")
 
@@ -139,26 +139,14 @@ set textwidth=80
 set wrap
 
 " Syntax highlight tabs as error
-au BufRead,BufNewFile * syn match TAB_CHAR "\t"
+" au BufRead,BufNewFile * syn match TAB_CHAR "\t"
 
 " Spell checking
 set spelllang=en_us
 autocmd FileType gitcommit,pandoc,markdown,mail setlocal spell
 
 "## Diffmode settings using 'au FilterWritePre * if &diff'
-
-" Set wrap automatically in vimdiff
-if &diff 
-    setlocal wrap< 
-    set diffopt=filler,context:1000,iwhite
-endif
-
-" When in diffmode suppress annoying auto-folding (filler,context:1000) and don't check for white space differences
-" au FilterWritePre * if &diff | exe 'set diffopt=filler,context:1000,iwhite' | exe 'execute "normal \<c-w>\<c-w>"' | endif # Buggy 
-autocmd FilterWritePre * if &diff | set wrap< | endif 
-autocmd FilterWritePre * if &diff | exe 'set diffopt=filler,context:1000,iwhite' | endif 
-
-"## End Diffmode settings
+set diffopt=filler,context:1000,iwhite
 
 " NERD Tree plugin
 map <F12> :NERDTreeToggle<CR>
