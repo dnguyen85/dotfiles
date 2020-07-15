@@ -478,8 +478,8 @@ endtry
 nnoremap <C-p> :Denite file/rec/git -start-filter<CR>  
 nnoremap <C-t> :Denite file/rec -start-filter<CR>  
 nnoremap <leader>db :Denite buffer<CR>
-nnoremap <leader>d8 :DeniteCursorWord grep:.<CR>
-nnoremap <leader>d* :DeniteCursorWord grep:<C-r>%:'--column'<CR>
+nnoremap <leader>d* :DeniteCursorWord grep:.<CR>
+nnoremap <leader>d8 :DeniteCursorWord grep:<C-r>%:'--column'<CR>
 nnoremap <leader>d/ :Denite grep:.<CR>
 nnoremap <leader>d. :Denite -start-filter grep:::!<CR>
 nnoremap <leader>d> :Denite -start-filter grep:<C-r>%:'--column':!<CR> 
@@ -607,8 +607,25 @@ nnoremap <leader>lru :call LanguageClient#textDocument_rename(
 
 " Ack.vim
 let g:ackprg = 'ag --vimgrep --column'
-nnoremap <leader>8 :Ack!"\b<cword>\b" <CR>
-nnoremap <leader>* :Ack!"\b<cword>\b" %<CR>
+let g:ack_mappings = {
+      \ "h": "",
+      \ "H": "",
+      \ "t": "",
+      \ "s": "",
+      \ "S": "",
+      \ "v": "",
+      \ "V": "",
+      \ "<C-t>": "<C-W><CR><C-W>T",          
+      \ "T": "<C-W><CR><C-W>TgT<C-W>j",        
+      \ "o": "<CR>",
+      \ "O": "<CR><C-W><C-W>:ccl<CR>",
+      \ "go": "<CR><C-W>j",
+      \ "<C-s>": "<C-W><CR><C-W>K",
+      \ "gs": "<C-W><CR><C-W>K<C-W>b",
+      \ "<C-v>": "<C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t",
+      \ "gv": "<C-W><CR><C-W>H<C-W>b<C-W>J" }
+nnoremap <leader>* :Ack!"\b<cword>\b" <CR>
+nnoremap <leader>8 :Ack!"\b<cword>\b" %<CR>
 
 "## diffchar plugin - new plugin
 let g:DiffPairVisible=2
