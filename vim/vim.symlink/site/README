@@ -1,0 +1,2 @@
+In order to use the `site/` plugins, you will need to copy the `site` fodler to
+~/.local/share/nvim.

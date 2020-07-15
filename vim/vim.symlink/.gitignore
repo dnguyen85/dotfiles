@@ -1,0 +1,8 @@
+plug.vim
+*.pyc
+.netrwhist
+plugged/
+*tags
+*tags/
+*.swp
+*~

@@ -1,0 +1,61 @@
+snippet st
+abbr Define a simple type xsd:simpleType
+  <xsd:simpleType name="${1:typeName}">
+    <xsd:restriction base="xsd:${2:#:baseType}">
+      ${0}
+    </xsd:restriction>
+  </xsd:simpeType>
+
+snippet enumT
+abbr Enum type
+  <xsd:simpleType name="${1:typeName}">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="${2:value1}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+snippet enum
+abbr Addd xsd:enumeration item
+  <xsd:enumeration value="${1:value}"/>
+
+snippet minIn
+abbr xsd:minInclusive
+  <xsd:minInclusive value="${1:minVal}"/>
+
+snippet maxIn
+abbr xsd:maxInclusive
+  <xsd:maxInclusive value="${1:maxVal}"/>
+
+snippet patt
+abbr xsd:pattern
+  <xsd:pattern value="${1:pattern}"/>
+
+snippet complexType
+abbr Define a complex type
+  <xsd:complexType name="${1:typeName}">
+    <xsd:annotation>
+      <xsd:documentation>${2:doc}</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="${3:#:elemName}" type="${4:#:elemType}" default="${5:#:elemDefault}" minOccurs="${6:0}" "maxOccurs="${7:1}"/>${0}
+    </xsd:sequence>
+  </xsd:complexType>
+
+snippet elem
+abbr xsd:element
+  <xsd:element name="${1:#:elemName}" type="${2:#:elemType}" default="${3:#:elemDefault}" minOccurs="${5:1}" maxOccurs="${4:1}"/>${0}
+
+snippet elemC
+abbr Element of complex type
+  <xsd:element name="${1:elemName}">
+    <xsd:annotation>
+      <xsd:documentation>${2:doc}</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        ${0}
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+
