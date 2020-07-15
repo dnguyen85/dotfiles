@@ -1,3 +1,0 @@
-#!/bin/bash
-
-/usr2/danhnguy/.local/bin/vim -d $*
