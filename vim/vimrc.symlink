@@ -55,6 +55,7 @@ Plug 'juneedahamed/vc.vim'
 Plug 'ncm2/float-preview.nvim'
 Plug 'othree/xml.vim'
 Plug 'Konfekt/FastFold'
+Plug 'https://github.qualcomm.com/kting/vim-perforce'
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -379,7 +380,7 @@ function! s:denite_my_settings() abort
     nnoremap <silent><buffer><expr> <C-s>
         \ denite#do_map('do_action', 'split')
     nnoremap <silent><buffer><expr> <C-t>
-        \ denite#do_map('do_action', 'tabopen')
+        \ denite#do_map('do_action', 'tabswitch')
     nnoremap <silent><buffer><expr> p
         \ denite#do_map('do_action', 'preview')
     nnoremap <silent><buffer><expr> q

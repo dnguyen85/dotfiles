@@ -2,7 +2,7 @@
 nnoremap <leader>bs :Break<CR> 
 nnoremap <leader>bd :Clear<CR>
 nnoremap <leader>bc :call TermDebugSendCommand('delete')<CR>
-nnoremap <C-@> :Step<CR>
+nnoremap <C-Space> :Step<CR>
 nnoremap <Space> :Over<CR>
 nnoremap <leader>f :Finish<CR>
 nnoremap <leader>r :Continue<CR>
