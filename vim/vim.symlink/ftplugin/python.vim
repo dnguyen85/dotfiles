@@ -245,3 +245,106 @@ endfunction
 " C     R    <      >     foldlevel as computed for next line: -1
 " S     R    <      *     compute foldlevel the hard way: use function
 " C     R    <      <     foldlevel as computed for this line: use function
+
+" Python setup
+func! s:SetBreakpoint()
+    cal append('.', repeat(' ', strlen(matchstr(getline('.'), '^\s*'))) . 'import ipdb; ipdb.set_trace()')
+endf
+
+func! s:RemoveBreakpoint()
+    exe 'silent! g/^\s*import\sipdb\;\?\n*\s*ipdb.set_trace()/d'
+endf
+
+func! s:ToggleBreakpoint()
+    if getline('.')=~#'^\s*import\sipdb' | cal s:RemoveBreakpoint() | el | cal s:SetBreakpoint() | en
+endf
+
+" Disable smartindent in python file. Don't need the auto indenting after '{'
+setl nosmartindent
+setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
+call deoplete#enable()
+
+" Debug helpers for ipdb
+" Next
+nnoremap <silent> <buffer> <Space> :let @m = "n"<CR>:SlimeSend1 <C-r>m<CR>
+" Step
+nnoremap <silent> <buffer> <C-Space> :let @m = "s"<CR>:SlimeSend1 <C-r>m<CR>
+" Where
+nnoremap <silent> <buffer> <leader>w :let @m = "w"<CR>:SlimeSend1 <C-r>m<CR>
+" Go down
+nnoremap <silent> <buffer> <leader>sd :let @m = "d"<CR>:SlimeSend1 <C-r>m<CR>
+" Go up
+nnoremap <silent> <buffer> <leader>su :let @m = "u"<CR>:SlimeSend1 <C-r>m<CR>
+" continue until next breakpoint or end of program
+nnoremap <silent> <buffer> <leader>e :let @m = "c"<CR>:SlimeSend1 <C-r>m<CR>
+" finish current function
+nnoremap <silent> <buffer> <leader>f :let @m = "r"<CR>:SlimeSend1 <C-r>m<CR>
+" Open current variable under cursor in GUI variable viewer
+nnoremap <silent> <buffer> <M-k> :let @m = "p " . expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
+
+" Ipython mappings
+nnoremap <silent> <buffer> <leader>ss :let @m = expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <silent> <buffer> <leader>sS :let @m = expand('<cWORD>')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <silent> <buffer> <leader>s/ :let @m = "?" . expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <silent> <buffer> <leader>s? :let @m = "??" . expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <silent> <localleader>b :call <SID>ToggleBreakpoint()<CR>
+nnoremap <buffer> <leader>b :call SetBreakpoint()<CR>:let @m = "b " . expand('%') . ":" . line('.')<CR>:SlimeSend1 <C-r>m<CR>
+" unset breakpoint at the current line
+nnoremap <buffer> <leader>bd :call UnsetBreakpoint()<CR>:let @m = "clear " . expand('%') . ":" . line('.')<CR>:SlimeSend1 <C-r>m<CR>
+" delete all breakpoints
+nnoremap <buffer> <leader>bc :call RemoveAllBreakpoints()<CR>:let @m = "clear"<CR>:SlimeSend1 <C-r>m<CR>
+" temporary breakpoint
+nnoremap <buffer> <leader>bt :let @m = "tbreak " . expand('%') . ":" . line('.')<CR>:SlimeSend1 <C-r>m<CR>
+" Show all breakpoint
+nnoremap <buffer> <leader>bs :let @m = "b"<CR>:SlimeSend1 <C-r>m<CR>
+" continue until next breakpoint or end of program
+nnoremap <buffer> <leader>e :let @m = "cont"<CR>:SlimeSend1 <C-r>m<CR>
+" run to cursor
+nnoremap <buffer> <leader>u :let @m = "until " . line('.')<CR>:SlimeSend1 <C-r>m<CR>
+
+" Vimspector mapping
+" nmap <localleader>c    <Plug>VimspectorContinue
+" nmap <silent> <localleader>s    <Plug>VimspectorStop
+" nmap <silent> <localleader>r    <Plug>VimspectorRestart
+" nmap <silent> <localleader>p    <Plug>VimspectorPause
+" nmap <silent> <localleader>b    <Plug>VimspectorToggleBreakpoint
+" nmap <silent> <localleader>bc   <Plug>VimspectorToggleConditionalBreakpoint
+" nmap <silent> <localleader>bf   <Plug>VimspectorAddFunctionBreakpoint
+" nmap <silent> <Space>           <Plug>VimspectorStepOver
+" nmap <silent> <C-Space>         <Plug>VimspectorStepInto
+" nmap <silent> <localleader>f    <Plug>VimspectorStepOut
+" nmap <silent> <localleader>e   :let @m = expand('<cword>')<CR>:VimspectorEval <C-r>m<CR><C-w><C-p>
+" nmap <silent> <M-k>    :let @m = expand('<cword>')<CR>:VimspectorWatch <C-r>m<CR>
+" nmap <silent> <localleader>u    <Plug>VimspectorToggleBreakpoint<Plug>VimspectorContinue<Plug>VimspectorToggleBreakpoint
+
+
+
+" func s:GetVisualSelection()
+    "Shamefully stolen from http://stackoverflow.com/a/6271254/794380
+    " Why is this not a built-in Vim script function?!
+    " let [lnum1, col1] = getpos("'<")[1:2]
+    " let [lnum2, col2] = getpos("'>")[1:2]
+    " let lines = getline(lnum1, lnum2)
+    " let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
+    " let lines[0] = lines[0][col1 - 1:]
+    " return join(lines, "\n")
+" endfunction
+
+" :EvaludateVisual
+" func s:EvaluateVisual()
+  " let at = s:GetVisualSelection()
+  " call vimspector#Evaluate(at)
+" endfunc
+
+" :WatchVisual
+" func s:WatchVisual()
+  " let at = s:GetVisualSelection()
+  " call vimspector#AddWatch(at)
+" endfunc
+
+" command! -range EvalVisualPython call s:EvaluateVisual()
+" vnoremap <localleader>e :EvalVisualPython<CR><C-w><C-p> 
+" command! -range WatchVisualPython call s:WatchVisual()
+" vnoremap <M-k> :WatchVisualPython<CR> 
+
+
