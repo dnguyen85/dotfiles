@@ -33,7 +33,7 @@ Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
 Plug 'zchee/deoplete-jedi', { 'for': ['python'] }
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'jiangmiao/auto-pairs', { 'for': ['python', 'c', 'c++', 'matlab', 'vim'] }
+"Plug 'jiangmiao/auto-pairs', { 'for': ['python', 'c', 'c++', 'matlab', 'vim'] }
 Plug 'dnguyen85/vim-colors-solarized'
 Plug 'vim-scripts/EnhCommentify.vim'
 Plug 'Shougo/denite.nvim', {'do': ':UpdateRemotePlugins'}
@@ -54,8 +54,11 @@ Plug 'vimoutliner/vimoutliner'
 Plug 'juneedahamed/vc.vim'
 Plug 'ncm2/float-preview.nvim'
 Plug 'othree/xml.vim'
-Plug 'Konfekt/FastFold'
-Plug 'https://github.qualcomm.com/kting/vim-perforce'
+" Plug 'Konfekt/FastFold'
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'dhruvasagar/vim-table-mode'
+Plug 'JulioJu/neovim-qt-colors-solarized-truecolor-only'
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -93,7 +96,7 @@ set smartcase
 
 " Colorscheme
 set background=dark
-colorscheme solarized
+colorscheme molokai
 call togglebg#map("")
 
 
@@ -242,24 +245,14 @@ let g:vimwiki_hl_headers = 1
 
 " List of wikis
 let wiki_1 = {}
-let wiki_1.path = '~/Dropbox/www/wiki_files/'
-let wiki_1.path_html = '~/Dropbox/www/wiki/'
+let wiki_1.path = '~/OneDrive - Qualcomm/www/wiki_files/'
+let wiki_1.path_html = '~/OneDrive - Qualcomm/www/wiki/'
 let wiki_1.auto_export = 0
-let wiki_1.template_path = '~/Dropbox/www/wiki_assets/'
+let wiki_1.template_path = '~/OneDrive - Qualcomm/www/wiki_assets/'
 let wiki_1.template_default = 'template'
 let wiki_1.nested_syntaxes = {'python': 'python', 'c++': 'cpp', 'c': 'cpp', 'css': 'css', 'js': 'javascript', 'javascript': 'javascript', 'html': 'html', 'matlab': 'matlab'}
 
-let wiki_2 = {}
-let wiki_2.index = 'Nguyen - index - 2015'
-let wiki_2.path = '~/Dropbox/Papers/'
-let wiki_2.path_html = '~/Dropbox/Papers/'
-" let wiki_2.ext = '.wiki'
-let wiki_2.auto_export = 0
-let wiki_2.template_path = '~/Dropbox/wiki_assets/'
-let wiki_2.template_default = 'template'
-let wiki_2.nested_syntaxes = {'python': 'python', 'c++': 'cpp', 'c': 'cpp', 'css': 'css', 'js': 'javascript', 'javascript': 'javascript', 'html': 'html', 'matlab': 'matlab'}
-
-let g:vimwiki_list = [wiki_1, wiki_2]
+let g:vimwiki_list = [wiki_1]
 
 " Remap find previous link on current page
 map <leader>wb :VimwikiAll2HTML<CR><CR>
@@ -647,6 +640,15 @@ let g:slime_python_ipython = 1
 " Termdebug
 let g:termdebug_wide = 1
 au TermOpen * setlocal nonumber norelativenumber
+
+" Table mode
+let g:table_mode_corner_corner = '+'
+let g:table_mode_header_fillchar = '='
+" Needed ~/.config/nvim/after/ftplug/pandoc.vim to fix issue #142
+
+" Pandoc
+nnoremap <localleader>c :Pandoc #article<CR>
+autocmd Filetype pandoc setlocal nospell
 
 " Use mouse in terminal vim
 set mouse=a

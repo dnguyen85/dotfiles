@@ -34,11 +34,13 @@
 [difftool]
         prompt = false
 [diff]
-	tool = vimdiff
+	tool = nvimdiff
+[difftool "nvimdiff"]
+    cmd = "nvim-qt -- -d \"$LOCAL\" \"$REMOTE\""
 [merge]
 	tool = splice
 [mergetool "splice"]
-    cmd = "vim -f $BASE $LOCAL $REMOTE $MERGED --cmd 'let nominibuf=1' -c 'SpliceInit'"
+    cmd = "nvim-qt -- -f $BASE $LOCAL $REMOTE $MERGED --cmd 'let nominibuf=1' -c 'SpliceInit'"
     trustExitCode = true
 [help]
         autocorrect = 1
