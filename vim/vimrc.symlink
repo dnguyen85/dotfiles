@@ -51,10 +51,10 @@ Plug 'dnguyen85/vim-indent-guides', { 'for': 'python' }
 Plug 'jeetsukumaran/vim-indentwise'
 Plug 'vimoutliner/vimoutliner'
 Plug 'juneedahamed/vc.vim'
-Plug 'ncm2/float-preview.nvim'
+" Plug 'ncm2/float-preview.nvim'
 Plug 'othree/xml.vim'
 " Plug 'Konfekt/FastFold'
-Plug 'https://github.qualcomm.com/kting/vim-perforce'
+" Plug 'https://github.qualcomm.com/kting/vim-perforce'
 Plug 'mhinz/vim-signify'
 Plug 'kshenoy/vim-origami'               " To manage folds
 " Plug 'puremourning/vimspector', { 'for': 'python' }
@@ -75,7 +75,7 @@ if has("mac")
 elseif has("win32")
     let g:python3_host_prog = 'C:\Python38\python.exe'
 else
-    let g:python3_host_prog = '~/python_envs/3.8.3/bin/python3'
+    let g:python3_host_prog = '~/python_envs/3.8.2/bin/python3'
 endif
 
 " Escape insert mode
@@ -293,6 +293,7 @@ let g:C_Ctrl_j='off'
 nnoremap <C-j>     <C-W>j
 nnoremap <C-k>     <C-W>k
 nnoremap <BS>     <C-W>h
+nnoremap <C-h>     <C-W>h
 nnoremap <C-l>     <C-W>l
 
 " Show the stack of syntax hilighting classes affecting whatever is under the
@@ -713,4 +714,3 @@ let g:vimspector_install_gadgets = ['debugpy', 'vscode-cpptools']
 
 " Use mouse in terminal vim
 set mouse=a
-
