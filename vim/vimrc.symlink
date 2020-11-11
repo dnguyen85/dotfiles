@@ -44,19 +44,19 @@ Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.s
 Plug 'Shougo/neco-syntax'               " For syntax completion
 Plug 'Shougo/neoinclude.vim'            " For include completion
 Plug 'Shougo/neosnippet.vim'
-Plug 'sjl/splice.vim'                   " For git merge 
 Plug 'sk1418/QFGrep'
 Plug 'honza/vim-snippets'
 Plug 'dnguyen85/vim-indent-guides', { 'for': 'python' }
 Plug 'jeetsukumaran/vim-indentwise'
 Plug 'vimoutliner/vimoutliner'
 Plug 'juneedahamed/vc.vim'
-Plug 'ncm2/float-preview.nvim'
+" Plug 'ncm2/float-preview.nvim'
 Plug 'othree/xml.vim'
 " Plug 'Konfekt/FastFold'
 Plug 'https://github.qualcomm.com/kting/vim-perforce'
 Plug 'mhinz/vim-signify'
 Plug 'kshenoy/vim-origami'               " To manage folds
+Plug 'romainl/vim-cool'                  " Stop search highlight after searching
 " Plug 'puremourning/vimspector', { 'for': 'python' }
 " Plug 'dense-analysis/ale'
 
@@ -104,7 +104,7 @@ call togglebg#map("")
 " nnoremap <silent><esc> :let @/=""<return><esc>
 
 " Clear highlighting on escape in normal mode (option 2)
-nnoremap <silent> <esc> :noh<return><esc>
+" nnoremap <silent> <esc> :noh<return><esc>
 " Needed to make terminal vim work ok when remapping Esc
 " nnoremap <esc>^[ <esc>^[ 
 
@@ -457,7 +457,7 @@ else
     let s:denite_options = {'default' : {
     \ 'prompt': 'λ ',
     \ 'highlight_matched_char': 'Todo',
-    \ 'highlight_matched_range': 'SpellBad',
+    \ 'highlight_matched_range': 'SpellBad'
     \ }}
 endif
 

@@ -1,10 +1,12 @@
 " Debug helpers
 " set breakpoint at the current line
-nnoremap <buffer> <leader>bs :call SetBreakpoint()<CR>:let @m = "dbstop at " . line('.') . " in " . expand('%')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <leader>b :call SetBreakpoint()<CR>:let @m = "dbstop at " . line('.') . " in " . expand('%')<CR>:SlimeSend1 <C-r>m<CR>
+" status
+nnoremap <buffer> <leader>s :let @m = "dbstatus"<CR>:SlimeSend1 <C-r>m<CR>
 " step next
 nnoremap <buffer> <Space> :let @m = "dbstep"<CR>:SlimeSend1 <C-r>m<CR>
 " Print stack
-nnoremap <buffer> <leader>ss :let @m = "dbstack"<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <leader>w :let @m = "dbstack"<CR>:SlimeSend1 <C-r>m<CR>
 " Go down
 nnoremap <buffer> <leader>sd :let @m = "dbdown"<CR>:SlimeSend1 <C-r>m<CR>
 " Go up
@@ -20,8 +22,8 @@ nnoremap <buffer> <leader>bc :call RemoveAllBreakpoints()<CR>:let @m = "dbclear 
 " continue until next breakpoint or end of program
 nnoremap <buffer> <leader>r :let @m = "dbcont"<CR>:SlimeSend1 <C-r>m<CR>
 " put me in debug mode if there is an error or warning
-nnoremap <buffer> <leader>e :let @m = "dbstop if error"<CR>:SlimeSend1 <C-r>m<CR>
-nnoremap <buffer> <leader>w :let @m = "dbstop if warning"<CR>:SlimeSend1 <C-r>m<CR>
+" nnoremap <buffer> <leader>e :let @m = "dbstop if error"<CR>:SlimeSend1 <C-r>m<CR>
+" nnoremap <buffer> <leader>w :let @m = "dbstop if warning"<CR>:SlimeSend1 <C-r>m<CR>
 " exit debug mode without removing breakpoints
 nnoremap <buffer> <leader>k :let @m = "dbquit"<CR>:SlimeSend1 <C-r>m<CR>
 " quit debugging mode and remove all breakpoints
@@ -35,7 +37,8 @@ nnoremap <buffer> <leader>mK :let @m = "edit " . expand('%:r')<CR>:SlimeSend1 <C
 " Show workspace
 nnoremap <buffer> <leader>mb :let @m = "workspace"<CR>:SlimeSend1 <C-r>m<CR>
 " Open current variable under cursor in GUI variable viewer
-nnoremap <buffer> K :let @m = "openvar('" . expand('<cword>') . "')"<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> K :let @m = expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <M-k> :let @m = "openvar('" . expand('<cword>') . "')"<CR>:SlimeSend1 <C-r>m<CR>
 nnoremap <buffer> <leader>mO :let @m = "openvar('" . expand('<cWORD>') . "')"<CR>:SlimeSend1 <C-r>m<CR>
 vnoremap <buffer> <leader>mo "my:let @m = "openvar('<C-R>m')"<CR>:SlimeSend1 <C-r>m<CR>
 " See types of variable
