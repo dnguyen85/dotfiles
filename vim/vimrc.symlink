@@ -75,7 +75,7 @@ if has("mac")
 elseif has("win32")
     let g:python3_host_prog = 'C:\Python38\python.exe'
 else
-    let g:python3_host_prog = '~/python_envs/3.8.2/bin/python3'
+    let g:python3_host_prog = '~/python_envs/3.8.3/bin/python3'
 endif
 
 " Escape insert mode
