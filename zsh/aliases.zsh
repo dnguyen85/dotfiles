@@ -36,3 +36,8 @@ alias boringdiff='svn diff --diff-cmd=/usr/bin/diff'
 export MATLAB_VER='2018b'
 alias matlab_cli='/pkg/qcaetools/syseng/bin/Matlab -qc_ver $MATLAB_VER -nodesktop -nosplash'
 alias matlab_sub='bsub -Is -q interactive -R "select[sles12 && type=LINUX64 && mem>8000] rusage[mem=8000]" /pkg/qcaetools/syseng/bin/Matlab -qc_ver $MATLAB_VER -nodesktop -nosplash'
+
+timezsh() {
+  shell=${1-$SHELL}
+  for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
+}

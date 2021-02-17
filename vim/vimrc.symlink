@@ -547,7 +547,7 @@ xmap <C-k>     <Plug>(neosnippet_expand_target)
 
 " FAQ for auto-complete w/ function parameters from clang-complete
 let g:neosnippet#enable_completed_snippet = 1
-let g:neosnippet#enable_complete_done = 1
+" let g:neosnippet#enable_complete_done = 1          " Python issue with jedi 
 
 " For snippet_complete marker.
 " if has('conceal')
@@ -632,6 +632,12 @@ nnoremap <leader>8 :Ack!"\b<cword>\b" %<CR>
 
 " Jedi-vim
 " let g:jedi#use_splits_not_buffers = "top"
+
+" disable automatic configuration, specifically to stop the pydocs split which
+" causes the cursor to jump around (!)
+" https://github.com/davidhalter/jedi-vim/issues/43
+let g:jedi#auto_vim_configuration = 0
+set completeopt=menuone,longest
 
 "## diffchar plugin - new plugin
 let g:DiffPairVisible=2
