@@ -52,7 +52,7 @@ set -g mouse on
 # Copy mode
 setw -g mode-keys vi
 bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
-bind-key -T copy-mode-vi 'y' send-keys -X copy-pipe "xclip -i -sel p -f | xclip -i -sel c" \; display-message "copied to system clipboard" \; send-keys -X cancel
+bind-key -T copy-mode-vi 'y' send-keys -X copy-pipe-and-cancel "xclip -i -sel c" \; display-message "copied to system clipboard" 
 bind-key -T copy-mode-vi 'r' send-keys -X rectangle-toggle
 bind-key -T copy-mode-vi 'B' send-keys -X page-up
 bind-key -T copy-mode-vi 'F' send-keys -X page-down
