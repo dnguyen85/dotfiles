@@ -52,7 +52,7 @@ Plug 'dnguyen85/vim-indent-guides', { 'for': 'python' }
 Plug 'jeetsukumaran/vim-indentwise'
 Plug 'vimoutliner/vimoutliner'
 Plug 'juneedahamed/vc.vim'
-Plug 'ncm2/float-preview.nvim'
+Plug 'JulioJu/neovim-qt-colors-solarized-truecolor-only'
 Plug 'othree/xml.vim'
 Plug 'Konfekt/FastFold'
 
@@ -91,16 +91,16 @@ set ignorecase
 set smartcase
 
 " Colorscheme
-set background=light
+set background=dark
 colorscheme solarized
 call togglebg#map("")
 
 
 " Clear highlighting on escape in normal mode (Option 1)
-" nnoremap <silent><esc> :let @/=""<return><esc>
+nnoremap <silent><esc> :let @/=""<return><esc>
 
 " Clear highlighting on escape in normal mode (option 2)
-nnoremap <silent> <esc> :noh<return><esc>
+" nnoremap <silent> <esc> :noh<return><esc>
 " Needed to make terminal vim work ok when remapping Esc
 " nnoremap <esc>^[ <esc>^[ 
 
@@ -559,9 +559,9 @@ let g:neosnippet#enable_completed_snippet = 1
 let g:neosnippet#enable_complete_done = 1
 
 " For snippet_complete marker.
-if has('conceal')
-  set conceallevel=2 concealcursor=niv
-endif
+" if has('conceal')
+  " set conceallevel=2 concealcursor=niv
+" endif
 
 " Use Honza's snippets
 let g:neosnippet#enable_snipmate_compatibility = 1
