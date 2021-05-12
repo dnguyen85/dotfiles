@@ -38,14 +38,12 @@ Plug 'dnguyen85/vim-colors-solarized'
 Plug 'vim-scripts/EnhCommentify.vim'
 Plug 'Shougo/denite.nvim', {'do': ':UpdateRemotePlugins'}
 Plug 'tpope/vim-dispatch'
-Plug 'joonty/vdebug', { 'for': ['python'] }
 Plug 'wincent/loupe'
 Plug 'mileszs/ack.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 Plug 'Shougo/neco-syntax'               " For syntax completion
 Plug 'Shougo/neoinclude.vim'            " For include completion
 Plug 'Shougo/neosnippet.vim'
-Plug 'sjl/splice.vim'                   " For git merge 
 Plug 'sk1418/QFGrep'
 Plug 'honza/vim-snippets'
 Plug 'dnguyen85/vim-indent-guides', { 'for': 'python' }
@@ -54,7 +52,13 @@ Plug 'vimoutliner/vimoutliner'
 Plug 'juneedahamed/vc.vim'
 Plug 'JulioJu/neovim-qt-colors-solarized-truecolor-only'
 Plug 'othree/xml.vim'
-Plug 'Konfekt/FastFold'
+" Plug 'Konfekt/FastFold'
+" Plug 'https://github.qualcomm.com/kting/vim-perforce'
+Plug 'mhinz/vim-signify'
+Plug 'kshenoy/vim-origami'               " To manage folds
+Plug 'romainl/vim-cool'                  " Stop search highlight after searching
+" Plug 'puremourning/vimspector', { 'for': 'python' }
+" Plug 'dense-analysis/ale'
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -71,7 +75,7 @@ if has("mac")
 elseif has("win32")
     let g:python3_host_prog = 'C:\Python38\python.exe'
 else
-    let g:python3_host_prog = '~/python_envs/3.6.4/bin/python3'
+    let g:python3_host_prog = '~/python_envs/3.8.3/bin/python3'
 endif
 
 " Escape insert mode
@@ -107,12 +111,6 @@ nnoremap <silent><esc> :let @/=""<return><esc>
 " Matchit is a plugin for vim, but is built-in for neovim - activate it
 runtime macros/matchit.vim
 
-" Disable smartindent in python file. Don't need the auto indenting after '{'
-au! FileType python setl nosmartindent 
-
-" Python set tab attributes
-autocmd Filetype python setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
-
 " Space to toggle folds
 nnoremap <silent> <Space> @=(foldlevel('.')?'za':'l')<CR>
 
@@ -139,34 +137,26 @@ set textwidth=80
 set wrap
 
 " Syntax highlight tabs as error
-au BufRead,BufNewFile * syn match TAB_CHAR "\t"
+" au BufRead,BufNewFile * syn match TAB_CHAR "\t"
 
 " Spell checking
 set spelllang=en_us
 autocmd FileType gitcommit,pandoc,markdown,mail setlocal spell
 
 "## Diffmode settings using 'au FilterWritePre * if &diff'
-
-" Set wrap automatically in vimdiff
-if &diff 
-    setlocal wrap< 
-    set diffopt=filler,context:1000,iwhite
-endif
-
-" When in diffmode suppress annoying auto-folding (filler,context:1000) and don't check for white space differences
-" au FilterWritePre * if &diff | exe 'set diffopt=filler,context:1000,iwhite' | exe 'execute "normal \<c-w>\<c-w>"' | endif # Buggy 
-autocmd FilterWritePre * if &diff | set wrap< | endif 
-autocmd FilterWritePre * if &diff | exe 'set diffopt=filler,context:1000,iwhite' | endif 
-
-"## End Diffmode settings
+set diffopt=filler,context:1000,iwhite
 
 " NERD Tree plugin
-map <F12> :NERDTreeToggle<CR>
+nnoremap <F12> :NERDTreeToggle<CR>
 
 "" Folding
 nnoremap zk zk[z
 " Open file at highest foldlevel
 autocmd BufWinEnter *.py,*.m,*.md,*.otl let &foldlevel = max(map(range(1, line('$')), 'foldlevel(v:val)'))
+
+" Vim origami
+let g:OrigamiSeparateLevels = 1
+
 
 " Run Make with F5/F6
 nnoremap <localleader>M :Make<CR>               " Wrapper to call Make
@@ -302,6 +292,7 @@ let g:BASH_Ctrl_j='off'
 let g:C_Ctrl_j='off'
 nnoremap <C-j>     <C-W>j
 nnoremap <C-k>     <C-W>k
+nnoremap <BS>     <C-W>h
 nnoremap <C-h>     <C-W>h
 nnoremap <C-l>     <C-W>l
 
@@ -391,7 +382,7 @@ function! s:denite_my_settings() abort
     nnoremap <silent><buffer><expr> <C-s>
         \ denite#do_map('do_action', 'split')
     nnoremap <silent><buffer><expr> <C-t>
-        \ denite#do_map('do_action', 'tabopen')
+        \ denite#do_map('do_action', 'tabswitch')
     nnoremap <silent><buffer><expr> p
         \ denite#do_map('do_action', 'preview')
     nnoremap <silent><buffer><expr> q
@@ -467,7 +458,7 @@ else
     let s:denite_options = {'default' : {
     \ 'prompt': 'λ ',
     \ 'highlight_matched_char': 'Todo',
-    \ 'highlight_matched_range': 'SpellBad',
+    \ 'highlight_matched_range': 'SpellBad'
     \ }}
 endif
 
@@ -490,8 +481,8 @@ endtry
 nnoremap <C-p> :Denite file/rec/git -start-filter<CR>  
 nnoremap <C-t> :Denite file/rec -start-filter<CR>  
 nnoremap <leader>db :Denite buffer<CR>
-nnoremap <leader>d8 :DeniteCursorWord grep:.<CR>
-nnoremap <leader>d* :DeniteCursorWord grep:<C-r>%:'--column'<CR>
+nnoremap <leader>d* :DeniteCursorWord grep:.<CR>
+nnoremap <leader>d8 :DeniteCursorWord grep:<C-r>%:'--column'<CR>
 nnoremap <leader>d/ :Denite grep:.<CR>
 nnoremap <leader>d. :Denite -start-filter grep:::!<CR>
 nnoremap <leader>d> :Denite -start-filter grep:<C-r>%:'--column':!<CR> 
@@ -556,7 +547,7 @@ xmap <C-k>     <Plug>(neosnippet_expand_target)
 
 " FAQ for auto-complete w/ function parameters from clang-complete
 let g:neosnippet#enable_completed_snippet = 1
-let g:neosnippet#enable_complete_done = 1
+" let g:neosnippet#enable_complete_done = 1          " Python issue with jedi 
 
 " For snippet_complete marker.
 " if has('conceal')
@@ -619,8 +610,34 @@ nnoremap <leader>lru :call LanguageClient#textDocument_rename(
 
 " Ack.vim
 let g:ackprg = 'ag --vimgrep --column'
-nnoremap <leader>8 :Ack!"\b<cword>\b" <CR>
-nnoremap <leader>* :Ack!"\b<cword>\b" %<CR>
+let g:ack_mappings = {
+      \ "h": "",
+      \ "H": "",
+      \ "t": "",
+      \ "s": "",
+      \ "S": "",
+      \ "v": "",
+      \ "V": "",
+      \ "<C-t>": "<C-W><CR><C-W>T",          
+      \ "T": "<C-W><CR><C-W>TgT<C-W>j",        
+      \ "o": "<CR>",
+      \ "O": "<CR><C-W><C-W>:ccl<CR>",
+      \ "go": "<CR><C-W>j",
+      \ "<C-s>": "<C-W><CR><C-W>K",
+      \ "gs": "<C-W><CR><C-W>K<C-W>b",
+      \ "<C-v>": "<C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t",
+      \ "gv": "<C-W><CR><C-W>H<C-W>b<C-W>J" }
+nnoremap <leader>* :Ack!"\b<cword>\b" <CR>
+nnoremap <leader>8 :Ack!"\b<cword>\b" %<CR>
+
+" Jedi-vim
+" let g:jedi#use_splits_not_buffers = "top"
+
+" disable automatic configuration, specifically to stop the pydocs split which
+" causes the cursor to jump around (!)
+" https://github.com/davidhalter/jedi-vim/issues/43
+let g:jedi#auto_vim_configuration = 0
+set completeopt=menuone,longest
 
 "## diffchar plugin - new plugin
 let g:DiffPairVisible=2
@@ -642,6 +659,64 @@ let g:slime_python_ipython = 1
 let g:termdebug_wide = 1
 au TermOpen * setlocal nonumber norelativenumber
 
+" Vim-signify
+let g:signify_disable_by_default = 1        " Disable signify by default
+
+" set the sign to be placed on the sign column for debugging {{{2
+function! SetBreakpoint()
+    " set the breakpoint character and set the breakpoint
+    exe ':sign define mybreakpoint text=◉'
+    let s:breakpointplaceline = line('.')
+    exe ":sign place" s:breakpointplaceline " line=" . s:breakpointplaceline . " name=mybreakpoint file=" . expand('%:p')
+endfunction
+
+" Set the breakpoint {{{2
+function! SetBreakIndicator()
+    " set the breakpoint character and indicate the breakpoint
+    exe ':sign define mybreakindicator text=➤'
+    let s:breakpointplaceline = line('.')
+    exe ":sign place" s:breakpointplaceline " line=" . s:breakpointplaceline . " name=mybreakindicator file=" . expand('%:p')
+endfunction
+nnoremap <> :call SetBreakIndicator()<CR>           
+
+" Unset the breakpoint {{{2
+function! UnsetBreakpoint()
+    " remove the breakpoint character
+    let s:breakpointplaceline = line('.')
+    exe ":sign unplace" s:breakpointplaceline
+    if exists(':SignifyRefresh')
+        SignifyRefresh
+        redraw!
+        " SignifyEnable
+    endif
+endfunction
+nnoremap >< :call UnsetBreakpoint()<CR>
+
+" Remove all breakpoints {{{2
+function! RemoveAllBreakpoints()
+    " remove all breakpoints
+    exe ":sign unplace *"
+    if exists(':SignifyRefresh')
+        SignifyRefresh
+        redraw!
+        " SignifyEnable
+    endif
+endfunction
+
+" Vimspector
+let g:vimspector_enable_mappings = ''
+let g:vimspector_install_gadgets = ['debugpy', 'vscode-cpptools']
+
+""" ALE configurations
+" Set virtual environment to search for python execs
+" let g:ale_python_flake8_executable = '/usr2/danhnguy/python_envs/3.7.6/bin/flake8'
+" let g:ale_python_flake8_use_global = 1  " No need to search for flake8, just use the above executable 
+" let g:ale_python_flake8_options = "--ignore=E501,E226"  " Ignore max-line-length check
+" let g:ale_python_pylint_executable = '/usr2/danhnguy/python_envs/3.7.6/bin/pylint'
+" let g:ale_python_pylint_use_global = 1  " No need to search for flake8, just use the above executable 
+
+" Ignore pylint linter for now
+" let g:ale_linters_ignore = {'python': ['pylint']}
+
 " Use mouse in terminal vim
 set mouse=a
-

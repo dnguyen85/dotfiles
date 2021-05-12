@@ -1,3 +1,5 @@
 export WORKON_HOME=~/python_envs
-export PYTHONPATH=~/.dotfiles/python:~/.software/komodo-python-dbgp/pythonlib
-source /usr/local/bin/virtualenvwrapper_lazy.sh
+export PYTHONPATH=~/.dotfiles/python:~/.software/komodo-python-dbgp/pythonlib:$PYTHONPATH
+#  export PATH=~/python_envs/3.8.3/bin:$PATH
+
+# extra configs set in .localrc

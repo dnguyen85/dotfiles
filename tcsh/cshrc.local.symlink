@@ -1,0 +1,120 @@
+# Colors!
+set     red="%{\033[0;31m%}"
+set   green="%{\033[0;32m%}"
+set  yellow="%{\033[1;33m%}"
+set    blue="%{\033[1;34m%}"
+set magenta="%{\033[1;35m%}"
+set    cyan="%{\033[1;36m%}"
+set   white="%{\033[0;37m%}"
+set     end="%{\033[0m%}" # This is needed at the end... :(
+
+# set prompt="${green}%n${blue}@%m ${white}%~ ${green}%%${end} "
+# set prompt="[${green}%n${blue}@%m ${white}%~ ]${end} "
+
+set prompt="\n%B%m%b:${green}%c5${end}%B ~> %b"
+
+if ( $?CLEARCASE_ROOT ) then
+  set prompt = "\n${red}[`basename $CLEARCASE_ROOT`]${end} $prompt"
+endif
+
+# Clean up after ourselves...
+unset red green yellow blue magenta cyan yellow white end
+
+# nodejs
+setenv NPM_PACKAGES ~/.npm-packages
+
+# Override system path
+set path = (~/.local/bin $NPM_PACKAGES/bin /pkg/qct/software/gnu64/gcc/7.2.0/bin ~/.local/clang/10.0.0/bin /pkg/qct/software/nodejs/v12.14.0/bin ~/mtsg/software/gdb_8.3/bin ~/mtsg/denali_csim/run/regression/tx_tv_denali $path)
+setenv LD_LIBRARY_PATH ~/.local/lib:/pkg/qct/software/gnu/gcc/7.2.0/lib64:/pkg/qct/software/pcre/10.22/lib
+unsetenv TMPDIR
+setenv PYTHONPATH /pkg/qct/software/qnetools/local/anaconda3/local_packages
+# setenv TMPDIR /prj/qct/mtsg/sandiego/projects/denali/nr/visitors/danhnguy
+
+# python3 packages used by vim8
+setenv PATH ~/python_envs/local/bin:$PATH
+
+#dircolors
+source ~/.dotfiles/dircolors/coreutils-dircolors.csh
+
+# Disable C-q for vim use
+# stty start undef
+
+# Disable C-s hanging terminal
+# stty -ixon
+# stty erase 
+
+# Backspace char
+umask 007
+
+
+# Completion and history search
+source ~/.complete
+bindkey -k down history-search-forward
+bindkey -k up history-search-backward
+
+# Aliases
+alias hist "history | grep $1"
+alias tmux "tmux -u"
+alias la 'ls -al'
+alias lh 'ls -hl'
+# alias gvim "gvim 2>/dev/null"
+# alias eclipse "eclipse 2>/dev/null"
+alias nau "nautilus ."
+alias gitl "git log-graph"
+alias gs "git status"
+alias gc "git commit"
+alias ga "git add"
+# alias dirdiff "gvim --cmd 'let nodiffchar=1'"
+
+alias ninjasub 'bsub -q priority -Is -n 4 -W60 -R "select[type==LINUX64 && mem>8000] rusage[mem=4000] span[hosts=1]" ninja'
+alias rdmsub 'bsub -q priority -Is -n 4 -W60 -R "select[type==LINUX64 && mem>8000] rusage[mem=4000] span[hosts=1]" rdm'
+alias sles12sub 'bsub -q priority -Is -R "select[sles12 && mem>4000] rusage[mem=4000] span[hosts=1]"'
+
+# Project tags - Denali
+setenv DRM_PROJECT `/pkg/icetools/bin/ptagger -f 18234 -t 03 -g mtsg -1 csim`
+setenv LSF_JOB_TAG `/pkg/icetools/bin/ptagger -f 18234 -t 03 -g mtsg -1 csim`
+
+# Eclipse IDE
+setenv ECLIPSE_VERSION 4.6.2
+alias Eclipse      '( bsub -Is -q interactive -R "select[type==LINUX64 && mem>8000] rusage[mem=4000]" /pkg/qct/software/eclipse-neon/4.6.2/eclipse/eclipse \!* ; )'
+alias Heclipse '( bsub -Ip -q interactive -R "select[type==LINUX64 && mem>60000] rusage[mem=60000]" ~/.local/bin/eclipse -vmargs -Xms30G -Xmx40G \!* ;)'
+alias tmuxsub 'bsub -Is -q interactive -W43200 -n16 -R "select[sles12 && type==LINUX64 && mem>64000] rusage[mem=64000] span[hosts=1]" mux'
+alias tmuxsub8 'bsub -Is -q interactive -W43200 -n8 -R "select[sles12 && type==LINUX64 && mem>32000] rusage[mem=32000] span[hosts=1]" mux'
+alias isub 'bsub -Is -q interactive -R "select[sles12 && mem>16000] rusage[mem=16000] span[hosts=1]"'
+
+# Clearcase
+alias ctdiffco "cleartool lsco -rec -me -cview -fmt '%n\n' | xargs -n 1 ctdiff"
+
+# Java
+setenv JAVA_HOME '/usr2/danhnguy/jdk'
+setenv JDK_HOME '/usr2/danhnguy/jdk'
+set path = ($JAVA_HOME/bin $path)
+
+# svn and bcompare
+set path = (/pkg/qct/software/bc4/4.1.3/bin /pkg/qct/software/gnu/subversion/1.8.13/bin $path)
+
+alias build_tools '\
+            limit vmemoryuse unlimited \
+            setenv PATH /pkg/qct/software/valgrind/3.9.0/bin:$PATH \
+            setenv PATH /pkg/qct/software/gnu/gdb/7.12/bin:$PATH \
+            setenv PATH /pkg/qct/software/gnu64/binutils/2.25/bin:$PATH \
+            setenv PATH /pkg/qct/software/cmake/3.8.2/bin:$PATH \
+            setenv PATH /pkg/qct/software/ninja/1.8.2:$PATH \
+            setenv PATH /pkg/qct/software/gnu/xz-utils/5.0.5/bin:$PATH \
+            setenv PATH /pkg/qct/software/gnu64/gcc/7.2.0/bin:$PATH \
+            setenv PATH /pkg/qct/software/gnu64/clangd/10.3/bin/:$PATH \
+            setenv LD_LIBRARY_PATH /afs/localcell/cm/GV2/sysname/pkg.@sys/qct/software/gnu/gcc/7.2.0/lib64:/pkg/qct/software/gnu/ncurses/5.9.20110404/lib:$LD_LIBRARY_PATH \
+            setenv PKG_CONFIG_PATH /pkg/qct/software/pcre/10.22/lib/pkgconfig:/pkg/qct/software/gnu/xz-utils/5.0.5/lib/pkgconfig:/pkg/qct/software/gnu/libxml2/2.9.1/lib/pkgconfig:/pkg/qct/software/gnu/libxslt/1.1.28/lib/pkgconfig \
+            setenv CC /pkg/qct/software/gnu64/gcc/7.2.0/bin/gcc \
+            setenv CXX /pkg/qct/software/gnu64/gcc/7.2.0/bin/g++ \
+            setenv ACLOCAL_PATH /usr/share/aclocal \
+            set path = (/afs/localcell/cm/GV2/sysname/pkg.@sys/qct/software/gnu/autoconf/2.69/bin /pkg/qct/software/gnu/libtool/2.4.2/bin /pkg/qct/software/gnu/pkg-config/0.23/bin /pkg/qct/software/gnu/autoconf/2.69/bin /pkg/qct/software/gnu/automake/1.15/bin /pkg/qct/software/gnu/ncurses/5.9.20110404/bin $path)'
+
+alias py364 'source ~/python_envs/3.6.4/bin/activate.csh'
+alias py3local 'source ~/python_envs/local/bin/activate.csh'
+setenv RANGER_LOAD_DEFAULT_RF FALSE
+alias ra "ranger --confdir=/usr2/danhnguy/.ranger"
+
+# svn
+alias boringdiff 'svn diff --diff-cmd=/usr/bin/diff'
+
