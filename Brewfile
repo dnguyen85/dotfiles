@@ -24,6 +24,7 @@ brew 'fzf'
 brew 'ranger'
 brew 'cmake'
 brew 'tmux-mem-cpu-load'
+brew 'trash'
 
 cask 'java'
 cask 'google-chrome'

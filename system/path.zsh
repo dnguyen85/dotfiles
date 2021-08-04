@@ -1,7 +1,9 @@
 if [[ "$OSX" == "1" ]]
 then
+    # Local
+    export PATH="/usr/local/bin:$PATH"
     # coreutils
-    export PATH="/usr/local/opt/coreutils/libexec/gnubin:$DOTFILES/bin:$PATH"
+    export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
     export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
     # find
     export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"

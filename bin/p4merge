@@ -1,0 +1,8 @@
+#!/bin/bash
+
+BASE="$1"
+THEIRS="$2"
+YOURS="$3"
+MERGED="$4"
+
+vim -f $BASE $YOURS $THEIRS $MERGED -c 'SpliceInit'

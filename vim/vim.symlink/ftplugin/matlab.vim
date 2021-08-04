@@ -1,29 +1,33 @@
-setlocal foldcolumn=2
-
 " Debug helpers
 " set breakpoint at the current line
-nnoremap <buffer> <leader>db :call SetBreakpoint()<CR>:let @m = "dbstop at " . line('.') . " in " . expand('%')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <leader>b :call SetBreakpoint()<CR>:let @m = "dbstop at " . line('.') . " in " . expand('%')<CR>:SlimeSend1 <C-r>m<CR>
+" status
+nnoremap <buffer> <leader>s :let @m = "dbstatus"<CR>:SlimeSend1 <C-r>m<CR>
 " step next
-nnoremap <buffer> <leader>ds :let @m = "dbstep"<CR>:SlimeSend1 <C-r>m<CR>
-" debugging status
-nnoremap <buffer> <leader>dl :let @m = "dbstatus"<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <Space> :let @m = "dbstep"<CR>:SlimeSend1 <C-r>m<CR>
+" Print stack
+nnoremap <buffer> <leader>w :let @m = "dbstack"<CR>:SlimeSend1 <C-r>m<CR>
+" Go down
+nnoremap <buffer> <leader>sd :let @m = "dbdown"<CR>:SlimeSend1 <C-r>m<CR>
+" Go up
+nnoremap <buffer> <leader>su :let @m = "dbup"<CR>:SlimeSend1 <C-r>m<CR>
 " step in
-nnoremap <buffer> <leader>di :let @m = "dbstep in"<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <C-Space> :let @m = "dbstep in"<CR>:SlimeSend1 <C-r>m<CR>
 " step out
-nnoremap <buffer> <leader>do :let @m = "dbstep out"<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <leader>f :let @m = "dbstep out"<CR>:SlimeSend1 <C-r>m<CR>
 " unset breakpoint at the current line
-nnoremap <buffer> <leader>du :call UnsetBreakpoint()<CR>:let @m = "dbclear at " . line('.') . " in " . expand('%')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <leader>bd :call UnsetBreakpoint()<CR>:let @m = "dbclear at " . line('.') . " in " . expand('%')<CR>:SlimeSend1 <C-r>m<CR>
 " delete all breakpoints
-nnoremap <buffer> <leader>da :call RemoveAllBreakpoints()<CR>:let @m = "dbclear all"<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <leader>bc :call RemoveAllBreakpoints()<CR>:let @m = "dbclear all"<CR>:SlimeSend1 <C-r>m<CR>
 " continue until next breakpoint or end of program
-nnoremap <buffer> <leader>dc :let @m = "dbcont"<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <leader>r :let @m = "dbcont"<CR>:SlimeSend1 <C-r>m<CR>
 " put me in debug mode if there is an error or warning
-nnoremap <buffer> <leader>de :let @m = "dbstop if error"<CR>:SlimeSend1 <C-r>m<CR>
-nnoremap <buffer> <leader>dw :let @m = "dbstop if warning"<CR>:SlimeSend1 <C-r>m<CR>
+" nnoremap <buffer> <leader>e :let @m = "dbstop if error"<CR>:SlimeSend1 <C-r>m<CR>
+" nnoremap <buffer> <leader>w :let @m = "dbstop if warning"<CR>:SlimeSend1 <C-r>m<CR>
 " exit debug mode without removing breakpoints
-nnoremap <buffer> <leader>dk :let @m = "dbquit"<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <leader>k :let @m = "dbquit"<CR>:SlimeSend1 <C-r>m<CR>
 " quit debugging mode and remove all breakpoints
-nnoremap <buffer> <leader>dq :call RemoveAllBreakpoints()<CR>:let @m = "dbclear all; dbquit"<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <leader>q :call RemoveAllBreakpoints()<CR>:let @m = "dbclear all; dbquit"<CR>:SlimeSend1 <C-r>m<CR>
 
 " Variable viewing
 " Open file under cursor in GUI
@@ -33,7 +37,8 @@ nnoremap <buffer> <leader>mK :let @m = "edit " . expand('%:r')<CR>:SlimeSend1 <C
 " Show workspace
 nnoremap <buffer> <leader>mb :let @m = "workspace"<CR>:SlimeSend1 <C-r>m<CR>
 " Open current variable under cursor in GUI variable viewer
-nnoremap <buffer> <leader>mo :let @m = "openvar('" . expand('<cword>') . "')"<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> K :let @m = expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <buffer> <M-k> :let @m = "openvar('" . expand('<cword>') . "')"<CR>:SlimeSend1 <C-r>m<CR>
 nnoremap <buffer> <leader>mO :let @m = "openvar('" . expand('<cWORD>') . "')"<CR>:SlimeSend1 <C-r>m<CR>
 vnoremap <buffer> <leader>mo "my:let @m = "openvar('<C-R>m')"<CR>:SlimeSend1 <C-r>m<CR>
 " See types of variable
