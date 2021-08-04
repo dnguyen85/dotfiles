@@ -44,8 +44,8 @@
     trustExitCode = true
 [help]
         autocorrect = 1
-[credential]
-	helper = cache --timeout=18000
+;  [credential]
+    ;  helper = cache --timeout=18000
 [push]
         # See `git help config` (search for push.default)
         # for more information on different options of the below setting.

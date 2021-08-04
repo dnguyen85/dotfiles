@@ -58,7 +58,9 @@ Plug 'othree/xml.vim'
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'dhruvasagar/vim-table-mode'
+Plug 'junegunn/limelight.vim'
 Plug 'JulioJu/neovim-qt-colors-solarized-truecolor-only'
+Plug 'vim-voom/voom'
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -305,6 +307,7 @@ endif
 
 "" Fugitive plugin
 cnoreabbrev Gs Gstatus
+cnoreabbrev Otl !C:\python27\python.exe -m otl2html -c -S otl_nnnnnn.css "%" > "%".html<CR>
 if has("autocmd")
     autocmd BufReadPost fugitive://* set bufhidden=delete
 endif
@@ -648,6 +651,8 @@ let g:table_mode_header_fillchar = '='
 
 " Pandoc
 nnoremap <localleader>c :Pandoc #article<CR>
+nnoremap <localleader>w :Pandoc #docx<CR>
+autocmd Filetype pandoc inoremap <leader>d <!----><CR>
 autocmd Filetype pandoc setlocal nospell
 
 " Use mouse in terminal vim
