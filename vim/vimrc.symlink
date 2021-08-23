@@ -57,6 +57,7 @@ Plug 'othree/xml.vim'
 Plug 'mhinz/vim-signify'
 Plug 'kshenoy/vim-origami'               " To manage folds
 Plug 'romainl/vim-cool'                  " Stop search highlight after searching
+Plug 'Glench/Vim-Jinja2-Syntax'          " Syntax 
 " Plug 'puremourning/vimspector', { 'for': 'python' }
 " Plug 'dense-analysis/ale'
 

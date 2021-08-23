@@ -1,4 +1,5 @@
 # shortcut to this dotfiles path is $ZSH
+#  zmodload zsh/prof
 export DOTFILES=$HOME/.dotfiles
 
 # Stash your environment variables in ~/.localrc. This means they'll stay out
@@ -21,11 +22,11 @@ else
     export OSX=
 fi
 
-# Run antigen first
-if [[ -a $DOTFILES/antigen/antigen.zsh ]]
-then
-    source $DOTFILES/antigen/antigen.zsh
-fi
+# Run antigen first if exist
+#  if [[ -a $DOTFILES/antigen/antigen.zsh ]]
+#  then
+    #  source $DOTFILES/antigen/antigen.zsh
+#  fi
 
 # all of our zsh files
 typeset -U config_files
@@ -43,19 +44,19 @@ do
   source $file
 done
 
-# initialize autocomplete here, otherwise functions won't be loaded
-autoload -U compinit
-compinit
+# initialize autocomplete here, otherwise functions won't be loaded. Done via oh-my-zsh
+#  autoload -U compinit
+#  compinit
 
 # load every completion after autocomplete loads
-for file in ${(M)config_files:#*/completion.zsh}
-do
-  source $file
-done
+#  for file in ${(M)config_files:#*/completion.zsh}
+#  do
+  #  source $file
+#  done
 
-unset config_files
+#  unset config_files
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+#  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 

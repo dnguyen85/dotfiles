@@ -1,5 +1,5 @@
 # Use zsh
-set-option -g default-shell /bin/zsh
+set-option -g default-shell /bin/tcsh
 set-option -sg escape-time 10           # for nvim
 set-option -sa terminal-overrides ',xterm-256color:RGB'
 set-option -g focus-events on
