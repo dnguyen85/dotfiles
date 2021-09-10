@@ -46,6 +46,10 @@ snippet pusch
     # UCI info
     ${31}
 
+snippet override
+    arfcn: ${1}     
+    arfcn_not_centered: ${2:true}
+
 snippet dft-s-ofdm
     precoding: ${1:true}   # True if DFT-s-OFDM. False if CP-OFDM
     n_rs_id: ${2}   # Determining group and sequence hopping for DFT-s-OFDM. If empty, will be set to cell_id
@@ -55,10 +59,11 @@ snippet uci_pusch
     num_csip1_bits: ${2:0} 
     num_csip2_bits: ${3:0} 
     num_ack_bits: ${4:0} 
-    beta_ack_idx: ${5:0}    # Chosen beta-offset index for ACK
-    beta_csip1_idx: ${6:0}  # Chosen beta-offset index for CSIp1
-    beta_csip2_idx: ${7:0}  # Chosen beta-offset index for CSIp2
-    alpha_idx: ${8:0}       # UCI alpha scaling index (not value)
+    beta_ack_idx: ${5:11}    # Chosen from set of 3 values for <= 2, 3..11, and >11 bits. When absent, assumed to be 11
+    beta_csip1_idx: ${6:13}  # Chosen from set of 2 values for <= 11 bits and > 11 bits. When absent, assumed to be 13
+    beta_csip2_idx: ${7:13}  # Chosen from set of 2 values for <= 11 bits and > 11 bits. When absent, assumed to be 13
+    alpha_idx: ${8:3}       # UCI alpha scaling index (not value 0: f0p5, 1: 0p65, 2: f0p8, 3: f1). When absent, assume f1
+    ${9}
 
 snippet sj
     # Sanjole config
