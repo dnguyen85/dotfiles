@@ -21,7 +21,6 @@ Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
 Plug 'jpalardy/vim-slime'
 Plug 'scrooloose/nerdtree'
-Plug 'dnguyen85/vimoutliner'
 Plug 'sjl/splice.vim'
 Plug 'rickhowe/diffchar.vim'
 Plug 'will133/vim-dirdiff'
@@ -61,6 +60,7 @@ Plug 'vim-voom/voom'
 Plug 'romainl/vim-cool'                  " Stop search highlight after searching
 Plug 'mhinz/vim-signify'
 Plug 'kshenoy/vim-origami'               " To manage folds
+Plug 'Ron89/thesaurus_query.vim'        
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -75,7 +75,7 @@ call plug#end()
 if has("mac")
     let g:python3_host_prog = '/usr/local/bin/python3'
 elseif has("win32")
-    let g:python3_host_prog = 'C:\Python38\python.exe'
+    let g:python3_host_prog = 'C:\Python39\python.exe'
 else
     let g:python3_host_prog = '~/python_envs/3.8.3/bin/python3'
 endif
@@ -100,6 +100,7 @@ set smartcase
 set background=dark
 colorscheme molokai
 call togglebg#map("")
+let g:solarized_nvimqt_underline = 0
 
 
 " Clear highlighting on escape in normal mode (Option 1)
@@ -234,7 +235,7 @@ let g:vimwiki_use_mouse = 1
 if has("mac")
     let g:vimwiki_browsers=['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome']
 elseif has("win32")
-    let g:vimwiki_browsers=['C:\Program Files\Mozilla Firefox\firefox.exe']
+    let g:vimwiki_browsers=['C:\Program Files\Google\Chrome\Application\chrome.exe']
 else
     let g:vimwiki_browsers=['google-chrome']
 endif
@@ -310,6 +311,8 @@ cnoreabbrev Otl !C:\python27\python.exe -m otl2html -c -S otl_nnnnnn.css "%" > "
 if has("autocmd")
     autocmd BufReadPost fugitive://* set bufhidden=delete
 endif
+
+let g:vo_fold_length = "max"
 
 " EnhancedCommentify plugin
 let g:EnhCommentifyRespectIndent = 'yes'

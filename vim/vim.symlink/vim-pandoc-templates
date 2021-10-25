@@ -1,3 +1,5 @@
-article|pdf --smart --number-sections --listings --latex-engine=pdflatex --template=pandoc_template.tex -F pandoc-crossref -F pandoc-citeproc 
-tex|latex -s --smart --number-sections --listings --latex-engine=pdflatex --template=pandoc_template.tex -F pandoc-crossref -F pandoc-citeproc 
-docx|docx -s --smart --number-sections -F pandoc-crossref -F pandoc-citeproc
+docx|docx --reference-doc=numbered-sections.docx -F pandoc-crossref -MlinkReferences
+landscape|pdf --number-sections -V geometry:"landscape,margin=0.2in"
+#docx|docx --reference-doc=numbered-sections.docx -F pandoc-crossref -MlinkReferences
+article|pdf --number-sections -V geometry:"margin=1in" -F pandoc-crossref
+sdd|docx --reference-doc=sdd_template_nodrm.docx -F pandoc-crossref -MlinkReferences
