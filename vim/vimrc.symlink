@@ -21,7 +21,7 @@ Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
 Plug 'jpalardy/vim-slime'
 Plug 'scrooloose/nerdtree'
-Plug 'dnguyen85/vimoutliner'
+" Plug 'dnguyen85/vimoutliner'
 Plug 'sjl/splice.vim'
 Plug 'rickhowe/diffchar.vim'
 Plug 'will133/vim-dirdiff'
@@ -33,7 +33,7 @@ Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
 Plug 'zchee/deoplete-jedi', { 'for': ['python'] }
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'jiangmiao/auto-pairs', { 'for': ['python', 'c', 'c++', 'matlab', 'vim'] }
+Plug 'jiangmiao/auto-pairs', { 'for': ['python', 'c', 'cpp', 'matlab', 'vim'] }
 Plug 'dnguyen85/vim-colors-solarized'
 Plug 'vim-scripts/EnhCommentify.vim'
 Plug 'Shougo/denite.nvim', {'do': ':UpdateRemotePlugins'}
@@ -98,7 +98,6 @@ set smartcase
 set background=dark
 colorscheme solarized
 call togglebg#map("")
-
 
 " Clear highlighting on escape in normal mode (Option 1)
 nnoremap <silent><esc> :let @/=""<return><esc>
@@ -314,6 +313,7 @@ endif
 
 "" Fugitive plugin
 cnoreabbrev Gs Gstatus
+cnoreabbrev Otl !python2 -m otl2html -c -S otl_nnnnnn.css "%" > "%".html<CR>
 if has("autocmd")
     autocmd BufReadPost fugitive://* set bufhidden=delete
 endif
@@ -479,7 +479,7 @@ endtry
 
 " Denite Mappings
 nnoremap <C-p> :Denite file/rec/git -start-filter<CR>  
-nnoremap <C-t> :Denite file/rec -start-filter<CR>  
+" nnoremap <C-t> :Denite file/rec -start-filter<CR>  
 nnoremap <leader>db :Denite buffer<CR>
 nnoremap <leader>d* :DeniteCursorWord grep:.<CR>
 nnoremap <leader>d8 :DeniteCursorWord grep:<C-r>%:'--column'<CR>
@@ -597,6 +597,13 @@ augroup LSP
   autocmd!
   autocmd FileType cpp,c call SetupCpp()
 augroup END
+
+" Python setup
+function SetupPython()
+    call deoplete#enable()
+endfunction()
+
+autocmd FileType python call SetupPython()
 
 " Rename - rc => rename camelCase
 nnoremap <leader>lrc :call LanguageClient#textDocument_rename(

@@ -3,6 +3,7 @@ set mouse=a
 
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 set background=dark
+let g:solarized_nvimqt_underline = 0
 colorscheme solarized_nvimqt
 GuiFont! DejaVu Sans Mono for PowerLine:h12
 
