@@ -325,7 +325,6 @@ def handlePreformattedText(linein, lineLevel):
         inBodyText = 2
     print ">" + semicolonStrip(linein.strip()),
 
-
 # isAlignRight
 # return flag
 # input: coldata, a string
@@ -549,12 +548,17 @@ def stripTitleText(line):
 # do some optional, simple beautification of the text in a line
 # input: line
 # output: modified line
-def beautifyLine(line):
+def beautifyLine(line, preformat=False):
     if (line.strip() == "-" * 40):
         return "<br><hr><br>"
 
     out = line
     line = ""
+
+    if preformat:
+        out = re.sub('>', '&gt;', out)
+        out = re.sub('<', '&lt;', out)
+        return out
 
     while (line != out):
         line = out
@@ -607,6 +611,8 @@ def processLine(linein):
     lineLevel = getLineLevel(linein)
     if (inBodyText != 2) and (lineLevel != linein.find(";") + 1):
         linein = beautifyLine(linein)
+    else:
+        linein = beautifyLine(linein, preformat=True)
     if ((hideComments == 0) or (lineLevel != linein.find("~") + 1)):
 
         if (lineLevel > level):  # increasing depth
