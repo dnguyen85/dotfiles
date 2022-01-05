@@ -21,6 +21,9 @@ then
     export PATH="/usr/local/opt/python/libexec/bin:$PATH"
     # Matlab
     export PATH="/Applications/MATLAB_R2020a.app/bin:$PATH"
+    # TexShop
+    export PATH="/Applications/Tex/TeXShop.app/Contents/MacOS:/Applications/Tex/BibDesk.app/Contents/MacOS:$PATH"
+
 else
     export PATH="./bin:/usr/local/bin:/usr/local/sbin:$HOME/.local/bin:$DOTFILES/bin:$PATH"
     export MANPATH="/usr/local/man:/usr/local/mysql/man:/usr/local/git/man:$MANPATH"
