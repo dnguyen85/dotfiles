@@ -1,5 +1,5 @@
 # Use zsh
-set-option -g default-shell /bin/tcsh
+set-option -g default-shell /bin/zsh
 set-option -sg escape-time 10           # for nvim
 set-option -sa terminal-overrides ',xterm-256color:RGB'
 set-option -g focus-events on
@@ -52,13 +52,13 @@ set -g mouse on
 # Copy mode
 setw -g mode-keys vi
 bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
-bind-key -T copy-mode-vi 'y' send-keys -X copy-pipe-and-cancel "pbcopy" \; display-message "copied to system clipboard" 
+bind-key -T copy-mode-vi 'y' send-keys -X copy-pipe-and-cancel "xclip -i -sel c" \; display-message "copied to system clipboard" 
 bind-key -T copy-mode-vi 'r' send-keys -X rectangle-toggle
 bind-key -T copy-mode-vi 'B' send-keys -X page-up
 bind-key -T copy-mode-vi 'F' send-keys -X page-down
 # Mouse drag in copy mode
 unbind -T copy-mode-vi MouseDragEnd1Pane
-bind -T copy-mode-vi MouseDown1Pane select-pane \; send-keys -X copy-pipe "pbcopy" \; display-message "copied to system clipboard" \; send-keys -X clear-selection
+bind -T copy-mode-vi MouseDown1Pane select-pane \; send-keys -X copy-pipe "xclip -i -sel p -f | xclip -i -sel c" \; display-message "copied to system clipboard" \; send-keys -X clear-selection
 
 # Navi mode
 bind h select-pane -L
