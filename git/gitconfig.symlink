@@ -19,6 +19,7 @@
         sum = !git log --pretty=format:'%C(yellow)%h %Cgreen%d %Creset%s' 
         d = difftool
         diff-orig = !git diff --no-ext-diff -w "$@" | vim -R -
+	dag = log --graph --format='format:%C(yellow)%h%C(reset) %C(blue)%an <%ae>%C(reset) %C(magenta)%cr%C(reset)%C(auto)%d%C(reset)%n%s' --date-order
 [color]
         diff = auto
         status = auto
@@ -51,3 +52,5 @@
         #
         # Setting to git 2.0 default to suppress warning message
         default = simple
+[pull]
+	rebase = false
