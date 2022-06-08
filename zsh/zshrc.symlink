@@ -11,8 +11,8 @@ then
 fi
 
 # Unset flow control
-stty start undef
-stty -ixon
+#  stty start undef
+#  stty -ixon
 
 # Detecting OS and set env variables
 if [[ "$(uname -s)" == "Darwin" ]]

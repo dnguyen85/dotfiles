@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [[ ! -d ~/.vim ]];
-then
-    git clone --recursive https://github.com/dnguyen85/vim ~/.vim
-fi
-
 if [[ ! -d ~/.config/nvim ]];
 then
     echo "Setting up nvim init file\n"
