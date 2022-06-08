@@ -126,3 +126,5 @@ xReset () {
 zpu () {
     export PATH=/usr/local/zpu-toolchain/bin:$PATH
 }
+
+export PATH=$PATH:/Users/danhhn/.toolbox/bin

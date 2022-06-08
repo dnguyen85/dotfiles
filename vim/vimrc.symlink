@@ -58,8 +58,16 @@ Plug 'mhinz/vim-signify'
 Plug 'kshenoy/vim-origami'               " To manage folds
 Plug 'romainl/vim-cool'                  " Stop search highlight after searching
 Plug 'Glench/Vim-Jinja2-Syntax'          " Syntax 
+Plug 'junegunn/limelight.vim'
+Plug 'vim-voom/voom'
 " Plug 'puremourning/vimspector', { 'for': 'python' }
 " Plug 'dense-analysis/ale'
+Plug 'ssh://git.amazon.com:2222/pkg/VimAmazonWiki.git'
+Plug 'ipkiss42/xwiki.vim'
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'dhruvasagar/vim-table-mode'
+
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -72,7 +80,7 @@ call plug#end()
 
 " Set python provider with neovim python packages
 if has("mac")
-    let g:python3_host_prog = '/usr/local/bin/python3'
+    let g:python3_host_prog = '~/python_envs/3.9.10/bin/python3'
 elseif has("win32")
     let g:python3_host_prog = 'C:\Python38\python.exe'
 else
@@ -665,8 +673,8 @@ let g:slime_target = "tmux"
 let g:slime_python_ipython = 1
 
 " Termdebug
-let g:termdebug_wide = 1
-au TermOpen * setlocal nonumber norelativenumber
+" let g:termdebug_wide = 1
+" au TermOpen * setlocal nonumber norelativenumber
 
 " Vim-signify
 let g:signify_disable_by_default = 1        " Disable signify by default
@@ -726,6 +734,17 @@ let g:vimspector_install_gadgets = ['debugpy', 'vscode-cpptools']
 
 " Ignore pylint linter for now
 " let g:ale_linters_ignore = {'python': ['pylint']}
+
+" Table mode - REST style
+" let g:table_mode_corner_corner='+'
+" let g:table_mode_header_fillchar='='
+" Table mode - Markdown style
+let g:table_mdoe_corner='|'
+
+" AMZN
+let g:amazonWikiClient = 'cd ~/workplace/WikiClient/src/WikiClient/ && brazil-runtime-exec amzn-wiki'
+let g:netrw_use_errorwindow = 0
+
 
 " Use mouse in terminal vim
 set mouse=a

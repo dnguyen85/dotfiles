@@ -1,7 +1,7 @@
 # Local/private config goes in the include
 [user]
         name = "Danh Nguyen"
-        email = "danh@dnguyen.io"
+        email = "danhhn@amazon.com"
 [include]
         path = ~/.gitconfig.local
 [hub]
@@ -19,6 +19,7 @@
         sum = !git log --pretty=format:'%C(yellow)%h %Cgreen%d %Creset%s' 
         d = difftool
         diff-orig = !git diff --no-ext-diff -w "$@" | vim -R -
+	dag = log --graph --format='format:%C(yellow)%h%C(reset) %C(blue)%an <%ae>%C(reset) %C(magenta)%cr%C(reset)%C(auto)%d%C(reset)%n%s' --date-order
 [color]
         diff = auto
         status = auto
@@ -27,6 +28,7 @@
 [core]
         excludesfile = ~/.gitignore
         editor = vim
+	pager = less -FMRiX
 [apply]
         whitespace = nowarn
 [mergetool]
