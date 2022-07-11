@@ -56,8 +56,17 @@ Plug 'othree/xml.vim'
 Plug 'mhinz/vim-signify'
 Plug 'kshenoy/vim-origami'               " To manage folds
 Plug 'romainl/vim-cool'                  " Stop search highlight after searching
+Plug 'Glench/Vim-Jinja2-Syntax'          " Syntax 
+Plug 'junegunn/limelight.vim'
+Plug 'vim-voom/voom'
 " Plug 'puremourning/vimspector', { 'for': 'python' }
 " Plug 'dense-analysis/ale'
+Plug 'ssh://git.amazon.com:2222/pkg/VimAmazonWiki.git'
+Plug 'ipkiss42/xwiki.vim'
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'dhruvasagar/vim-table-mode'
+
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -70,11 +79,11 @@ call plug#end()
 
 " Set python provider with neovim python packages
 if has("mac")
-    let g:python3_host_prog = '/usr/local/bin/python3'
+    let g:python3_host_prog = '~/python_envs/3.9.10/bin/python3'
 elseif has("win32")
     let g:python3_host_prog = 'C:\Python38\python.exe'
 else
-    let g:python3_host_prog = '~/python_envs/3.8.3/bin/python3'
+    let g:python3_host_prog = '~/python_envs/3.7.10/bin/python3'
 endif
 
 " Escape insert mode
@@ -405,6 +414,7 @@ endfunction
 "" In filter mode and want to go back
 autocmd FileType denite-filter call s:denite_filter_my_settings()
 function! s:denite_filter_my_settings() abort
+  call deoplete#custom#buffer_option('auto_complete', v:false)
   imap <silent><buffer> <C-o> <Plug>(denite_filter_quit)
 endfunction
 
@@ -664,8 +674,8 @@ let g:slime_target = "tmux"
 let g:slime_python_ipython = 1
 
 " Termdebug
-let g:termdebug_wide = 1
-au TermOpen * setlocal nonumber norelativenumber
+" let g:termdebug_wide = 1
+" au TermOpen * setlocal nonumber norelativenumber
 
 " Vim-signify
 let g:signify_disable_by_default = 1        " Disable signify by default
@@ -725,6 +735,57 @@ let g:vimspector_install_gadgets = ['debugpy', 'vscode-cpptools']
 
 " Ignore pylint linter for now
 " let g:ale_linters_ignore = {'python': ['pylint']}
+
+" Table mode - REST style
+" let g:table_mode_corner_corner='+'
+" let g:table_mode_header_fillchar='='
+" Table mode - Markdown style
+let g:table_mdoe_corner='|'
+
+" AMZN
+let g:amazonWikiClient = 'cd ~/workplace/WikiClient/src/WikiClient/ && brazil-runtime-exec amzn-wiki'
+let g:netrw_use_errorwindow = 0
+
+" Git
+command! DiffHistory call s:view_git_history()
+
+function! s:view_git_history() abort
+  Git difftool --name-only ! !^@
+  call s:diff_current_quickfix_entry()
+  " Bind <CR> for current quickfix window to properly set up diff split layout after selecting an item
+  " There's probably a better way to map this without changing the window
+  copen
+  nnoremap <buffer> <CR> <CR><BAR>:call <sid>diff_current_quickfix_entry()<CR>
+  wincmd p
+endfunction
+
+function s:diff_current_quickfix_entry() abort
+  " Cleanup windows
+  for window in getwininfo()
+    if window.winnr !=? winnr() && bufname(window.bufnr) =~? '^fugitive:'
+      exe 'bdelete' window.bufnr
+    endif
+  endfor
+  cc
+  call s:add_mappings()
+  let qf = getqflist({'context': 0, 'idx': 0})
+  if get(qf, 'idx') && type(get(qf, 'context')) == type({}) && type(get(qf.context, 'items')) == type([])
+    let diff = get(qf.context.items[qf.idx - 1], 'diff', [])
+    echom string(reverse(range(len(diff))))
+    for i in reverse(range(len(diff)))
+      exe (i ? 'leftabove' : 'rightbelow') 'vert diffsplit' fnameescape(diff[i].filename)
+      call s:add_mappings()
+    endfor
+  endif
+endfunction
+
+function! s:add_mappings() abort
+  nnoremap <buffer>]q :cnext <BAR> :call <sid>diff_current_quickfix_entry()<CR>
+  nnoremap <buffer>[q :cprevious <BAR> :call <sid>diff_current_quickfix_entry()<CR>
+  " Reset quickfix height. Sometimes it messes up after selecting another item
+  11copen
+  wincmd p
+endfunction
 
 " Use mouse in terminal vim
 set mouse=a

@@ -6,3 +6,5 @@ bin/tig
 *.zwc
 fontList.cache
 ez_setup.py
+amz/
+amazon/

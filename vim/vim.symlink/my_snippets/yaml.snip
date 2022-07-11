@@ -1,0 +1,186 @@
+snippet pusch
+    capture_type: PUSCH
+    auto_show_plots: true
+    plot_enable: true
+
+    # config
+    mu: ${1:0}
+    is_mmw: ${2:false}
+    bw_mhz: ${3}            # In MHz
+    bwp: ${4}               # In RBs
+    bwp_rb_start: ${5:0}
+    offset_to_carrier: ${6:0}
+    cell_id: ${7}
+    carrier_freq: ${8}
+    frame: ${9}
+    slot: ${10}
+    sampling_rate: ${11}
+    n_rnti: ${12}
+    pusch_symb: ${13}
+    num_pusch_rbs: ${14}
+    first_rb: ${15}
+    num_layers: ${16}
+    n_rx: ${17}
+
+    # Payload info
+    n_prb_oh: ${18:0}       # 0, 6, 12, 18 possible
+    tb_size: ${19}          # Will override n_prb_oh
+    rv: ${20:0}
+    mcs: ${21:0}
+    mcs_table: ${22:1}
+
+    # DMRS info
+    ul_dmrs_config_type: ${23:1}    # 1 or 2 for DMRS config type 1 or 2
+    dmrs_symbols: ${24}     
+    dmrs_ports: ${25:[1000, 1001]}
+    cdm_groups_with_data: ${26:0}
+    n_scid: ${27:0}                  # Used for cinit in DMRS scrambling. Takes values of 0 or 1
+    n_scid_id: ${28:0}               # Used for cinit in DMRS scrambling. If empty, will be set to cell_id
+
+    # DFT-s-OFDM info (optional)
+    ${29}
+
+    # PTRS info (optional)
+    ${30}
+
+    # UCI info
+    ${31}
+
+snippet override
+    arfcn: ${1}     
+    arfcn_not_centered: ${2:true}
+
+snippet dft-s-ofdm
+    precoding: ${1:true}   # True if DFT-s-OFDM. False if CP-OFDM
+    n_rs_id: ${2}   # Determining group and sequence hopping for DFT-s-OFDM. If empty, will be set to cell_id
+
+snippet uci_pusch
+    uci: ${1:true}
+    num_csip1_bits: ${2:0} 
+    num_csip2_bits: ${3:0} 
+    num_ack_bits: ${4:0} 
+    beta_ack_idx: ${5:11}    # Chosen from set of 3 values for <= 2, 3..11, and >11 bits. When absent, assumed to be 11
+    beta_csip1_idx: ${6:13}  # Chosen from set of 2 values for <= 11 bits and > 11 bits. When absent, assumed to be 13
+    beta_csip2_idx: ${7:13}  # Chosen from set of 2 values for <= 11 bits and > 11 bits. When absent, assumed to be 13
+    alpha_idx: ${8:3}       # UCI alpha scaling index (not value 0: f0p5, 1: 0p65, 2: f0p8, 3: f1). When absent, assume f1
+    ${9}
+
+snippet sj
+    # Sanjole config
+    rx_ant: ${3:[5]}    # UL Rx antenna idx
+
+snippet generic
+    capture_type: GENERIC
+    auto_show_plots: true
+    plot_enable: true
+
+    # Config
+    mu: ${1:0}
+    is_mmw: ${2:false}
+    bw_mhz: ${3}
+    bwp: ${4}
+    carrier_freq: ${6}
+    slot: ${8}
+    sampling_rate: ${9}
+    sync_symb: ${11}
+    n_rx: 1
+    
+snippet pucch
+    capture_type: PUCCH
+    auto_show_plots: true
+    plot_enable: true
+
+    # config
+    mu: ${1:0}
+    is_mmw: ${2:false}
+    bw_mhz: ${3}            # In MHz
+    bwp: ${4}               # In RBs
+    bwp_rb_start: ${5:0}
+    offset_to_carrier: ${6:0}
+    cell_id: ${7}
+    carrier_freq: ${8}
+    frame: ${9}
+    slot: ${10}
+    sampling_rate: ${11}
+    n_rnti: ${12}           # Used in data scrambling. This is just C-RNTI
+    pucch_symbols: ${13:1}
+    sync_symb: ${14:[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]}
+    num_pucch_rbs: ${15:1}
+    first_rb: ${16:0}
+
+    # Hopping
+    intra_slot_hopping: ${17:false}
+    first_rb_2nd_hop: ${18:0}
+
+    # Fmt0
+    ${22}
+
+    # Fmt1
+    ${23}
+
+    # Fmt2
+    ${24}
+
+    # Fmt3/4
+    ${25}
+    
+    # UCI config (Required for fmt 2/3/4)
+    ${26}
+
+    # Other config
+    n_rx: ${27}
+
+snippet fmt0
+    pucch_format: 0
+
+    # Sequence generation 
+    m0_initial_cyclic_shift: ${1}
+    pucch_grouphopping: ${2:Enabled}   # 'Enabled', 'Disabled', or 'Neither'
+    pucch_hopping_id: ${3}             # n_ID in 38.211 6.3.2.2.1
+
+    # Optional override 
+    ${4:#:m_cs:} ${5} 
+
+snippet fmt1
+    pucch_format: 1
+    time_domain_occ: ${1}              # TD OCC sequence index. Length is determined by number of symbols
+
+    # Sequence generation 
+    m0_initial_cyclic_shift: ${2}
+    pucch_grouphopping: ${3:Enabled}   # 'Enabled', 'Disabled', or 'Neither'
+    pucch_hopping_id: ${4}             # n_ID in 38.211 6.3.2.2.1
+
+snippet fmt2
+    pucch_format: 2
+    dmrs_scrambling_id: ${1}            # For RS signal. If not present, will be set to cell ID
+    data_scrambling_id: ${2}            # For scrambling data. If not present, will be set to cell ID  
+
+snippet fmt3
+    pucch_format: 3
+    data_scrambling_id: ${1}            # Payload scrambling
+
+    # Sequence generation for RS
+    m0_initial_cyclic_shift: ${2}
+    pucch_grouphopping: ${3:Enabled}   # 'Enabled', 'Disabled', or 'Neither'
+    pucch_hopping_id: ${4}             # n_ID in 38.211 6.3.2.2.1
+
+snippet fmt4
+    pucch_format: 4
+    data_scrambling_id: ${1}            # Payload scrambling
+
+    # Sequence generation for RS
+    m0_initial_cyclic_shift: ${2}
+    pucch_grouphopping: ${3:Enabled}   # 'Enabled', 'Disabled', or 'Neither'
+    pucch_hopping_id: ${4}             # n_ID in 38.211 6.3.2.2.1
+
+    # Block spreading into 1 RB in FD
+    occ_length: ${5}                    # Can be 2 or 4 based on RRC
+    occ_index: ${6}                     # Index of configured spreading seq 
+
+snippet uci_pucch
+    n_uci_bits: ${1}
+    n_uci_bits_p2: ${2}
+
+snippet cfo
+    cfo_est_en: ${1:true}
+    cfo_comp_en: ${2:true}

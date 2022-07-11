@@ -11,7 +11,9 @@ set     end="%{\033[0m%}" # This is needed at the end... :(
 # set prompt="${green}%n${blue}@%m ${white}%~ ${green}%%${end} "
 # set prompt="[${green}%n${blue}@%m ${white}%~ ]${end} "
 
+setenv GIT_BRANCH_CMD "sh -c 'git branch --no-color 2> /dev/null' | sed -r -e 's/(.*)/(\1) /'"
 set prompt="\n%B%m%b:${green}%c5${end}%B ~> %b"
+# set prompt="${green}%n@%m:${yellow}%~${cyan} `$GIT_BRANCH_CMD`%B\n${white}%#%b${end}"
 
 if ( $?CLEARCASE_ROOT ) then
   set prompt = "\n${red}[`basename $CLEARCASE_ROOT`]${end} $prompt"
@@ -21,17 +23,19 @@ endif
 unset red green yellow blue magenta cyan yellow white end
 
 # nodejs
-setenv NPM_PACKAGES ~/.npm-packages
+# setenv NPM_PACKAGES ~/.npm-packages
 
 # Override system path
-set path = (~/.local/bin $NPM_PACKAGES/bin /pkg/qct/software/gnu64/gcc/7.2.0/bin ~/.local/clang/10.0.0/bin /pkg/qct/software/nodejs/v12.14.0/bin ~/mtsg/software/gdb_8.3/bin ~/mtsg/denali_csim/run/regression/tx_tv_denali $path)
+set path = (/pkg/qct/software/gnu64/gcc/7.2.0/bin ~/.local/clang/10.0.0/bin ~/mtsg/software/gdb_8.3/bin $path)
 setenv LD_LIBRARY_PATH ~/.local/lib:/pkg/qct/software/gnu/gcc/7.2.0/lib64:/pkg/qct/software/pcre/10.22/lib
 unsetenv TMPDIR
-setenv PYTHONPATH /pkg/qct/software/qnetools/local/anaconda3/local_packages
+
+# Python
+setenv PYTHONPATH ~/.dotfiles/python:~/.software/komodo-python-dbgp/pythonlib
 # setenv TMPDIR /prj/qct/mtsg/sandiego/projects/denali/nr/visitors/danhnguy
 
 # python3 packages used by vim8
-setenv PATH ~/python_envs/local/bin:$PATH
+setenv PATH /opt/qcom/APEX/bin:/opt/qcom/QXDM/:$HOME/.local/bin:$PATH
 
 #dircolors
 source ~/.dotfiles/dircolors/coreutils-dircolors.csh

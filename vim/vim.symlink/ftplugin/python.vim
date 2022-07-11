@@ -262,7 +262,6 @@ endf
 " Disable smartindent in python file. Don't need the auto indenting after '{'
 setl nosmartindent
 setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
-call deoplete#enable()
 
 " Debug helpers for ipdb
 " Next
