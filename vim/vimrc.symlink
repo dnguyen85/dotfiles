@@ -21,7 +21,6 @@ Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-unimpaired'
 Plug 'jpalardy/vim-slime'
 Plug 'scrooloose/nerdtree'
-" Plug 'dnguyen85/vimoutliner'
 Plug 'sjl/splice.vim'
 Plug 'rickhowe/diffchar.vim'
 Plug 'will133/vim-dirdiff'
@@ -98,6 +97,8 @@ set smartcase
 set background=dark
 colorscheme solarized
 call togglebg#map("")
+let g:solarized_nvimqt_underline = 0
+
 
 " Clear highlighting on escape in normal mode (Option 1)
 nnoremap <silent><esc> :let @/=""<return><esc>
