@@ -1,0 +1,115 @@
+snippet log_partition_usage_per_store
+    {
+    "metrics": [
+    {% for store in stores %}
+       [ { "expression": "SEARCH('{CWAgent, device, fstype, host, path, store} MetricName=disk_used_percent AND \"/var/log\" store={{store}}', 'Maximum', 86400) ", 
+       "label": "", "id": "m{{loop.index}}", "period": 86400, "visible": false } ],
+       [ { "expression": "MAX(m{{loop.index}})", "label": "{{store}}", "id": "e{{loop.index}}", "period": 86400, "visible": true } ],
+       [ { "expression": "SEARCH('{CWAgent, device, fstype, host, path, store} MetricName=disk_used_percent AND \"/var/.log.inactive\" store={{store}}', 'Maximum', 86400) ", 
+       "label": "", "id": "n{{loop.index}}", "period": 86400, "visible": false } ],
+       [ { "expression": "MAX(n{{loop.index}})", "label": "{{store}}_inactive", "id": "f{{loop.index}}", "period": 86400, "visible": true } ],
+    {% endfor %}
+    ],
+    "view": "timeSeries",
+    "stacked": false,
+    "region": "us-west-2",
+    "period": 86400,
+    "liveData": true,
+    "yAxis": {
+    "left": {
+    "min": 0
+    }
+    },
+    "title": "PDX Store Max Log Partition Usage",
+    "width": 1617,
+    "height": 200,
+    "theme": "light"
+    }
+
+snippet ui_downtime_per_store
+    {
+    "metrics": [
+    {% for store in stores %}
+    [ { "expression": "m{{2*loop.index-1}}-m{{2*loop.index}}", "label": "{{store}}", "id": "e{{loop.index}}", "period": 3600 } ],
+    [ "CWAgent", "cart_overall_uptime", "store", "{{store}}", { "id": "m{{2*loop.index-1}}", "visible": false } ],
+    [ "...", { "stat": "Sum", "id": "m{{2*loop.index}}", "visible": false } ],
+    {% endfor %}
+    ],
+    "view": "timeSeries",
+    "stacked": false,
+    "region": "us-west-2",
+    "stat": "SampleCount",
+    "period": 3600,
+    "liveData": true,
+    "yAxis": {
+    "left": {
+    "min": 0
+    }
+    },
+    "title": "PDX Downtime minutes per store",
+    "width": 1617,
+    "height": 200,
+    "theme": "light"
+    }
+
+snippet ui_downtime_per_cart_in_store
+    {
+        "metrics": [
+        {% for cart in carts %}
+            [ { "expression": "m{{3*loop.index-2}}+m{{3*loop.index-1}}+m{{3*loop.index}}", "label": "{{cart}}", "id": "e{{loop.index}}" } ],
+            [ "CWAgent", "shopping_unhealthy_uptime", "metric_type", "histogram", "host", "{{cart}}", "store", "US-CA-TU1", { "id": "m{{3*loop.index-2}}", "visible": false } ],
+            [ ".", "manual_oos_uptime", ".", ".", ".", ".", ".", ".", { "id": "m{{3*loop.index-1}}", "visible": false } ],
+            [ ".", "login_unhealthy_uptime", ".", ".", ".", ".", ".", ".", { "id": "m{{3*loop.index}}", "visible": false } ],
+        {% endfor %}
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-west-2",
+        "stat": "Sum",
+        "period": 300,
+        "title": "UI Downtime Minutes per Cart",
+        "yAxis": {
+            "left": {
+                "label": "Carts",
+                "showUnits": false
+            }
+        }
+    }
+
+
+snippet ui_downtime_ranked_per_cart
+    {
+        "metrics": [
+            [ { "expression": "SORT([e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,e20,e21,e22,e23,e24,e25,e26,e27,e28], AVG, DESC)", "label": "", "id": "e100", "region": "us-east-1" } ],
+            {% for cart in carts %}
+            [ { "expression": "m{{3*loop.index-2}}+m{{3*loop.index-1}}+m{{3*loop.index}}", "label": "{{cart}}", "id": "e{{loop.index}}" } ],
+            [ "CWAgent", "shopping_unhealthy_uptime", "metric_type", "histogram", "host", "{{cart}}", "store", "US-IL-61", { "id": "m{{3*loop.index-2}}", "visible": false } ],
+            [ ".", "manual_oos_uptime", ".", ".", ".", ".", ".", ".", { "id": "m{{3*loop.index-1}}", "visible": false } ],
+            [ ".", "login_unhealthy_uptime", ".", ".", ".", ".", ".", ".", { "id": "m{{3*loop.index}}", "visible": false } ],
+            {% endfor %}
+        ],
+        "sparkline": false,
+        "view": "bar",
+        "stacked": true,
+        "region": "us-east-1",
+        "stat": "Sum",
+        "period": 300,
+        "setPeriodToTimeRange": true,
+        "trend": false,
+        "title": "UI Downtime Minutes Ranked per Cart",
+        "legend": {
+            "position": "right"
+        }
+    }
+
+snippet cw_log_dns_failure_count
+    {% for cart in carts %}
+    | parse @logStream "{{cart}}" as host_{{cart}}
+    {%- endfor -%}
+    | stats
+    {% for cart in carts -%}
+    count(host_{{cart}}),
+    {%- endfor %}
+
+
+

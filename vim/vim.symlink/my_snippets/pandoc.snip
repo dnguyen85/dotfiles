@@ -1,0 +1,662 @@
+snippet cw_log_get_AP_rekey_reassociate
+    fields @message
+    | filter (@log like /wifi-watchdog/ and @message like /bssid/) or (@log like /wpa_supplicant/ and @message like /Request PTK rekeying|CTRL-EVENT-DISCONNECTED/)
+    | parse @log 'US-*/' as store
+    | parse @message '"bssid": "*"' as AP
+    | parse @message '"wifi_mac_address": "*"' as wifi_mac
+    | parse @message 'Request PTK rekeying' as rekey
+    | parse @message 'CTRL-EVENT-DISCONNECTED' as reassociate
+    | stats earliest(wifi_mac), earliest(AP), latest(AP), count_distinct(AP), count(rekey), count(reassociate) by store, @logStream
+    | sort @timestamp asc
+    | limit 10000
+
+snippet cw_log_collated_wifi_systemd_kills
+    fields @message
+    | filter @logStream == '${1:48b02dxxx}'
+    | filter (@log like /wifi-watchdog/) or (@log like /nvidia/ and @message like /systemd/)
+    | filter (@log like /nvidia-xavier/ and @message like /(dhcp|systemd.*wifi-watchdog)/) or (@log like /wifi-watchdog/ and @message like /Failed|bssid|reassociate/)
+    | parse @message "Aug * *:*:* localhost *" as reqD, reqH, reqMin, reqSec
+    | fields ${2:2023} as reqYear, ${3:8} as reqM, 0 as reqMilliSec
+    | fields reqYear - 1970 as reqYearDiff, reqYear % 4 == 0 as reqIsLeapYear, reqM/1 as reqMonth, reqD/1 as reqDay, reqH/1 as reqHour, reqMin/1 as reqMinute, reqSec/1 as reqSecond, reqMilliSec/1 as reqMilliSecond
+    | fields ((reqYearDiff * 365) + ((reqYear % 4 == 1) * 1) + floor(reqYearDiff / 4) # as yearsToDays
+             + ((reqMonth == 2) * 31) # 
+             + ((reqMonth == 3) * 59) #
+             + ((reqMonth == 4) * 90) #
+             + ((reqMonth == 5) * 120) #
+             + ((reqMonth == 6) * 151) #
+             + ((reqMonth == 7) * 181) #
+             + ((reqMonth == 8) * 212) #
+             + ((reqMonth == 9) * 243) #
+             + ((reqMonth == 10) * 273) #
+             + ((reqMonth == 11) * 304) #
+             + ((reqMonth == 12) * 334) #
+             + ((reqMonth > 2) and (reqIsLeapYear == 1)) # as monthsToDays
+             + reqDay - 1) * 24 * 60 * 60 * 1000 # as daysToMilliSeconds
+             + reqHour * 60 * 60 * 1000 # as hoursToMilliSeconds
+             + reqMinute * 60 * 1000 # as minutesToMilliSeconds
+             + reqSecond * 1000 # as secondsToMilliSeconds
+             + reqMilliSecond  
+             as reqMilliSeconds
+    | fields coalesce(fromMillis(reqMilliSeconds), @timestamp) as ts
+    | sort ts asc
+
+snippet cw_log_wpa_supplicant_rtw_kernel
+    fields @ingestionTime, @message
+    | filter @logStream == '${1:48b02d768104}'
+    | filter (@log like /wpa_supplicant/) or (@log like /kernel/ and @message like /RTW/)
+    | sort @timestamp asc
+    | limit 10000
+
+
+snippet cw_battery_downtime_ca139_cart
+    {
+        "metrics": [
+            [ { "expression": "m2-m1", "label": "48b02d677f57", "id": "e1", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d677f57", "store", "US-CA-139", { "stat": "Sum", "id": "m1", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m2", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m4-m3", "label": "48b02d678b53", "id": "e2", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d678b53", "store", "US-CA-139", { "stat": "Sum", "id": "m3", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m4", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m6-m5", "label": "48b02d678df3", "id": "e3", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d678df3", "store", "US-CA-139", { "stat": "Sum", "id": "m5", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m6", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m8-m7", "label": "48b02d678f17", "id": "e4", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d678f17", "store", "US-CA-139", { "stat": "Sum", "id": "m7", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m8", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m10-m9", "label": "48b02d678f1a", "id": "e5", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d678f1a", "store", "US-CA-139", { "stat": "Sum", "id": "m9", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m10", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m12-m11", "label": "48b02d75c49a", "id": "e6", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d75c49a", "store", "US-CA-139", { "stat": "Sum", "id": "m12", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m11", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m14-m13", "label": "48b02d765dc9", "id": "e7", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d765dc9", "store", "US-CA-139", { "stat": "Sum", "id": "m14", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m13", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m16-m15", "label": "48b02d765dd5", "id": "e8", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d765dd5", "store", "US-CA-139", { "stat": "Sum", "id": "m16", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m15", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m18-m17", "label": "48b02d765def", "id": "e9", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d765def", "store", "US-CA-139", { "stat": "Sum", "id": "m17", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m18", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m20-m19", "label": "48b02d765df6", "id": "e10", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d765df6", "store", "US-CA-139", { "stat": "Sum", "id": "m19", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m20", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m22-m21", "label": "48b02d76622b", "id": "e11", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d76622b", "store", "US-CA-139", { "stat": "Sum", "id": "m21", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m22", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m24-m23", "label": "48b02d766245", "id": "e12", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d766245", "store", "US-CA-139", { "stat": "Sum", "id": "m23", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m24", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m26-m25", "label": "48b02d7663c4", "id": "e13", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d7663c4", "store", "US-CA-139", { "stat": "Sum", "id": "m25", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m26", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m28-m27", "label": "48b02d76641b", "id": "e14", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d76641b", "store", "US-CA-139", { "stat": "Sum", "id": "m27", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m28", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m30-m29", "label": "48b02d76642a", "id": "e15", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d76642a", "store", "US-CA-139", { "stat": "Sum", "id": "m29", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m30", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m32-m31", "label": "48b02d766577", "id": "e16", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d766577", "store", "US-CA-139", { "stat": "Sum", "id": "m31", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m32", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m34-m33", "label": "48b02d767c72", "id": "e17", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d767c72", "store", "US-CA-139", { "stat": "Sum", "id": "m33", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m34", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m36-m35", "label": "48b02d767fc2", "id": "e18", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d767fc2", "store", "US-CA-139", { "stat": "Sum", "id": "m35", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m36", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m38-m37", "label": "48b02d768155", "id": "e19", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "48b02d768155", "store", "US-CA-139", { "stat": "Sum", "id": "m37", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m38", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-west-2",
+        "stat": "SampleCount",
+        "period": 3600,
+        "liveData": true,
+        "yAxis": {
+            "left": {
+                "min": 0,
+                "max": 60 
+            }
+        },
+        "title": "Overall Uptime",
+        "width": 1420,
+        "height": 437.960205078125,
+        "theme": "light"
+    }
+
+snippet cw_ui_downtime_ca139_cart
+    {
+        "metrics": [
+            [ { "expression": "m2-m1", "label": "48b02d677f57", "id": "e1", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d677f57", "store", "US-CA-139", { "stat": "Sum", "id": "m1", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m2", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m4-m3", "label": "48b02d678b53", "id": "e2", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d678b53", "store", "US-CA-139", { "stat": "Sum", "id": "m3", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m4", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m6-m5", "label": "48b02d678df3", "id": "e3", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d678df3", "store", "US-CA-139", { "stat": "Sum", "id": "m5", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m6", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m8-m7", "label": "48b02d678f17", "id": "e4", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d678f17", "store", "US-CA-139", { "stat": "Sum", "id": "m7", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m8", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m10-m9", "label": "48b02d678f1a", "id": "e5", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d678f1a", "store", "US-CA-139", { "stat": "Sum", "id": "m9", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m10", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m12-m11", "label": "48b02d75c49a", "id": "e6", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d75c49a", "store", "US-CA-139", { "stat": "Sum", "id": "m12", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m11", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m14-m13", "label": "48b02d765dc9", "id": "e7", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d765dc9", "store", "US-CA-139", { "stat": "Sum", "id": "m14", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m13", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m16-m15", "label": "48b02d765dd5", "id": "e8", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d765dd5", "store", "US-CA-139", { "stat": "Sum", "id": "m16", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m15", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m18-m17", "label": "48b02d765def", "id": "e9", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d765def", "store", "US-CA-139", { "stat": "Sum", "id": "m17", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m18", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m20-m19", "label": "48b02d765df6", "id": "e10", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d765df6", "store", "US-CA-139", { "stat": "Sum", "id": "m19", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m20", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m22-m21", "label": "48b02d76622b", "id": "e11", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d76622b", "store", "US-CA-139", { "stat": "Sum", "id": "m21", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m22", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m24-m23", "label": "48b02d766245", "id": "e12", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d766245", "store", "US-CA-139", { "stat": "Sum", "id": "m23", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m24", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m26-m25", "label": "48b02d7663c4", "id": "e13", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d7663c4", "store", "US-CA-139", { "stat": "Sum", "id": "m25", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m26", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m28-m27", "label": "48b02d76641b", "id": "e14", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d76641b", "store", "US-CA-139", { "stat": "Sum", "id": "m27", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m28", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m30-m29", "label": "48b02d76642a", "id": "e15", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d76642a", "store", "US-CA-139", { "stat": "Sum", "id": "m29", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m30", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m32-m31", "label": "48b02d766577", "id": "e16", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d766577", "store", "US-CA-139", { "stat": "Sum", "id": "m31", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m32", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m34-m33", "label": "48b02d767c72", "id": "e17", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d767c72", "store", "US-CA-139", { "stat": "Sum", "id": "m33", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m34", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m36-m35", "label": "48b02d767fc2", "id": "e18", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d767fc2", "store", "US-CA-139", { "stat": "Sum", "id": "m35", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m36", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m38-m37", "label": "48b02d768155", "id": "e19", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d768155", "store", "US-CA-139", { "stat": "Sum", "id": "m37", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m38", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-west-2",
+        "stat": "SampleCount",
+        "period": 3600,
+        "liveData": true,
+        "yAxis": {
+            "left": {
+                "min": 0,
+                "max": 60 
+            }
+        },
+        "title": "Overall Uptime",
+        "width": 1420,
+        "height": 437.960205078125,
+        "theme": "light"
+    }
+
+snippet cw_ui_downtime_ca138_cart
+    {
+        "metrics": [
+            [ { "expression": "m2-m1", "label": "48b02d677d94", "id": "e1", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d677d94", "store", "US-CA-138", { "stat": "Sum", "id": "m1", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m2", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m4-m3", "label": "48b02d678d76", "id": "e2", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d678d76", "store", "US-CA-138", { "stat": "Sum", "id": "m3", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m4", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m6-m5", "label": "48b02d678efc", "id": "e3", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d678efc", "store", "US-CA-138", { "stat": "Sum", "id": "m5", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m6", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m8-m7", "label": "48b02d678f18", "id": "e4", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d678f18", "store", "US-CA-138", { "stat": "Sum", "id": "m7", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m8", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m10-m9", "label": "48b02d6790f0", "id": "e5", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d6790f0", "store", "US-CA-138", { "stat": "Sum", "id": "m9", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m10", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m12-m11", "label": "48b02d75c4f1", "id": "e6", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d75c4f1", "store", "US-CA-138", { "stat": "Sum", "id": "m12", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m11", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m14-m13", "label": "48b02d75c4fb", "id": "e7", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d75c4fb", "store", "US-CA-138", { "stat": "Sum", "id": "m14", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m13", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m16-m15", "label": "48b02d765dde", "id": "e8", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d765dde", "store", "US-CA-138", { "stat": "Sum", "id": "m16", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m15", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m18-m17", "label": "48b02d765ff4", "id": "e9", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d765ff4", "store", "US-CA-138", { "stat": "Sum", "id": "m17", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m18", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m20-m19", "label": "48b02d76620b", "id": "e10", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d76620b", "store", "US-CA-138", { "stat": "Sum", "id": "m19", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m20", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m22-m21", "label": "48b02d76640f", "id": "e11", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d76640f", "store", "US-CA-138", { "stat": "Sum", "id": "m21", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m22", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m24-m23", "label": "48b02d766489", "id": "e12", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d766489", "store", "US-CA-138", { "stat": "Sum", "id": "m23", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m24", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m26-m25", "label": "48b02d76670c", "id": "e13", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d76670c", "store", "US-CA-138", { "stat": "Sum", "id": "m25", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m26", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m28-m27", "label": "48b02d767249", "id": "e14", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d767249", "store", "US-CA-138", { "stat": "Sum", "id": "m27", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m28", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m30-m29", "label": "48b02d7680b4", "id": "e15", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d7680b4", "store", "US-CA-138", { "stat": "Sum", "id": "m29", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m30", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m32-m31", "label": "48b02d7680bf", "id": "e16", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d7680bf", "store", "US-CA-138", { "stat": "Sum", "id": "m31", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m32", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m34-m33", "label": "48b02d7680c5", "id": "e17", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d7680c5", "store", "US-CA-138", { "stat": "Sum", "id": "m33", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m34", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m36-m35", "label": "48b02d7680ca", "id": "e18", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d7680ca", "store", "US-CA-138", { "stat": "Sum", "id": "m35", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m36", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m38-m37", "label": "48b02d76810a", "id": "e19", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d76810a", "store", "US-CA-138", { "stat": "Sum", "id": "m37", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m38", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m40-m39", "label": "48b02d76810e", "id": "e20", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "48b02d76810e", "store", "US-CA-138", { "stat": "Sum", "id": "m39", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m40", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-west-2",
+        "stat": "SampleCount",
+        "period": 3600,
+        "liveData": true,
+        "yAxis": {
+            "left": {
+                "min": 0,
+                "max": 60 
+            }
+        },
+        "title": "Overall Uptime",
+        "width": 1420,
+        "height": 437.960205078125,
+        "theme": "light"
+    }
+
+
+snippet cw_ui_downtime_pdx
+    {
+        "metrics": [
+            [ { "expression": "m1-m2", "label": "US-CA-117", "id": "e1", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e1)", "label": "Expression$2", "id": "e2", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-CA-117", { "id": "m1", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m2", "visible": false } ],
+            [ { "expression": "m3-m4", "label": "US-CA-118", "id": "e3", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e3)", "label": "Expression$2", "id": "e4", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-CA-118", { "id": "m3", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m4", "visible": false } ],
+            [ { "expression": "m5-m6", "label": "US-CA-133", "id": "e5", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e5)", "label": "Expression$2", "id": "e6", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-CA-133", { "id": "m5", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m6", "visible": false } ],
+            [ { "expression": "m7-m8", "label": "US-CA-134", "id": "e7", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e7)", "label": "Expression$2", "id": "e8", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-CA-134", { "id": "m7", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m8", "visible": false } ],
+            [ { "expression": "m9-m10", "label": "US-CA-138", "id": "e9", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e9)", "label": "Expression$2", "id": "e10", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-CA-138", { "id": "m9", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m10", "visible": false } ],
+            [ { "expression": "m11-m12", "label": "US-CA-139", "id": "e11", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e11)", "label": "Expression$2", "id": "e12", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-CA-139", { "id": "m11", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m12", "visible": false } ],
+            [ { "expression": "m13-m14", "label": "US-CA-141", "id": "e13", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e13)", "label": "Expression$2", "id": "e14", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-CA-141", { "id": "m13", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m14", "visible": false } ],
+            [ { "expression": "m15-m16", "label": "US-CA-147", "id": "e15", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e15)", "label": "Expression$2", "id": "e16", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-CA-147", { "id": "m15", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m16", "visible": false } ],
+            [ { "expression": "m17-m18", "label": "US-CA-185", "id": "e17", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e17)", "label": "Expression$2", "id": "e18", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-CA-185", { "id": "m17", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m18", "visible": false } ],
+            [ { "expression": "m19-m20", "label": "US-CA-TU1", "id": "e19", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e19)", "label": "Expression$2", "id": "e20", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-CA-TU1", { "id": "m19", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m20", "visible": false } ],
+            [ { "expression": "m21-m22", "label": "US-WA-28", "id": "e21", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e21)", "label": "Expression$2", "id": "e22", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-WA-28", { "id": "m21", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m22", "visible": false } ],
+            [ { "expression": "m23-m24", "label": "US-WA-34", "id": "e23", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e23)", "label": "Expression$2", "id": "e24", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-WA-34", { "id": "m23", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m24", "visible": false } ],
+            [ { "expression": "m25-m26", "label": "US-WA-935", "id": "e25", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e25)", "label": "Expression$2", "id": "e26", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-WA-935", { "id": "m25", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m26", "visible": false } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-west-2",
+        "stat": "SampleCount",
+        "period": 3600,
+        "liveData": true,
+        "yAxis": {
+            "left": {
+                "min": 0
+            }
+        },
+        "title": "PDX Downtime minutes per store",
+        "width": 1617,
+        "height": 200,
+        "theme": "light"
+    }    
+
+snippet cw_ui_downtime_iad
+    {
+        "metrics": [
+            [ { "expression": "m1-m2", "label": "US-IL-57", "id": "e1", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e1)", "label": "Expression$2", "id": "e2", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-IL-57", { "id": "m1", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m2", "visible": false } ],
+            [ { "expression": "m3-m4", "label": "US-IL-59", "id": "e3", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e3)", "label": "Expression$2", "id": "e4", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-IL-59", { "id": "m3", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m4", "visible": false } ],
+            [ { "expression": "m5-m6", "label": "US-IL-60", "id": "e5", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e5)", "label": "Expression$2", "id": "e6", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-IL-60", { "id": "m5", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m6", "visible": false } ],
+            [ { "expression": "m7-m8", "label": "US-IL-61", "id": "e7", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e7)", "label": "Expression$2", "id": "e8", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-IL-61", { "id": "m7", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m8", "visible": false } ],
+            [ { "expression": "m9-m10", "label": "US-MD-14", "id": "e9", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e9)", "label": "Expression$2", "id": "e10", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-MD-14", { "id": "m9", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m10", "visible": false } ],
+            [ { "expression": "m11-m12", "label": "US-PA-19", "id": "e11", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e11)", "label": "Expression$2", "id": "e12", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-PA-19", { "id": "m11", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m12", "visible": false } ],
+            [ { "expression": "m13-m14", "label": "US-VA-20", "id": "e13", "period": 3600 } ],
+            [ { "expression": "RUNNING_SUM(e13)", "label": "Expression$2", "id": "e14", "visible": false, "period": 3600 } ],
+            [ "CWAgent", "cart_overall_uptime", "store", "US-VA-20", { "id": "m13", "visible": false } ],
+            [ "...", { "stat": "Sum", "id": "m14", "visible": false } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "stat": "SampleCount",
+        "period": 3600,
+        "liveData": true,
+        "yAxis": {
+            "left": {
+                "min": 0
+            }
+        },
+        "title": "IAD Downtime minutes per store",
+        "width": 1617,
+        "height": 200,
+        "theme": "light"
+    }
+
+snippet cw_component_downtime_ca139 
+    {
+    "metrics": [
+    [ { "expression": "m1-m2", "label": "Battery", "id": "e1", "period": 3600 } ],
+    [ { "expression": "m3-m4", "label": "Overall UI Health", "id": "e2", "visible": false } ],
+    [ { "expression": "m5-m6", "label": "EGS", "id": "e3" } ],
+    [ { "expression": "m7-m8", "label": "Cart_controller_network_interface", "id": "e4" } ],
+    [ { "expression": "m9-m10", "label": "ihm-eco-sputnik-agent", "id": "e5" } ],
+    [ { "expression": "m11-m12", "label": "Vision Pipeline", "id": "e6" } ],
+    [ { "expression": "m13-m14", "label": "Weights Pipeline", "id": "e7" } ],
+    [ { "expression": "m15-m16", "label": "Cart Server", "id": "e8" } ],
+    [ { "expression": "m17-m18", "label": "upnd", "id": "e9" } ],
+    [ { "expression": "m19-m20", "label": "lights", "id": "e10" } ],
+    [ { "expression": "m21-m22", "label": "load-cells", "id": "e11" } ],
+    [ { "expression": "m23-m24", "label": "localization", "id": "e12" } ],
+    [ { "expression": "m25-m26", "label": "mqtt-server", "id": "e13" } ],
+    [ { "expression": "m27-m28", "label": "red-mqtt-server", "id": "e14" } ],
+    [ { "expression": "m29-m30", "label": "ihm-eco-credentials-agent", "id": "e15" } ],
+    [ { "expression": "m31-m32", "label": "ec2-metadata-server", "id": "e16" } ],
+    [ { "expression": "m33-m34", "label": "iot-server", "id": "e17" } ],
+    [ { "expression": "m35-m36", "label": "ui", "id": "e18" } ],
+    [ { "expression": "m37-m38", "label": "store-data-server", "id": "e19" } ],
+    [ "CWAgent", "cart_uptime_battery", "store", "US-CA-139", { "stat": "SampleCount", "id": "m1", "visible": false } ],
+    [ "...", { "id": "m2", "visible": false } ],
+    [ ".", "cart_overall_uptime", ".", ".", { "id": "m3", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m4", "visible": false } ],
+    [ ".", "cart_uptime_ihm-eco-gateway-service", ".", ".", { "id": "m5", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m6", "visible": false } ],
+    [ ".", "cart_uptime_cart_controller_network_interfaces", ".", ".", { "id": "m7", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m8", "visible": false } ],
+    [ ".", "cart_uptime_ihm-eco-sputnik-agent", ".", ".", { "id": "m9", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m10", "visible": false } ],
+    [ ".", "cart_uptime_vision-pipeline", ".", ".", { "id": "m11", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m12", "visible": false } ],
+    [ ".", "cart_uptime_weights-pipeline", ".", ".", { "id": "m13", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m14", "visible": false } ],
+    [ ".", "cart_uptime_cart-server", ".", ".", { "id": "m15", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m16", "visible": false } ],
+    [ ".", "cart_uptime_upnd", ".", ".", { "id": "m17", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m18", "visible": false } ],
+    [ ".", "cart_uptime_lights", ".", ".", { "id": "m19", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m20", "visible": false } ],
+    [ ".", "cart_uptime_load-cells", ".", ".", { "id": "m21", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m22", "visible": false } ],
+    [ ".", "cart_uptime_localization", ".", ".", { "id": "m23", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m24", "visible": false } ],
+    [ ".", "cart_uptime_mqtt-server", ".", ".", { "id": "m25", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m26", "visible": false } ],
+    [ ".", "cart_uptime_red-mqtt-server", ".", ".", { "id": "m27", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m28", "visible": false } ],
+    [ ".", "cart_uptime_ihm-eco-credentials-agent", ".", ".", { "id": "m29", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m30", "visible": false } ],
+    [ ".", "cart_uptime_ec2-metadata-server", ".", ".", { "id": "m31", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m32", "visible": false } ],
+    [ ".", "cart_uptime_iot-server", ".", ".", { "id": "m33", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m34", "visible": false } ],
+    [ ".", "cart_uptime_ui", ".", ".", { "id": "m35", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m36", "visible": false } ],
+    [ ".", "cart_uptime_store-data-server", ".", ".", { "id": "m37", "stat": "SampleCount", "visible": false } ],
+    [ "...", { "id": "m38", "visible": false } ]
+    ],
+    "view": "timeSeries",
+    "stacked": true,
+    "region": "us-west-2",
+    "stat": "Sum",
+    "period": 3600,
+    "yAxis": {
+    "left": {
+    "min": 0,
+    "label": "Minutes"
+    }
+    },
+    "title": "US-CA-139 Downtime Minutes"
+    }
+
+snippet cw_component_downtime_cart_store
+    {
+        "metrics": [
+            [ { "expression": "m2-m1", "label": "weights-pipeline", "id": "e1", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_weights-pipeline", "metric_type", "histogram", "host", "${1:48b02dxxxxxx}", "store", "${2:US-CA-138}", { "stat": "Sum", "id": "m1", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m2", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m4-m3", "label": "Battery", "id": "e2", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_battery", "metric_type", "histogram", "host", "$1, "store", "$2", { "stat": "Sum", "id": "m3", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m4", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m6-m5", "label": "vision-pipeline", "id": "e3", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_vision-pipeline", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m5", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m6", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m8-m7", "label": "lights", "id": "e4", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_lights", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m7", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m8", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m10-m9", "label": "Sputnik", "id": "e5", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_ihm-eco-sputnik-agent", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m9", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m10", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m12-m11", "label": "cart_controller_network_interfaces", "id": "e6", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_cart_controller_network_interfaces", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m12", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m11", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m14-m13", "label": "load-cells", "id": "e7", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_load-cells", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m14", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m13", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m16-m15", "label": "ihm-eco-credentials-agent", "id": "e8", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_ihm-eco-credentials-agent", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m16", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m15", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m18-m17", "label": "red-mqtt-server", "id": "e9", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_red-mqtt-server", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m17", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m18", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m20-m19", "label": "EGS", "id": "e10", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_ihm-eco-gateway-service", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m19", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m20", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m22-m21", "label": "convoy-usb", "id": "e11", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_convoy-usb", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m21", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m22", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m24-m23", "label": "upnd", "id": "e12", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_upnd", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m23", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m24", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m26-m25", "label": "mqtt-server", "id": "e13", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_mqtt-server", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m25", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m26", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m28-m27", "label": "iot-server", "id": "e14", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_iot-server", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m27", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m28", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m30-m29", "label": "ec2-metadata-server", "id": "e15", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_ec2-metadata-server", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m29", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m30", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m32-m31", "label": "localization", "id": "e16", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_localization", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m31", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m32", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m34-m33", "label": "sputnik-IhmEcoDeviceConfigSmoothAmbler", "id": "e16", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_spunik-IhmEcoDeviceConfigSmoothAmbler", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m33", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m34", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m36-m35", "label": "sputnik-IhmEcoNvidiaJetsonABImage", "id": "e17", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_spunik-IhmEcoNvidiaJetsonABImage", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m35", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m36", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m38-m37", "label": "ui", "id": "e18", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_uptime_ui", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m38", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m37", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ { "expression": "m40-m39", "label": "overall", "id": "e19", "period": 3600, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "CWAgent", "cart_overall_uptime", "metric_type", "histogram", "host", "$1", "store", "$2", { "stat": "Sum", "id": "m39", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ],
+            [ "...", { "id": "m40", "visible": false, "region": "us-west-2", "accountId": "877944539755" } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-west-2",
+        "stat": "SampleCount",
+        "period": 3600,
+        "liveData": true,
+        "yAxis": {
+            "left": {
+                "min": 0,
+                "max": 60
+            }
+        },
+        "title": "Overall Downtime",
+        "width": 1420,
+        "height": 437.960205078125,
+        "theme": "light"
+    }
+
+
+snippet cw_graph_foundation_service_crash_count
+    {
+        "sparkline": false,
+        "metrics": [
+            [ { "expression": "SEARCH(' {CWAgent,exit_code,store} (MetricName=ihm-eco-sputnik-agent_exit_code OR MetricName=ihm-eco-bridge-agent_exit_code OR MetricName=ihm-eco-wifi-watchdog_exit_code OR MetricName=ihm-eco-identity-agent_exit_code OR MetricName=ihm-eco-security-agent_exit_code OR MetricName=ihm-eco-credentials-agent_exit_code OR MetricName=ihm-eco-deprovisioning-agent_exit_code OR MetricName=ihm-eco-dhcpcd_exit_code OR MetricName=ihm-eco-convoy-usb_exit_code OR MetricName=ihm-eco-convoy-manager_exit_code OR MetricName=ihm-eco-convoy-cerberus_exit_code OR MetricName=ihm-eco-power-management_exit_code OR MetricName=ihm-eco-ab-failover_exit_code OR MetricName=ihm-eco-test-automation_exit_code) AND NOT (exit_code=255 OR exit_code=TERM OR exit_code=0)', 'Sum')", "label": "", "id": "e1", "region": "${1:us-east-1}", "period": 604800, "visible": false } ],
+            [ { "expression": "FILL(e1, 0)", "label": "${PROP('MetricName')} ${PROP('Dim.store')}", "id": "e2", "region": "$1", "period": 604800 } ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "$1",
+        "stat": "Average",
+        "period": 604800,
+        "table": {
+            "summaryColumns": [],
+            "layout": "horizontal",
+            "stickySummary": false
+        },
+        "liveData": false,
+        "setPeriodToTimeRange": true,
+        "trend": false,
+        "yAxis": {
+            "left": {
+                "showUnits": false
+            }
+        },
+        "title": "Foundation Service Crash Count Weekly"
+    }
+
+snippet cw_graph_foundation_service_crash_count_bar
+    {
+        "metrics": [
+            [ { "expression": "SEARCH(' {CWAgent,exit_code,store} (MetricName=ihm-eco-sputnik-agent_exit_code OR MetricName=ihm-eco-bridge-agent_exit_code OR MetricName=ihm-eco-wifi-watchdog_exit_code OR MetricName=ihm-eco-identity-agent_exit_code OR MetricName=ihm-eco-security-agent_exit_code OR MetricName=ihm-eco-credentials-agent_exit_code OR MetricName=ihm-eco-deprovisioning-agent_exit_code OR MetricName=ihm-eco-dhcpcd_exit_code OR MetricName=ihm-eco-convoy-usb_exit_code OR MetricName=ihm-eco-convoy-manager_exit_code OR MetricName=ihm-eco-convoy-cerberus_exit_code OR MetricName=ihm-eco-power-management_exit_code OR MetricName=ihm-eco-ab-failover_exit_code OR MetricName=ihm-eco-test-automation_exit_code) AND NOT (exit_code=255 OR exit_code=TERM OR exit_code=0)', 'Sum')", "label": "", "id": "e1", "region": "${1:us-east-1}", "period": 604800, "visible": false } ],
+            [ { "expression": "FILL(e1, 0)", "label": "${PROP('MetricName')}  ${PROP('Dim.store')}", "id": "e2", "region": "$1", "period": 604800, "visible": false } ],
+            [ { "expression": "SORT(e2, AVG, DESC)", "label": "${PROP('MetricName')}  ${PROP('Dim.store')}", "id": "e3", "region": "$1", "period": 604800 } ]
+        ],
+        "sparkline": false,
+        "view": "bar",
+        "stacked": false,
+        "region": "$1",
+        "stat": "Average",
+        "period": 604800,
+        "table": {
+            "summaryColumns": [],
+            "layout": "horizontal",
+            "stickySummary": false
+        },
+        "liveData": false,
+        "setPeriodToTimeRange": true,
+        "trend": false,
+        "yAxis": {
+            "left": {
+                "showUnits": false
+            }
+        },
+        "title": "Foundation Service Crash Count Weekly"
+    }
+
+snippet cw_graph_number_of_clients_served_per_ap
+    {
+        "metrics": [
+            [ { "expression": "SEARCH(' {CWAgent,\"Access Point\",store} MetricName=ihm_eco_wifi_watchdog_wifi_rssi store=${1:US-CA-147} ', 'SampleCount')", "label": "", "id": "e1", "visible": false, "period": 300, "region": "${2:us-west-2}" } ],
+            [ { "expression": "SORT(FILL(CEIL(e1/(e3/10)), 0), AVG, DESC)", "label": "", "id": "e2", "region": "$2", "visible": false } ],
+            [ { "expression": "PERIOD(FIRST(e1))", "label": "Expression3", "id": "e3", "visible": false, "period": 300, "region": "$2"} ],
+            [ { "expression": "SUM(e2)", "label": "Expression4", "id": "e4" } ]
+        ],
+        "view": "timeSeries",
+        "region": "$2",
+        "stat": "Average",
+        "period": 300,
+        "setPeriodToTimeRange": false,
+        "sparkline": true,
+        "trend": true,
+        "stacked": false,
+        "title": "Number of Clients Served per AP as Time Series"
+    }
+
+snippet cw_graph_metric_count_per_ap_per_host
+    {
+        "metrics": [
+            [ { "expression": "SEARCH(' {CWAgent,\"Access Point\",host,metric_type,store} MetricName=ihm_eco_wifi_watchdog_wifi_rssi store=${1:US-CA-147} host=${2:48b02dxxxxxx}', 'SampleCount')", "label": "", "id": "e1", "visible": true, "period": 300, "region": "${3:us-west-2}" }]
+        ],
+        "view": "timeSeries",
+        "region": "$2",
+        "stat": "Average",
+        "period": 300,
+        "setPeriodToTimeRange": false,
+        "sparkline": true,
+        "trend": true,
+        "stacked": false,
+        "title": "Number of Metric Count By Host"
+    }

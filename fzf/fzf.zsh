@@ -21,7 +21,7 @@ fo() {
 }
 
 # fuzzy grep open via ag with line number
-vg() {
+fg() {
   local file
   local line
 
@@ -30,6 +30,34 @@ vg() {
   if [[ -n $file ]]
   then
      vim $file +$line
+  fi
+}
+
+# fuzzy grep on a single file with line number, then open link
+fs() {
+  local title
+  local url
+
+  read -r title url <<<"$(cat $@ | fzf -0 -1 | awk -F' ' '{print $1, $NF}')"
+
+  if [[ -n $title ]]
+  then
+     open $url
+  fi
+}
+
+
+# fuzzy grep on a single file with line number, then copy content to clipboard
+fc() {
+  local title
+  local snippet
+
+  IFS=";" read -r title snippet <<< "$(cat $@ | fzf -0 -1)"
+
+  if [[ -n $title ]]
+  then
+     lemonade copy $snippet
+     echo "Copy snippet \"$title\" to clipboard"
   fi
 }
 

@@ -14,6 +14,7 @@ endfunction
 
 call plug#begin('~/.vim/plugged')
 Plug 'junegunn/vim-plug'
+Plug 'junegunn/goyo.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-abolish'
 Plug 'gregsexton/gitv'
@@ -67,6 +68,13 @@ Plug 'ipkiss42/xwiki.vim'
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'dhruvasagar/vim-table-mode'
+Plug 'aklt/plantuml-syntax'     
+Plug 'tyru/open-browser.vim'
+Plug 'weirongxu/plantuml-previewer.vim'
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
+Plug 'justinmk/vim-sneak'
+Plug 'tpope/vim-surround'
+Plug 'yasuhiroki/vim-plantuml-snippets'
 
 
 if has('nvim')
@@ -571,6 +579,8 @@ let g:neosnippet#snippets_directory='~/.vim/plugged/vim-snippets/snippets, ~/.vi
 """"""""""""""""""""""""""" Deoplete Setting Starts """"""""""""""""""""""
 " deoplete jedi
 let g:deoplete#sources#jedi#show_docstring = 1
+call deoplete#enable()
+
 
 """"""""""""""""""""""""""" Language client """"""""""""""""""""""""""""""
 let g:LanguageClient_serverCommands = {'cpp': ['clangd', '--header-insertion=never', '--pch-storage=memory', '-background-index',],}
@@ -788,3 +798,66 @@ endfunction
 
 " Use mouse in terminal vim
 set mouse=a
+
+if exists('g:started_by_firenvim') && g:started_by_firenvim
+  " general config for firenvim
+  let g:firenvim_config = {
+      \ 'globalSettings': {
+          \ 'alt': 'all',
+      \  },
+      \ 'localSettings': {
+          \ '.*': {
+              \ 'cmdline': 'neovim',
+              \ 'priority': 0,
+              \ 'selector': 'textarea',
+              \ 'takeover': 'never',
+          \ },
+          \ 'slack.com': {
+              \ 'content': 'html'
+          \ },
+      \ }
+  \ }
+
+  function! AdjustMinimumLines()
+          if &lines < 8 
+              set lines=8
+          endif
+          set filetype=pandoc
+          set laststatus=0 showtabline=0
+          set noruler noshowcmd
+          set guifont=Hack\ Nerd\ Font\ Mono:h11
+          set textwidth=0
+          colorscheme solarized_nvimqt
+  endfunction
+  autocmd UIEnter * call AdjustMinimumLines()
+  autocmd BufEnter * set filetype=pandoc
+endif
+
+" Limelight
+" Color name (:help cterm-colors) or ANSI code
+let g:limelight_conceal_ctermfg = 'gray'
+let g:limelight_conceal_ctermfg = 240
+
+" Color name (:help gui-colors) or RGB color
+" let g:limelight_conceal_guifg = 'DarkGray'
+" let g:limelight_conceal_guifg = '#777777'
+
+" Default: 0.5
+" let g:limelight_default_coefficient = 0.7
+
+" Number of preceding/following paragraphs to include (default: 0)
+" let g:limelight_paragraph_span = 1
+
+" Beginning/end of paragraph
+"   When there's no empty line between the paragraphs
+"   and each paragraph starts with indentation
+" let g:limelight_bop = '^\s'
+" let g:limelight_eop = '\ze\n^\s'
+
+" Highlighting priority (default: 10)
+"   Set it to -1 not to overrule hlsearch
+" let g:limelight_priority = -1
+
+" Plant UML
+let g:plantuml_previewer#debug_mode=1
+

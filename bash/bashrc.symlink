@@ -128,3 +128,8 @@ zpu () {
 }
 
 export PATH=$PATH:/Users/danhhn/.toolbox/bin
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+. "$HOME/.cargo/env"
+
+export PATH="/Applications/Fortify/Fortify_SCA_and_Apps_22.2.2/bin:$PATH"

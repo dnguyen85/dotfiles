@@ -61,3 +61,5 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 export PATH=$PATH:/Users/danhhn/.toolbox/bin
 
+
+export PATH="/Applications/Fortify/Fortify_SCA_and_Apps_22.2.2/bin:$PATH"
