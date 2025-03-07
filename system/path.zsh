@@ -25,6 +25,6 @@ then
     export PATH="/Applications/Tex/TeXShop.app/Contents/MacOS:/Applications/Tex/BibDesk.app/Contents/MacOS:$PATH"
 
 else
-    export PATH="./bin:/usr/local/bin:/usr/local/sbin:$HOME/.local/bin:$DOTFILES/bin:$PATH"
+    export PATH="$HOME/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/local/go/bin:$PATH"
     export MANPATH="/usr/local/man:/usr/local/mysql/man:/usr/local/git/man:$MANPATH"
 fi

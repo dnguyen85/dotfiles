@@ -1,0 +1,4 @@
+snippet ipython
+options indent
+    q = __import__("functools").partial(__import__("os")._exit, 0)  # FIXME
+    __import__("IPython").embed(colors="neutral")  # FIXME  ${0}

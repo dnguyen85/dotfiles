@@ -5,7 +5,6 @@ alias eclipse="eclipse 2>/dev/null"
 alias nau="nautilus ."
 #  alias okular="okular 2>/dev/null"
 alias gitl="git log-graph"
-#  alias git="hub"
 alias t="task"
 alias tw="task -misc"
 alias tm="task +misc"
@@ -35,8 +34,30 @@ alias boringdiff='svn diff --diff-cmd=/usr/bin/diff'
 export MATLAB_VER='2018b'
 alias matlab_cli='/pkg/qcaetools/syseng/bin/Matlab -qc_ver $MATLAB_VER -nodesktop -nosplash'
 alias matlab_sub='bsub -Is -q interactive -R "select[sles12 && type=LINUX64 && mem>8000] rusage[mem=8000]" /pkg/qcaetools/syseng/bin/Matlab -qc_ver $MATLAB_VER -nodesktop -nosplash'
+alias sam="brazil-build-tool-exec sam"
 
 timezsh() {
   shell=${1-$SHELL}
   for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
 }
+
+# Run docker image as is, using `ENTRYPOINT` script
+drun() {
+    docker run $(cat $(find build/images | grep .image$))
+}
+
+# Run docker image in interactive mode and attach a bash shell
+drunit() {
+    docker run -it --entrypoint bash $(cat $(find build/images | grep .image$))
+}
+
+printecr() {
+    echo containerbuild/$(brazil-build-tool-exec bash -c 'source IhmEcoContainerBuild.env; echo $CONTBUILD_ARCH')/$USER/$(brazil-path pkg.name | tr '[:upper:]' '[:lower:]')
+}
+
+bbformal() {
+    brazil-build release --force-formal-build --image-name=$USER/$(brazil-path pkg.name | tr '[:upper:]' '[:lower:]')
+}
+
+
+

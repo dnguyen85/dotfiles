@@ -1,3 +1,18 @@
+# Setup fzf
+# ---------
+if [[ ! "$PATH" == */home/danhhn/.fzf/bin* ]]; then
+  export PATH="${PATH:+${PATH}:}/home/danhhn/.fzf/bin"
+fi
+
+# Auto-completion
+# ---------------
+[[ $- == *i* ]] && source "/home/danhhn/.fzf/shell/completion.zsh" 2> /dev/null
+
+# Key bindings
+# ------------
+source "/home/danhhn/.fzf/shell/key-bindings.zsh"
+
+## Other configs
 export FZF_DEFAULT_OPS="--layout=reverse --inline-info --extended"
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
