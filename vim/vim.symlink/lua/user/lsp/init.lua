@@ -77,7 +77,7 @@ require'lspconfig'.pylsp.setup{
     capabilities = capabilities
 }
 
-require'lspconfig'.tsserver.setup{
+require'lspconfig'.ts_ls.setup{
     cmd = {"typescript-language-server", "--stdio"};
     on_attach = on_attach,
     flags = lsp_flags,
