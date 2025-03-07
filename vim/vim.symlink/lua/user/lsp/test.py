@@ -1,2 +1,0 @@
-import os.pa
-test
