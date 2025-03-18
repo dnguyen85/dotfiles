@@ -10,7 +10,7 @@ fi
 
 # Key bindings
 # ------------
-source "/home/danhhn/.fzf/shell/key-bindings.zsh"
+source "$HOME/.fzf/shell/key-bindings.zsh"
 
 ## Other configs
 export FZF_DEFAULT_OPS="--layout=reverse --inline-info --extended"
