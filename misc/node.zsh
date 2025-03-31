@@ -1,5 +1,0 @@
-# nodenv
-export NODENV_ROOT="$HOME/.nodenv"
-export PATH="$HOME/.nodenv/bin:$PATH"
-eval "$(nodenv init -)"
-

@@ -4,12 +4,13 @@ export PYTHONBREAKPOINT=ipdb.set_trace
 #  export PATH=~/python_envs/3.8.3/bin:$PATH
 
 # Pyenv
-if command -v pyenv &> /dev/null
-then
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$HOME/.pyenv/bin:$PATH"
-    eval "$(pyenv init -)"
-fi
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# Load pyenv-virtualenv automatically 
+eval "$(pyenv virtualenv-init -)"
 
 # extra configs set in .localrc
 
