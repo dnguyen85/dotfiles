@@ -64,9 +64,9 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 -- Language servers
 require'lspconfig'.pylsp.setup{
-    cmd = {"pylsp", "--verbose"};
+    cmd = {"/home/danhhn/.pyenv/versions/neovim3/bin/pylsp", "--verbose"};
     --  cmd = {"$HOME/test.sh"};
-    cmd_env = {VIRTUAL_ENV="./.venv"};
+    --  cmd_env = {VIRTUAL_ENV="./.venv"};
     on_attach = on_attach,
     capabilities = capabilities
 }

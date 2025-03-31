@@ -185,6 +185,7 @@ set diffopt=filler,context:1000,iwhite
 
 " NERD Tree plugin
 nnoremap <F12> :NERDTreeToggle<CR>
+nnoremap <leader>j= :%!jq --tab .<cr>
 
 "" Folding
 nnoremap zk zk[z

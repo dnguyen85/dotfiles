@@ -45,7 +45,7 @@ do
 done
 
 # initialize autocomplete here, otherwise functions won't be loaded. Done via oh-my-zsh
-autoload -Uz compinit && compinit
+#  autoload -Uz compinit && compinit
 
 # load every completion after autocomplete loads
 for file in ${(M)config_files:#*/completion.zsh}
@@ -54,3 +54,8 @@ do
 done
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# if you wish to use IMDS set AWS_EC2_METADATA_DISABLED=false
+
+export AWS_EC2_METADATA_DISABLED=true
+
