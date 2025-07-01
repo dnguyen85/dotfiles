@@ -63,10 +63,15 @@ cmp.setup({
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 -- Language servers
-require'lspconfig'.pylsp.setup{
-    cmd = {"/home/danhhn/.pyenv/versions/neovim3/bin/pylsp", "--verbose"};
+--  require'lspconfig'.pylsp.setup{
+    --  cmd = {"/home/danhhn/.pyenv/versions/neovim3/bin/pylsp", "--verbose"};
     --  cmd = {"$HOME/test.sh"};
     --  cmd_env = {VIRTUAL_ENV="./.venv"};
+    --  on_attach = on_attach,
+    --  capabilities = capabilities
+--  }
+require'lspconfig'.pyright.setup{
+    cmd = {"/home/danhhn/.pyenv/versions/neovim3/bin/pyright-langserver", "--stdio"};
     on_attach = on_attach,
     capabilities = capabilities
 }
@@ -75,6 +80,14 @@ require'lspconfig'.ts_ls.setup{
     cmd = {"typescript-language-server", "--stdio"};
     on_attach = on_attach,
     capabilities = capabilities
+}
+
+-- Kotlin
+require'lspconfig'.kotlin_language_server.setup{
+    cmd = {"/home/danhhn/.kotlin-language-server/bin/kotlin-language-server"};
+    on_attach = on_attach,
+    --  flags = lsp_flags,
+    capabilities = capabilities,
 }
 
 -- Barium

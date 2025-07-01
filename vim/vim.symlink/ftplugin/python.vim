@@ -264,28 +264,7 @@ setl nosmartindent
 setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
 
 " Debug helpers for ipdb
-" Next
-nnoremap <silent> <buffer> <Space> :let @m = "n"<CR>:SlimeSend1 <C-r>m<CR>
-" Step
-nnoremap <silent> <buffer> <C-Space> :let @m = "s"<CR>:SlimeSend1 <C-r>m<CR>
-" Where
-nnoremap <silent> <buffer> <leader>w :let @m = "w"<CR>:SlimeSend1 <C-r>m<CR>
-" Go down
-nnoremap <silent> <buffer> <leader>sd :let @m = "d"<CR>:SlimeSend1 <C-r>m<CR>
-" Go up
-nnoremap <silent> <buffer> <leader>su :let @m = "u"<CR>:SlimeSend1 <C-r>m<CR>
-" continue until next breakpoint or end of program
-nnoremap <silent> <buffer> <leader>e :let @m = "c"<CR>:SlimeSend1 <C-r>m<CR>
-" finish current function
-nnoremap <silent> <buffer> <leader>f :let @m = "r"<CR>:SlimeSend1 <C-r>m<CR>
-" Open current variable under cursor in GUI variable viewer
-nnoremap <silent> <buffer> <M-k> :let @m = "p " . expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
-
-" Ipython mappings
-nnoremap <silent> <buffer> <leader>ss :let @m = expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
-nnoremap <silent> <buffer> <leader>sS :let @m = expand('<cWORD>')<CR>:SlimeSend1 <C-r>m<CR>
-nnoremap <silent> <buffer> <leader>s/ :let @m = "?" . expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
-nnoremap <silent> <buffer> <leader>s? :let @m = "??" . expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
+" Insert debug marker ipdb.set_trace()
 nnoremap <silent> <localleader>b :call <SID>ToggleBreakpoint()<CR>
 nnoremap <buffer> <leader>b :call SetBreakpoint()<CR>:let @m = "b " . expand('%') . ":" . line('.')<CR>:SlimeSend1 <C-r>m<CR>
 " unset breakpoint at the current line
@@ -300,6 +279,30 @@ nnoremap <buffer> <leader>bs :let @m = "b"<CR>:SlimeSend1 <C-r>m<CR>
 nnoremap <buffer> <leader>e :let @m = "cont"<CR>:SlimeSend1 <C-r>m<CR>
 " run to cursor
 nnoremap <buffer> <leader>u :let @m = "until " . line('.')<CR>:SlimeSend1 <C-r>m<CR>
+" Next
+nnoremap <silent> <buffer> <Space> :let @m = "n"<CR>:SlimeSend1 <C-r>m<CR>
+" Step
+nnoremap <silent> <buffer> <C-Space> :let @m = "s"<CR>:SlimeSend1 <C-r>m<CR>
+" Where
+nnoremap <silent> <buffer> <leader>w :let @m = "w"<CR>:SlimeSend1 <C-r>m<CR>
+" Go down
+nnoremap <silent> <buffer> <leader>sd :let @m = "d"<CR>:SlimeSend1 <C-r>m<CR>
+" Go up
+nnoremap <silent> <buffer> <leader>su :let @m = "u"<CR>:SlimeSend1 <C-r>m<CR>
+" finish current function
+nnoremap <silent> <buffer> <leader>f :let @m = "r"<CR>:SlimeSend1 <C-r>m<CR>
+" Open current variable under cursor in GUI variable viewer
+nnoremap <silent> <buffer> <leader>k :let @m = "p " . expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
+" Print arguments of current func.
+nnoremap <silent> <buffer> <leader>a :let @m = "a"<CR>:SlimeSend1 <C-r>m<CR>
+" List current program
+nnoremap <silent> <buffer> <leader>l :let @m = "l"<CR>:SlimeSend1 <C-r>m<CR>
+
+" Ipython mappings
+nnoremap <silent> <buffer> <leader>ss :let @m = expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <silent> <buffer> <leader>sS :let @m = expand('<cWORD>')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <silent> <buffer> <leader>s/ :let @m = "?" . expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
+nnoremap <silent> <buffer> <leader>s? :let @m = "??" . expand('<cword>')<CR>:SlimeSend1 <C-r>m<CR>
 
 " Vimspector mapping
 " nmap <localleader>c    <Plug>VimspectorContinue
@@ -318,16 +321,16 @@ nnoremap <buffer> <leader>u :let @m = "until " . line('.')<CR>:SlimeSend1 <C-r>m
 
 
 
-" func s:GetVisualSelection()
+func s:GetVisualSelection()
     "Shamefully stolen from http://stackoverflow.com/a/6271254/794380
     " Why is this not a built-in Vim script function?!
-    " let [lnum1, col1] = getpos("'<")[1:2]
-    " let [lnum2, col2] = getpos("'>")[1:2]
-    " let lines = getline(lnum1, lnum2)
-    " let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
-    " let lines[0] = lines[0][col1 - 1:]
-    " return join(lines, "\n")
-" endfunction
+    let [lnum1, col1] = getpos("'<")[1:2]
+    let [lnum2, col2] = getpos("'>")[1:2]
+    let lines = getline(lnum1, lnum2)
+    let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][col1 - 1:]
+    return join(lines, "\n")
+endfunction
 
 " :EvaludateVisual
 " func s:EvaluateVisual()

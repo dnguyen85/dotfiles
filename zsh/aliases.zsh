@@ -13,7 +13,7 @@ alias to="taskopen"
 alias gs="git status"
 alias gc="git commit"
 alias ga="git add"
-alias dirdiff="vim --cmd 'let nodiffchar=1'"
+#  alias dirdiff="vim --cmd 'let nodiffchar=1'"
 # Foreground imap sync
 alias O="offlineimap"
 alias o="offlineimap -qf INBOX"
@@ -58,6 +58,7 @@ printecr() {
 bbformal() {
     brazil-build release --force-formal-build --image-name=$USER/$(brazil-path pkg.name | tr '[:upper:]' '[:lower:]')
 }
+
 
 
 
