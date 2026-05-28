@@ -34,7 +34,7 @@ Plug 'dnguyen85/vimwiki'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'jiangmiao/auto-pairs', { 'for': ['python', 'c', 'cpp', 'matlab', 'vim'] }
-Plug 'dnguyen85/vim-colors-solarized'
+Plug 'maxmx03/solarized.nvim'
 Plug 'vim-scripts/EnhCommentify.vim'
 Plug 'Shougo/denite.nvim', {'do': ':UpdateRemotePlugins'}
 Plug 'tpope/vim-dispatch'
@@ -217,10 +217,11 @@ set ignorecase
 set smartcase
 
 " Colorscheme
+if has('termguicolors') && ($COLORTERM ==# 'truecolor' || $COLORTERM ==# '24bit')
+  set termguicolors
+endif
 set background=dark
-colorscheme solarized
-" colorscheme solarized_nvimqt
-call togglebg#map("")
+silent! colorscheme solarized
 
 " Clear highlighting on escape in normal mode (Option 1)
 nnoremap <silent><esc> :let @/=""<return><esc>
