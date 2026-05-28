@@ -45,7 +45,7 @@
 [help]
         autocorrect = 1
 [credential]
-	helper = cache --timeout=18000
+	helper = cache --timeout=86400
 [push]
         # See `git help config` (search for push.default)
         # for more information on different options of the below setting.

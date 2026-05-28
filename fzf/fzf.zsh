@@ -35,12 +35,12 @@ fo() {
   fi
 }
 
-# fuzzy grep open via ag with line number
+# fuzzy grep open via rg with line number
 vg() {
   local file
   local line
 
-  read -r file line <<<"$(ag --nobreak --noheading $@ | fzf -0 -1 | awk -F: '{print $1, $2}')"
+  read -r file line <<<"$(rg --no-heading --line-number "$@" | fzf -0 -1 | awk -F: '{print $1, $2}')"
 
   if [[ -n $file ]]
   then
