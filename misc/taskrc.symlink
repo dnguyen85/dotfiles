@@ -1,0 +1,77 @@
+# [Created by task 2.6.2 10/2/2023 11:27:30]
+# Taskwarrior program configuration file.
+# For more documentation, see https://taskwarrior.org or try 'man task', 'man task-color',
+# 'man task-sync' or 'man taskrc'
+
+# Here is an example of entries that use the default, override and blank values
+#   variable=foo   -- By specifying a value, this overrides the default
+#   variable=      -- By specifying no value, this means no default
+#   #variable=foo  -- By commenting out the line, or deleting it, this uses the default
+
+# You can also refence environment variables:
+#   variable=$HOME/task
+#   variable=$VALUE
+
+# Use the command 'task show' to see all defaults and overrides
+
+# Files
+data.location=$HOME/.task
+defaultwidth=9999
+
+# To use the default location of the XDG directories,
+# move this configuration file from ~/.taskrc to ~/.config/task/taskrc and uncomment below
+
+#data.location=~/.local/share/task
+#hooks.location=~/.config/task/hooks
+
+# Color theme (uncomment one to use)
+#include light-16.theme
+#include light-256.theme
+#include dark-16.theme
+#include dark-256.theme
+#include dark-red-256.theme
+#include dark-green-256.theme
+#include dark-blue-256.theme
+#include dark-violets-256.theme
+#include dark-yellow-green.theme
+#include dark-gray-256.theme
+#include dark-gray-blue-256.theme
+#include solarized-dark-256.theme
+#include solarized-light-256.theme
+#include no-color.theme
+uda.blocks.type=string
+uda.blocks.label=Blocks
+report.completed.columns=id,uuid.short,entry,end,entry.age,depends,priority,project,tags,recur.indicator,due,description.count
+report.all.columns=id,status.short,uuid.short,start.active,entry.age,end.age,depends.indicator,priority,project,tags.count,recur.indicator,wait.remaining,scheduled.remaining,due,until.remaining,description.count
+report.long.filter=
+
+# --- Notes workflow UDAs ---
+uda.taskei_id.label=Taskei ID
+uda.taskei_id.type=string
+uda.taskei_uuid.label=Taskei UUID
+uda.taskei_uuid.type=string
+uda.taskei_synced.label=Last Synced
+uda.taskei_synced.type=date
+
+# --- Notes workflow custom reports ---
+
+# Daily triage view
+report.triage.columns=id,priority,project,description.truncated_count,taskei_id
+report.triage.labels=ID,P,Project,Description,Taskei
+report.triage.filter=status:pending
+report.triage.sort=priority-,project+,urgency-
+report.triage.description=Daily triage — all pending work
+
+# Unlinked (no Taskei ticket)
+report.unlinked.columns=id,priority,project,description.truncated_count,entry.age
+report.unlinked.labels=ID,P,Project,Description,Age
+report.unlinked.filter=status:pending taskei_id:
+report.unlinked.sort=entry+
+report.unlinked.description=Local tasks without Taskei tickets
+
+# --- Project mappings ---
+# FlexCell            -> flexcell
+#   Sensing Support   -> flexcell.sensing
+#     ARM64 build     -> flexcell.sensing.arm64
+# Manipulation        -> manipulation
+news.version=2.6.0

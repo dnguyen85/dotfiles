@@ -65,3 +65,11 @@ complete -C '/usr/local/bin/aws_completer' aws
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+function far-set-env() { eval "$(far-set-env-helper "$@" 2>/dev/tty)"; }  # added by far-dev-tools
+export CC=gcc10-gcc  # Added by far-dev-tools
+export CXX=gcc10-c++  # Added by far-dev-tools
+# added by far-dev-tools
+far-set-env SKY
+
+# Added by AIM CLI
+export PATH="$HOME/.aim/mcp-servers:$PATH"

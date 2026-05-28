@@ -71,7 +71,7 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
     --  capabilities = capabilities
 --  }
 require'lspconfig'.pyright.setup{
-    cmd = {"/home/danhhn/.pyenv/versions/neovim3/bin/pyright-langserver", "--stdio"};
+    cmd = {"/home/danhhn/.pyenv/versions/neovim3/bin/pyright-langserver", "--stdio"},
     on_attach = on_attach,
     capabilities = capabilities
 }
@@ -82,13 +82,50 @@ require'lspconfig'.ts_ls.setup{
     capabilities = capabilities
 }
 
--- Kotlin
-require'lspconfig'.kotlin_language_server.setup{
-    cmd = {"/home/danhhn/.kotlin-language-server/bin/kotlin-language-server"};
+-- buf (Protobuf). Override the shipped cmd: lspconfig's buf_ls still calls
+-- `buf beta lsp`, but that was promoted to `buf lsp serve` in newer buf CLI.
+require'lspconfig'.buf_ls.setup{
+    cmd = {'buf', 'lsp', 'serve'},
     on_attach = on_attach,
-    --  flags = lsp_flags,
     capabilities = capabilities,
 }
+
+-- Kotlin
+--  require("kotlin").setup {
+--      root_markers = {
+--          "gradlew",
+--          ".git",
+--          "mvnw",
+--          "settings.gradle",
+--          ".bemol",
+--          "packageInfo",
+--      },
+--      jre_path = os.getenv("JDK21"),
+--      jvm_args = {
+--          "-Xmx4g",
+--      },
+--  }
+
+--  vim.api.nvim_create_autocmd("FileType", {
+--      pattern = "kotlin",
+--      callback = function()
+--          if vim.lsp.config.kotlin_ls then
+--              vim.lsp.config.kotlin_ls.on_attach = on_attach
+--              vim.lsp.config.kotlin_ls.capabilities = capabilities
+--          end
+--      end,
+--  })
+
+--  Old config using straight server
+require'lspconfig'.kotlin_lsp.setup{
+    cmd = {"/home/danhhn/.local/bin/kotlin-lsp", "--stdio"},
+    on_attach = on_attach,
+    capabilities = capabilities,
+}
+
+vim.lsp.enable('kotlin_lsp')
+
+
 
 -- Barium
 local lspconfig = require 'lspconfig'
@@ -177,6 +214,7 @@ function PrintDiagnostics(opts, bufnr, line_nr, client_id)
 end
 
 --  vim.cmd [[ autocmd! CursorHold * lua PrintDiagnostics() ]]
+require('toggle_lsp_diagnostics').init(vim.diagnostic.config())
 
 -- Goto definition in a split window
 local function goto_definition(split_cmd)

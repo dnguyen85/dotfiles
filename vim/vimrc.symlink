@@ -17,21 +17,22 @@ Plug 'junegunn/vim-plug'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-abolish'
 Plug 'majutsushi/tagbar'
-Plug 'tpope/vim-unimpaired'
 Plug 'jpalardy/vim-slime'
 Plug 'scrooloose/nerdtree'
+Plug 'tummetott/unimpaired.nvim'
 " Plug 'dnguyen85/vimoutliner'
 Plug 'sjl/splice.vim'
 Plug 'rickhowe/diffchar.vim'
 Plug 'will133/vim-dirdiff'
 Plug 'qpkorr/vim-bufkill'
-Plug 'tpope/vim-unimpaired'
 Plug 'dnguyen85/vim-latex'
 Plug 'dnguyen85/vimwiki'
 " Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
 " Plug 'zchee/deoplete-jedi', { 'for': ['python'] }
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+" Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
+Plug 'nvim-lualine/lualine.nvim'
+Plug 'nvim-tree/nvim-web-devicons'
 Plug 'jiangmiao/auto-pairs', { 'for': ['python', 'c', 'cpp', 'matlab', 'vim'] }
 Plug 'dnguyen85/vim-colors-solarized'
 Plug 'vim-scripts/EnhCommentify.vim'
@@ -48,7 +49,6 @@ Plug 'dnguyen85/vim-indent-guides', { 'for': 'python' }
 Plug 'jeetsukumaran/vim-indentwise'
 Plug 'vimoutliner/vimoutliner'
 Plug 'juneedahamed/vc.vim'
-Plug 'JulioJu/neovim-qt-colors-solarized-truecolor-only'
 Plug 'othree/xml.vim'
 " Plug 'Konfekt/FastFold'
 " Plug 'https://github.qualcomm.com/kting/vim-perforce'
@@ -83,6 +83,9 @@ Plug 'tyru/open-browser.vim'
 Plug 'tpope/vim-surround'
 Plug 'mfussenegger/nvim-jdtls'
 Plug 'yssl/QFEnter'
+Plug 'WhoIsSethDaniel/toggle-lsp-diagnostics.nvim'
+Plug 'samir-roy/code-bridge.nvim'
+" Plug 'AlexandrosAlexiou/kotlin.nvim'
 
 
 " Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
@@ -108,13 +111,95 @@ if has("mac")
 elseif has("win32")
     let g:python3_host_prog = 'C:\Python38\python.exe'
 else
-    let g:python3_host_prog = '~/.pyenv/versions/neovim3/bin/python'
+    let g:python3_host_prog = '~/.pyenv/versions/3.12.11/envs/neovim3/bin/python3'
 endif
+
 
 " lsp
 lua <<EOF
 require("user.lsp")
--- require("user.plugins.fugitive")
+require("user.plugins.jar").setup()
+require("user.plugins.git_review").setup()
+
+require('unimpaired').setup {}
+
+require('lualine').setup({
+  tabline = {
+      lualine_a = {
+        {
+          'tabs',
+          show_filename_only = false,   -- Shows shortened relative path when set to false.
+          hide_filename_extension = false,   -- Hide filename extension when set to true.
+          show_modified_status = true, -- Shows indicator when the buffer is modified.
+    
+          mode = 2, -- 0: Shows buffer name
+                    -- 1: Shows buffer index
+                    -- 2: Shows buffer name + buffer index
+                    -- 3: Shows buffer number
+                    -- 4: Shows buffer name + buffer number
+    
+          max_length = vim.o.columns * 2 / 3, -- Maximum width of buffers component,
+                                              -- it can also be a function that returns
+                                              -- the value of `max_length` dynamically.
+          filetype_names = {
+            TelescopePrompt = 'Telescope',
+            dashboard = 'Dashboard',
+            packer = 'Packer',
+            fzf = 'FZF',
+            alpha = 'Alpha'
+          }, -- Shows specific buffer name for that filetype ( { `filetype` = `buffer_name`, ... } )
+    
+          -- Automatically updates active buffer color to match color of other components (will be overidden if buffers_color is set)
+          use_mode_colors = true,
+    
+          symbols = {
+            modified = ' ●',      -- Text to show when the buffer is modified
+            alternate_file = '#', -- Text to show to identify the alternate file
+            directory =  '',     -- Text to show when the buffer is a directory
+          },
+        }
+      },
+      lualine_x = {
+        {
+          'buffers',
+          show_filename_only = false,   -- Shows shortened relative path when set to false.
+          hide_filename_extension = false,   -- Hide filename extension when set to true.
+          show_modified_status = true, -- Shows indicator when the buffer is modified.
+    
+          mode = 2, -- 0: Shows buffer name
+                    -- 1: Shows buffer index
+                    -- 2: Shows buffer name + buffer index
+                    -- 3: Shows buffer number
+                    -- 4: Shows buffer name + buffer number
+    
+          max_length = vim.o.columns * 2 / 3, -- Maximum width of buffers component,
+                                              -- it can also be a function that returns
+                                              -- the value of `max_length` dynamically.
+    
+          -- Automatically updates active buffer color to match color of other components (will be overidden if buffers_color is set)
+          use_mode_colors = true,
+    
+          symbols = {
+            modified = ' ●',      -- Text to show when the buffer is modified
+            alternate_file = '#', -- Text to show to identify the alternate file
+            directory =  '',     -- Text to show when the buffer is a directory
+          },
+        }
+      }
+  }
+})
+
+require('code-bridge').setup({
+  tmux = {
+    target_mode = 'current_window',     -- 'window_name', 'current_window', 'find_process'
+    process_name = 'claude',         -- used when target_mode = 'current_window' or 'find_process'
+    switch_to_target = true,         -- whether to switch to target after sending
+    find_node_process = true,        -- whether to look for a node.js process
+  },
+  interactive = {
+    use_telescope = false,            -- don't use telescope for interactive prompts
+  }
+})
 EOF
 
 " Escape insert mode
@@ -136,6 +221,7 @@ set smartcase
 " Colorscheme
 set background=dark
 colorscheme solarized
+" colorscheme solarized_nvimqt
 call togglebg#map("")
 
 " Clear highlighting on escape in normal mode (Option 1)
@@ -375,29 +461,29 @@ let g:EnhCommentifyUseAltKeys = 'no'
 let g:EnhCommentifyUseBlockIndent = 'yes'
 
 " Vim-arline
-let g:airline_powerline_fonts = 1
-let g:airline_solarized_bg = 'dark'
+" let g:airline_powerline_fonts = 1
+" let g:airline_solarized_bg = 'dark'
 " Enable tab line
-let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#enabled = 1
 " Set the tab number to show actual number, instead of # of splits
-let g:airline#extensions#tabline#tab_nr_type = 1 " tab number
+" let g:airline#extensions#tabline#tab_nr_type = 1 " tab number
 " Hide the tab type
-let g:airline#extensions#tabline#show_tab_type = 0
+" let g:airline#extensions#tabline#show_tab_type = 0
 " Format buffer filenames
-let g:airline#extensions#tabline#fnamemod = ':t'
+" let g:airline#extensions#tabline#fnamemod = ':t'
 " Show the buffer number
-let g:airline#extensions#tabline#buffer_nr_show = 1
+" let g:airline#extensions#tabline#buffer_nr_show = 1
 " Eliminate the space between buffer number
-let g:airline#extensions#tabline#buffer_nr_format = '%s:'
+" let g:airline#extensions#tabline#buffer_nr_format = '%s:'
 " Collapse path for long filename
-let g:airline#extensions#tabline#fnamecollapse=1
+" let g:airline#extensions#tabline#fnamecollapse=1
 " Set min buffers to start showing tabline
-let g:airline#extensions#tabline#buffer_min_count = 2
+" let g:airline#extensions#tabline#buffer_min_count = 2
 " Use the `unique_tail` (or `unique_tail_improved` algorithm to display buffer
-let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+" let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 " Configure symbols
-let g:airline_symbols = get(g:,'airline_symbols',{})
-let g:airline_symbols.maxlinenr= ''
+" let g:airline_symbols = get(g:,'airline_symbols',{})
+" let g:airline_symbols.maxlinenr= ''
 
 " Denite setup
 " Wrap in try/catch to avoid errors on initial install before plugin is available
@@ -668,7 +754,8 @@ let g:DirDiffForceLang = ""         " Must set this to work in tcsh
 
 " Slime.vim
 let g:slime_target = "tmux"
-let g:slime_python_ipython = 1
+" let g:slime_python_ipython = 1
+let g:slime_bracketed_paste = 1
 
 " Termdebug
 " let g:termdebug_wide = 1
@@ -794,3 +881,269 @@ let g:openbrowser_browser_commands = [
 
 " Use mouse in terminal vim
 set mouse=a
+
+" --- git review: line-level comments via git notes ---
+" Adapted from jaykar's review system
+sign define ReviewComment text=> texthl=WarningMsg
+set signcolumn=auto
+
+function! GitReviewRoot()
+  let l:root = substitute(system('git rev-parse --show-toplevel 2>/dev/null'), '\n$', '', '')
+  if !v:shell_error && !empty(l:root)
+    return l:root
+  endif
+  return ''
+endfunction
+
+function! GitReviewFileFromBuffer()
+  " Extract the real relative file path, handling Diffview and Fugitive buffers
+  let l:root = GitReviewRoot()
+  let l:bufname = expand('%:p')
+
+  " Diffview buffers:
+  "   Regular repo: diffview:///path/to/repo/.git/<ref>//path/to/file
+  "   Worktree:     diffview:///path/.git/worktrees/<name>/<sha>/path/to/file
+  if l:bufname =~# '^diffview://'
+    " Try double-slash pattern first (regular repo)
+    if l:bufname =~# '\.git/[^/]*//'
+      return substitute(l:bufname, '.*\.git/[^/]*//', '', '')
+    endif
+    " Worktree pattern: .git/worktrees/<name>/<hex-sha>/
+    if l:bufname =~# '\.git/worktrees/[^/]\+/[0-9a-f]\+/'
+      return substitute(l:bufname, '.*\.git/worktrees/[^/]\+/[0-9a-f]\+/', '', '')
+    endif
+    " Fallback: strip everything up to last .git/.../ sequence
+    return substitute(l:bufname, '.*\.git/.\{-\}/', '', '')
+  endif
+
+  " Fugitive buffers: fugitive:///path/to/repo/.git//path/to/file
+  if l:bufname =~# '^fugitive://'
+    let l:after_git = substitute(l:bufname, '.*\.git//\?', '', '')
+    return l:after_git
+  endif
+
+  " Normal buffer: strip git root prefix
+  if !empty(l:root) && l:bufname[:len(l:root)-1] ==# l:root
+    return l:bufname[len(l:root)+1:]
+  endif
+
+  return expand('%:.')
+endfunction
+
+function! GitReviewComment()
+  let l:root = GitReviewRoot()
+  if empty(l:root)
+    echo "Not in a git repo"
+    return
+  endif
+  let l:relfile = GitReviewFileFromBuffer()
+  if empty(l:relfile)
+    echo "Cannot determine file path"
+    return
+  endif
+  let l:line = line('.')
+  " Detect left (base) vs right (new) side in diff mode
+  let l:side = ''
+  if &diff
+    let l:winnr = winnr()
+    let l:total = winnr('$')
+    let l:side = (l:winnr <= l:total / 2) ? '< ' : '> '
+  endif
+  let l:msg = input('Comment (' . l:relfile . ':' . l:line . '): ')
+  if empty(l:msg)
+    return
+  endif
+  let l:msg = l:side . l:msg
+  call system('git -C ' . shellescape(l:root) . ' review comment -f ' . shellescape(l:relfile) . ' -l ' . l:line . ' -m ' . shellescape(l:msg))
+  echo " Added."
+  call GitReviewPlaceSigns()
+endfunction
+
+function! GitReviewList()
+  let l:root = GitReviewRoot()
+  if empty(l:root)
+    echo "Not in a git repo"
+    return
+  endif
+  let l:raw = systemlist('git -C ' . shellescape(l:root) . ' review list HEAD')
+  " Parse into quickfix entries
+  let l:qf = []
+  for line in l:raw
+    let l:m = matchlist(line, '^\(.\{-}\):\(\d\+\):\s*\(.*\)')
+    if !empty(l:m)
+      call add(l:qf, {'filename': l:root . '/' . l:m[1], 'lnum': l:m[2], 'text': l:m[3]})
+    endif
+  endfor
+  if empty(l:qf)
+    echo "No review comments."
+  else
+    call setqflist(l:qf)
+    copen
+  endif
+endfunction
+
+function! GitReviewPlaceSigns()
+  " Clear previous review signs for this buffer only
+  for id in range(9000, 9200)
+    silent! execute 'sign unplace ' . id . ' buffer=' . bufnr('%')
+  endfor
+  let l:root = GitReviewRoot()
+  if empty(l:root)
+    return
+  endif
+  let l:relfile = GitReviewFileFromBuffer()
+  if empty(l:relfile)
+    return
+  endif
+  let l:raw = systemlist('git -C ' . shellescape(l:root) . ' review list HEAD')
+  let l:fpat = escape(l:relfile, '.')
+  let l:id = 9000
+  for c in l:raw
+    if c =~# '^' . l:fpat . ':\d\+:'
+      let l:m = matchlist(c, l:fpat . ':\(\d\+\):')
+      if !empty(l:m)
+        execute 'sign place ' . l:id . ' line=' . l:m[1] . ' name=ReviewComment buffer=' . bufnr('%')
+        let l:id += 1
+      endif
+    endif
+  endfor
+endfunction
+
+function! GitReviewGetComment()
+  " Return the comment text at the current file:line, or empty string
+  let l:root = GitReviewRoot()
+  if empty(l:root)
+    return ''
+  endif
+  let l:relfile = GitReviewFileFromBuffer()
+  let l:line = line('.')
+  let l:raw = systemlist('git -C ' . shellescape(l:root) . ' review list HEAD')
+  let l:pattern = '^' . escape(l:relfile, '.') . ':' . l:line . ':\s*'
+  for c in l:raw
+    if c =~# l:pattern
+      return substitute(c, l:pattern, '', '')
+    endif
+  endfor
+  return ''
+endfunction
+
+function! GitReviewShow()
+  let l:comment = GitReviewGetComment()
+  if empty(l:comment)
+    echo "No comment on this line."
+  else
+    echo "Review: " . l:comment
+  endif
+endfunction
+
+function! GitReviewEdit()
+  let l:root = GitReviewRoot()
+  if empty(l:root)
+    echo "Not in a git repo"
+    return
+  endif
+  let l:relfile = GitReviewFileFromBuffer()
+  if empty(l:relfile)
+    echo "Cannot determine file path"
+    return
+  endif
+  let l:line = line('.')
+  let l:existing = GitReviewGetComment()
+  if empty(l:existing)
+    echo "No comment on this line. Use ,rc to add one."
+    return
+  endif
+  " Prompt with existing comment pre-populated
+  let l:new = input('Edit (empty to delete): ', l:existing)
+  " Read raw notes, find and replace/remove the matching line
+  let l:sha = trim(system('git -C ' . shellescape(l:root) . ' rev-parse HEAD'))
+  let l:notes = systemlist('git -C ' . shellescape(l:root) . ' notes --ref=refs/notes/reviews show ' . l:sha)
+  let l:pattern = '^' . escape(l:relfile, '.') . ':' . l:line . ':'
+  let l:updated = []
+  for n in l:notes
+    if n =~# l:pattern
+      if !empty(l:new)
+        call add(l:updated, l:relfile . ':' . l:line . ': ' . l:new)
+      endif
+      " else: skip the line (delete)
+    else
+      call add(l:updated, n)
+    endif
+  endfor
+  if empty(l:updated)
+    call system('git -C ' . shellescape(l:root) . ' notes --ref=refs/notes/reviews remove ' . l:sha . ' 2>/dev/null')
+  else
+    call system('git -C ' . shellescape(l:root) . ' notes --ref=refs/notes/reviews add -f -m ' . shellescape(join(l:updated, "\n")) . ' ' . l:sha)
+  endif
+  echo empty(l:new) ? " Deleted." : " Updated."
+  call GitReviewPlaceSigns()
+endfunction
+
+function! GitReviewClear()
+  let l:root = GitReviewRoot()
+  if empty(l:root)
+    echo "Not in a git repo"
+    return
+  endif
+  call system('git -C ' . shellescape(l:root) . ' review clear HEAD')
+  echo "Review comments cleared."
+  call GitReviewPlaceSigns()
+endfunction
+
+function! GitReviewListAll()
+  let l:root = GitReviewRoot()
+  if empty(l:root)
+    echo "Not in a git repo"
+    return
+  endif
+  let l:raw = systemlist('git -C ' . shellescape(l:root) . ' review list --all HEAD')
+  let l:qf = []
+  for line in l:raw
+    let l:m = matchlist(line, '^\(.\{-}\):\(\d\+\):\s*\(.*\)')
+    if !empty(l:m)
+      call add(l:qf, {'filename': l:root . '/' . l:m[1], 'lnum': l:m[2], 'text': l:m[3]})
+    endif
+  endfor
+  if empty(l:qf)
+    echo "No review comments on branch."
+  else
+    call setqflist(l:qf)
+    copen
+  endif
+endfunction
+
+function! GitReviewClearAll()
+  let l:root = GitReviewRoot()
+  if empty(l:root)
+    echo "Not in a git repo"
+    return
+  endif
+  let l:confirm = input('Clear ALL review comments on this branch? (y/N): ')
+  if l:confirm !=# 'y'
+    echo " Cancelled."
+    return
+  endif
+  call system('git -C ' . shellescape(l:root) . ' review clear --all HEAD')
+  echo " All branch review comments cleared."
+  call GitReviewPlaceSigns()
+endfunction
+
+nnoremap <leader>r  <cmd>lua require('user.plugins.git_review').show()<CR>
+nnoremap <leader>rs <cmd>lua require('user.plugins.git_review').show_scroll()<CR>
+nnoremap <leader>rc <cmd>lua require('user.plugins.git_review').comment()<CR>
+nnoremap <leader>re <cmd>lua require('user.plugins.git_review').edit()<CR>
+nnoremap <leader>rd <cmd>lua require('user.plugins.git_review').delete()<CR>
+nnoremap <leader>rr <cmd>lua require('user.plugins.git_review').reply()<CR>
+nnoremap <leader>rt <cmd>lua require('user.plugins.git_review').top_comment()<CR>
+nnoremap <leader>ra <cmd>lua require('user.plugins.git_review').ask()<CR>
+nnoremap ]r <cmd>lua require('user.plugins.git_review').next_comment()<CR>
+nnoremap [r <cmd>lua require('user.plugins.git_review').prev_comment()<CR>
+nnoremap <leader>rf <cmd>lua require('user.plugins.git_review').list_file()<CR>
+nnoremap <leader>R  <cmd>lua require('user.plugins.git_review').show_all()<CR>
+nnoremap <leader>rl :call GitReviewList()<CR>
+nnoremap <leader>rL :call GitReviewListAll()<CR>
+nnoremap <leader>rx :call GitReviewClear()<CR>
+nnoremap <leader>rX :call GitReviewClearAll()<CR>
+
+" Virtual text annotations are handled by git_review.lua setup()
+autocmd FileType qf setlocal nowrap

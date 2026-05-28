@@ -13,7 +13,7 @@
         rank-contributors = !$ZSH/bin/git-rank-contributors
         count   = !git shortlog -sn
         stash-unapply = !git stash show -p | git apply -R
-        log-graph = !git log --color --graph --abbrev-commit --pretty=oneline --decorate  
+        log-graph = !git log --color --graph --abbrev-commit --pretty=format:'%C(auto)%h%C(reset) %C(dim white)%s%C(reset) | %C(blue)%an%C(reset)%C(auto)%d%C(reset) | %C(bold green)%ad%C(reset)' --date=short --decorate  
         assume-unchanged = !git ls-files -v | grep ^[a-z]
         ignored = !git clean -ndX
         sum = !git log --pretty=format:'%C(yellow)%h %Cgreen%d %Creset%s' 
@@ -58,3 +58,10 @@
 	browser = lemonade
 [browser "lemonade"]
 	cmd = "lemonade open"
+[init]
+	defaultBranch = mainline
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
