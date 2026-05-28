@@ -17,9 +17,9 @@ local on_attach = function(client, bufnr)
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
   vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
-  vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+  vim.keymap.set('n', 'K', function() vim.lsp.buf.hover({border = 'rounded'}) end, bufopts)
   vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-  vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
+  vim.keymap.set('n', '<C-k>', function() vim.lsp.buf.signature_help({border = 'rounded'}) end, bufopts)
   vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
   vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
   vim.keymap.set('n', '<space>wl', function()
@@ -62,90 +62,51 @@ cmp.setup({
 --- Add additional capabilities supported by nvim-cmp
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
--- Language servers
---  require'lspconfig'.pylsp.setup{
-    --  cmd = {"/home/danhhn/.pyenv/versions/neovim3/bin/pylsp", "--verbose"};
-    --  cmd = {"$HOME/test.sh"};
-    --  cmd_env = {VIRTUAL_ENV="./.venv"};
-    --  on_attach = on_attach,
-    --  capabilities = capabilities
---  }
-require'lspconfig'.pyright.setup{
-    cmd = {"/home/danhhn/.pyenv/versions/neovim3/bin/pyright-langserver", "--stdio"},
+-- Merge nvim-cmp capabilities and on_attach into every server's config.
+vim.lsp.config('*', {
+    capabilities = capabilities,
     on_attach = on_attach,
-    capabilities = capabilities
-}
+})
 
-require'lspconfig'.ts_ls.setup{
-    cmd = {"typescript-language-server", "--stdio"};
-    on_attach = on_attach,
-    capabilities = capabilities
-}
+-- Pyright
+vim.lsp.config('pyright', {
+    cmd = {"/home/danhhn/.pyenv/versions/neovim3/bin/pyright-langserver", "--stdio"},
+})
+vim.lsp.enable('pyright')
+
+-- TypeScript
+vim.lsp.config('ts_ls', {
+    cmd = {"typescript-language-server", "--stdio"},
+})
+vim.lsp.enable('ts_ls')
 
 -- buf (Protobuf). Override the shipped cmd: lspconfig's buf_ls still calls
 -- `buf beta lsp`, but that was promoted to `buf lsp serve` in newer buf CLI.
-require'lspconfig'.buf_ls.setup{
+vim.lsp.config('buf_ls', {
     cmd = {'buf', 'lsp', 'serve'},
-    on_attach = on_attach,
-    capabilities = capabilities,
-}
+})
+vim.lsp.enable('buf_ls')
 
--- Kotlin
---  require("kotlin").setup {
---      root_markers = {
---          "gradlew",
---          ".git",
---          "mvnw",
---          "settings.gradle",
---          ".bemol",
---          "packageInfo",
---      },
---      jre_path = os.getenv("JDK21"),
---      jvm_args = {
---          "-Xmx4g",
---      },
---  }
-
---  vim.api.nvim_create_autocmd("FileType", {
---      pattern = "kotlin",
---      callback = function()
---          if vim.lsp.config.kotlin_ls then
---              vim.lsp.config.kotlin_ls.on_attach = on_attach
---              vim.lsp.config.kotlin_ls.capabilities = capabilities
---          end
---      end,
---  })
-
---  Old config using straight server
-require'lspconfig'.kotlin_lsp.setup{
-    cmd = {"/home/danhhn/.local/bin/kotlin-lsp", "--stdio"},
-    on_attach = on_attach,
-    capabilities = capabilities,
-}
-
-vim.lsp.enable('kotlin_lsp')
-
-
-
--- Barium
-local lspconfig = require 'lspconfig'
-local configs = require 'lspconfig.configs'
-
--- Check if the config is already defined (useful when reloading this file)
-if not configs.barium then
-    configs.barium = {
-        default_config = {
-            cmd = {'barium'};
-            filetypes = {'brazil-config'};
-            root_dir = function(fname)
-                return lspconfig.util.find_git_ancestor(fname)
-            end;
-            settings = {};
-        };
-    }
+-- Kotlin (only enable when the binary is present)
+local kotlin_lsp_cmd = vim.fn.expand('~/.local/bin/kotlin-lsp')
+vim.lsp.config('kotlin_lsp', {
+    cmd = {kotlin_lsp_cmd, '--stdio'},
+    filetypes = {'kotlin'},
+    root_markers = {'gradlew', '.git', 'mvnw', 'settings.gradle', '.bemol', 'packageInfo'},
+})
+if vim.fn.executable(kotlin_lsp_cmd) == 1 then
+    vim.lsp.enable('kotlin_lsp')
 end
 
-lspconfig.barium.setup {}
+-- Barium (Brazil config)
+vim.lsp.config('barium', {
+    cmd = {'barium'},
+    filetypes = {'brazil-config'},
+    root_markers = {'.git'},
+})
+if vim.fn.executable('barium') == 1 then
+    vim.lsp.enable('barium')
+end
 
 -- Bash
 vim.api.nvim_create_autocmd('FileType', {
@@ -158,16 +119,7 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
--- Help windows with borders
-vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
-  vim.lsp.handlers.hover,
-  {border = 'rounded'}
-)
-
-vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
-  vim.lsp.handlers.signature_help,
-  {border = 'rounded'}
-)
+-- Hover/signature borders are passed inline at the keymap call sites (see on_attach).
 
 -- Diagnostics
 vim.diagnostic.config({
