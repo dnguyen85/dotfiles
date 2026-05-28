@@ -68,11 +68,25 @@ vim.lsp.config('*', {
     on_attach = on_attach,
 })
 
--- Pyright
-vim.lsp.config('pyright', {
-    cmd = {"/home/danhhn/.pyenv/versions/neovim3/bin/pyright-langserver", "--stdio"},
+-- basedpyright (type checking, go-to-def, hover types)
+vim.lsp.config('basedpyright', {
+    cmd = {'basedpyright-langserver', '--stdio'},
 })
-vim.lsp.enable('pyright')
+if vim.fn.executable('basedpyright-langserver') == 1 then
+    vim.lsp.enable('basedpyright')
+end
+
+-- ruff (lint + format). Defer hover to basedpyright to avoid duplicate popups.
+vim.lsp.config('ruff', {
+    cmd = {'ruff', 'server'},
+    on_attach = function(client, bufnr)
+        client.server_capabilities.hoverProvider = false
+        on_attach(client, bufnr)
+    end,
+})
+if vim.fn.executable('ruff') == 1 then
+    vim.lsp.enable('ruff')
+end
 
 -- TypeScript
 vim.lsp.config('ts_ls', {
