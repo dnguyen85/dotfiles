@@ -223,6 +223,22 @@ endif
 set background=dark
 silent! colorscheme solarized
 
+" Diff highlight overrides — match the legacy ethanschoonover/vim-colors-solarized
+" terminal-vim branch (default diffmode): cterm=NONE with semantic fg accents
+" on base02 bg. solarized.nvim leaves these without a guibg, so without these
+" overrides changes either blend in or invert under termguicolors.
+"   base02=#073642  magenta=#d33682  yellow=#b58900  red=#dc322f  blue=#268bd2
+augroup SolarizedDiffOverrides
+  autocmd!
+  autocmd ColorScheme solarized
+    \ highlight DiffAdd    cterm=NONE gui=NONE  guifg=#d33682 guibg=#073642 |
+    \ highlight DiffChange cterm=NONE gui=NONE  guifg=#b58900 guibg=#073642 |
+    \ highlight DiffDelete cterm=NONE gui=NONE  guifg=#dc322f guibg=#073642 |
+    \ highlight DiffText   cterm=NONE gui=NONE  guifg=#268bd2 guibg=#073642
+augroup END
+" Re-apply now since the autocmd was registered after :colorscheme ran.
+doautocmd ColorScheme solarized
+
 " Clear highlighting on escape in normal mode (Option 1)
 nnoremap <silent><esc> :let @/=""<return><esc>
 
@@ -267,7 +283,7 @@ set spelllang=en_us
 autocmd FileType gitcommit,pandoc,markdown,mail setlocal spell
 
 "## Diffmode settings using 'au FilterWritePre * if &diff'
-set diffopt=filler,context:1000,iwhite
+set diffopt=internal,filler,context:1000,iwhite,algorithm:patience,indent-heuristic,linematch:60
 
 " NERD Tree plugin
 nnoremap <F12> :NERDTreeToggle<CR>
