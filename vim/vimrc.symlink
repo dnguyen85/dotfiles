@@ -34,12 +34,11 @@ Plug 'dnguyen85/vimwiki'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'jiangmiao/auto-pairs', { 'for': ['python', 'c', 'cpp', 'matlab', 'vim'] }
-Plug 'dnguyen85/vim-colors-solarized'
-Plug 'JulioJu/neovim-qt-colors-solarized-truecolor-only'
+Plug 'craftzdog/solarized-osaka.nvim'
 Plug 'vim-scripts/EnhCommentify.vim'
 Plug 'Shougo/denite.nvim', {'do': ':UpdateRemotePlugins'}
 Plug 'tpope/vim-dispatch'
-Plug 'wincent/loupe'
+Plug 'wincent/loupe', { 'commit': '9189e7f' }
 Plug 'mileszs/ack.vim'
 Plug 'Shougo/neco-syntax'               " For syntax completion
 Plug 'Shougo/neoinclude.vim'            " For include completion
@@ -122,15 +121,12 @@ require("user.plugins.git_review").setup()
 
 require('unimpaired').setup {}
 
--- Initial lualine theme matches the active background; the autocmd below
--- keeps it in sync when :ToggleBG (or any ColorScheme change) flips it.
-local function _solarized_lualine_theme()
-  return vim.o.background == 'light' and 'solarized_light' or 'solarized_dark'
-end
-
+-- solarized-osaka.nvim ships its own lualine theme that tracks the
+-- active background; just reference it directly. The ColorScheme
+-- autocmd below re-applies after :ToggleBG.
 require('lualine').setup({
   options = {
-    theme = _solarized_lualine_theme(),
+    theme = 'solarized-osaka',
   },
   tabline = {
       lualine_a = {
@@ -197,15 +193,12 @@ require('lualine').setup({
   }
 })
 
--- Re-theme lualine when :ToggleBG flips background between dark and light.
--- ToggleBG re-runs `colorscheme <name>` which fires ColorScheme.
+-- Re-apply lualine on ColorScheme so it picks up solarized-osaka's
+-- updated palette when :ToggleBG flips background.
 vim.api.nvim_create_autocmd('ColorScheme', {
   callback = function()
     local lualine = require('lualine')
-    local cfg = lualine.get_config()
-    cfg.options = cfg.options or {}
-    cfg.options.theme = _solarized_lualine_theme()
-    lualine.setup(cfg)
+    lualine.setup(lualine.get_config())
   end,
 })
 
@@ -238,17 +231,47 @@ set smartindent
 set ignorecase
 set smartcase
 
-" Colorscheme — solarized_nvimqt is the truecolor variant of solarized that
-" sets gui colors directly (works under termguicolors regardless of terminal
-" palette). Falls back to terminal palette via cterm values when tgc is off.
+" Colorscheme — solarized-osaka.nvim. Modern Lua port with built-in
+" treesitter, LSP diagnostic float, lualine, telescope, etc. styling.
 if has('termguicolors') && ($COLORTERM ==# 'truecolor' || $COLORTERM ==# '24bit')
   set termguicolors
 endif
 set background=dark
-let g:solarized_nvimqt_underline = 0
-silent! colorscheme solarized_nvimqt
-" :ToggleBG flips between dark/light backgrounds (also bound to <F5>).
-silent! call togglebg#map("")
+silent! colorscheme solarized-osaka
+
+" solarized-osaka leaves Normal without a guibg (assumes terminal handles bg
+" via its own light/dark profile flip). For ToggleBG to look right, paint
+" Normal explicitly so the editor bg actually flips with &background.
+" Then link float groups to Normal so popups blend in.
+function! s:ApplySolarizedOsakaBG() abort
+  " Use classic solarized base03/base3 backgrounds; solarized-osaka's own
+  " #001419 is too close to black on most monitors.
+  if &background ==# 'light'
+    highlight Normal guifg=#586e75 guibg=#fdf6e3
+  else
+    highlight Normal guifg=#839496 guibg=#002b36
+  endif
+  highlight clear NormalFloat
+  highlight clear FloatBorder
+  highlight! link NormalFloat Normal
+  highlight! link FloatBorder Normal
+endfunction
+augroup SolarizedOsakaTuning
+  autocmd!
+  autocmd ColorScheme * call s:ApplySolarizedOsakaBG()
+augroup END
+call s:ApplySolarizedOsakaBG()
+
+" :ToggleBG flips between dark/light backgrounds. solarized-osaka doesn't
+" ship its own toggle, so we wire one to <F5> and a user command.
+function! s:ToggleBG() abort
+  let &background = (&background ==# 'dark') ? 'light' : 'dark'
+  if exists('g:colors_name')
+    execute 'colorscheme ' . g:colors_name
+  endif
+endfunction
+command! ToggleBG call <SID>ToggleBG()
+nnoremap <silent> <F5> :ToggleBG<CR>
 
 " Clear highlighting on escape in normal mode (Option 1)
 nnoremap <silent><esc> :let @/=""<return><esc>
