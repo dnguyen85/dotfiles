@@ -122,7 +122,16 @@ require("user.plugins.git_review").setup()
 
 require('unimpaired').setup {}
 
+-- Initial lualine theme matches the active background; the autocmd below
+-- keeps it in sync when :ToggleBG (or any ColorScheme change) flips it.
+local function _solarized_lualine_theme()
+  return vim.o.background == 'light' and 'solarized_light' or 'solarized_dark'
+end
+
 require('lualine').setup({
+  options = {
+    theme = _solarized_lualine_theme(),
+  },
   tabline = {
       lualine_a = {
         {
@@ -188,6 +197,18 @@ require('lualine').setup({
   }
 })
 
+-- Re-theme lualine when :ToggleBG flips background between dark and light.
+-- ToggleBG re-runs `colorscheme <name>` which fires ColorScheme.
+vim.api.nvim_create_autocmd('ColorScheme', {
+  callback = function()
+    local lualine = require('lualine')
+    local cfg = lualine.get_config()
+    cfg.options = cfg.options or {}
+    cfg.options.theme = _solarized_lualine_theme()
+    lualine.setup(cfg)
+  end,
+})
+
 require('code-bridge').setup({
   tmux = {
     target_mode = 'current_window',     -- 'window_name', 'current_window', 'find_process'
@@ -217,12 +238,16 @@ set smartindent
 set ignorecase
 set smartcase
 
-" Colorscheme — relies on the terminal's solarized 16-color palette, so
-" termguicolors stays OFF (the legacy vim-colors-solarized scheme uses
-" cterm slot numbers in cterm mode and only has gui values for `gui_running`).
-" nvim-qt GUI overrides this with solarized_nvimqt via ~/.config/nvim/ginit.vim.
+" Colorscheme — solarized_nvimqt is the truecolor variant of solarized that
+" sets gui colors directly (works under termguicolors regardless of terminal
+" palette). Falls back to terminal palette via cterm values when tgc is off.
+if has('termguicolors') && ($COLORTERM ==# 'truecolor' || $COLORTERM ==# '24bit')
+  set termguicolors
+endif
 set background=dark
-silent! colorscheme solarized
+let g:solarized_nvimqt_underline = 0
+silent! colorscheme solarized_nvimqt
+" :ToggleBG flips between dark/light backgrounds (also bound to <F5>).
 silent! call togglebg#map("")
 
 " Clear highlighting on escape in normal mode (Option 1)
