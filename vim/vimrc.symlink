@@ -34,7 +34,8 @@ Plug 'dnguyen85/vimwiki'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'jiangmiao/auto-pairs', { 'for': ['python', 'c', 'cpp', 'matlab', 'vim'] }
-Plug 'maxmx03/solarized.nvim'
+Plug 'dnguyen85/vim-colors-solarized'
+Plug 'JulioJu/neovim-qt-colors-solarized-truecolor-only'
 Plug 'vim-scripts/EnhCommentify.vim'
 Plug 'Shougo/denite.nvim', {'do': ':UpdateRemotePlugins'}
 Plug 'tpope/vim-dispatch'
@@ -216,28 +217,13 @@ set smartindent
 set ignorecase
 set smartcase
 
-" Colorscheme
-if has('termguicolors') && ($COLORTERM ==# 'truecolor' || $COLORTERM ==# '24bit')
-  set termguicolors
-endif
+" Colorscheme — relies on the terminal's solarized 16-color palette, so
+" termguicolors stays OFF (the legacy vim-colors-solarized scheme uses
+" cterm slot numbers in cterm mode and only has gui values for `gui_running`).
+" nvim-qt GUI overrides this with solarized_nvimqt via ~/.config/nvim/ginit.vim.
 set background=dark
 silent! colorscheme solarized
-
-" Diff highlight overrides — match the legacy ethanschoonover/vim-colors-solarized
-" terminal-vim branch (default diffmode): cterm=NONE with semantic fg accents
-" on base02 bg. solarized.nvim leaves these without a guibg, so without these
-" overrides changes either blend in or invert under termguicolors.
-"   base02=#073642  magenta=#d33682  yellow=#b58900  red=#dc322f  blue=#268bd2
-augroup SolarizedDiffOverrides
-  autocmd!
-  autocmd ColorScheme solarized
-    \ highlight DiffAdd    cterm=NONE gui=NONE  guifg=#d33682 guibg=#073642 |
-    \ highlight DiffChange cterm=NONE gui=NONE  guifg=#b58900 guibg=#073642 |
-    \ highlight DiffDelete cterm=NONE gui=NONE  guifg=#dc322f guibg=#073642 |
-    \ highlight DiffText   cterm=NONE gui=NONE  guifg=#268bd2 guibg=#073642
-augroup END
-" Re-apply now since the autocmd was registered after :colorscheme ran.
-doautocmd ColorScheme solarized
+silent! call togglebg#map("")
 
 " Clear highlighting on escape in normal mode (Option 1)
 nnoremap <silent><esc> :let @/=""<return><esc>
